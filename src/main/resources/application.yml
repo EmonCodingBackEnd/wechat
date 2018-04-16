@@ -1,0 +1,6 @@
+server:
+  context-path: /wechat
+spring:
+  h2:
+    console:
+      enabled: true
