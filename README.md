@@ -23,6 +23,10 @@
 
 ## 2.1 接入地址
 
+- 网站信息地址
+  - http://www.emon.vip/wechat/website/introduction
+
+
 - 本机地址
   - http://exp.mynatapp.cc/wechat/message
 - 阿里云地址
