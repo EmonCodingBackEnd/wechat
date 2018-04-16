@@ -9,6 +9,7 @@
   - 地址： http://weixin.qq.com/
   - 微信公众平台
     - 地址： https://mp.weixin.qq.com/
+    - 开发文档： https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1445241432
   - 微信开放平台：
     - 地址： https://open.weixin.qq.com/
   - 微信支付：
