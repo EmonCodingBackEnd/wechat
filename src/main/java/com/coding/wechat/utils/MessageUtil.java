@@ -12,6 +12,8 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
+import com.coding.wechat.DO.News;
+import com.coding.wechat.DO.NewsMessage;
 import com.coding.wechat.DO.TextMessage;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 消息格式转换工具.
@@ -45,6 +44,7 @@ import java.util.Map;
 public class MessageUtil {
 
     public static final String MESSAGE_TEXT = "text";
+    public static final String MESSAGE_NEWS = "news";
     public static final String MESSAGE_IMAGE = "image";
     public static final String MESSAGE_VOICE = "voice";
     public static final String MESSAGE_VIDEO = "video";
@@ -161,5 +161,60 @@ public class MessageUtil {
                         + "慕课网课程涵盖前端开发、PHP、Html5、Android、iOS、Swift等IT前沿技术语言，包括基础课程、实用案例、高级分享三大类型，适合不同阶段的学习人群。以纯干货、短视频的形式为平台特点，为在校学生、职场白领提供了一个迅速提升技能、共同分享进步的学习平台。 [1] \n"
                         + "4月2日，国内首个IT技能学习类应用——慕课网3.1.0版本在应用宝首发。据了解，在此次上线的版本中，慕课网新增了课程历史记录、相关课程推荐等四大功能，为用户营造更加丰富的移动端IT学习体验。");
         return sb.toString();
+    }
+
+    /**
+     * 图文消息转为xml.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180416 18:57</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param newsMessage -
+     * @return java.lang.String
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static String newsMessageToXml(NewsMessage newsMessage) {
+        XStream xStream = new XStream();
+        xStream.alias("xml", newsMessage.getClass());
+        xStream.alias("item", News.class);
+        String result = xStream.toXML(newsMessage);
+        log.info("【微信接收消息】应答消息={}", result);
+        return result;
+    }
+
+    /**
+     * 图文消息的组装.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180416 19:14</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param toUserName -
+     * @param fromUserName -
+     * @return com.coding.wechat.DO.NewsMessage
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static NewsMessage initNewsMessage(String toUserName, String fromUserName) {
+        List<News> newsList = new ArrayList<>();
+        News news = new News();
+        news.setTitle("慕课网介绍");
+        news.setDescription(
+                "慕课网是垂直的互联网IT技能免费学习网站。以独家视频教程、在线编程工具、学习计划、问答社区为核心特色。在这里，你可以找到最好的互联网技术牛人，也可以通过免费的在线公开视频课程学习国内领先的互联网IT技术。\n"
+                        + "慕课网课程涵盖前端开发、PHP、Html5、Android、iOS、Swift等IT前沿技术语言，包括基础课程、实用案例、高级分享三大类型，适合不同阶段的学习人群。以纯干货、短视频的形式为平台特点，为在校学生、职场白领提供了一个迅速提升技能、共同分享进步的学习平台。 [1] \n"
+                        + "4月2日，国内首个IT技能学习类应用——慕课网3.1.0版本在应用宝首发。据了解，在此次上线的版本中，慕课网新增了课程历史记录、相关课程推荐等四大功能，为用户营造更加丰富的移动端IT学习体验。");
+        news.setPicUrl("http://exp.mynatapp.cc/wechat/images/stare.jpg");
+        news.setUrl("www.imooc.com");
+        newsList.add(news);
+        newsList.add(news);
+
+        NewsMessage newsMessage = new NewsMessage();
+        newsMessage.setFromUserName(toUserName);
+        newsMessage.setToUserName(fromUserName);
+        newsMessage.setMsgType(MessageUtil.MESSAGE_NEWS);
+        newsMessage.setCreateTime(new Date().getTime());
+        newsMessage.setArticleCount(newsList.size());
+        newsMessage.setNewsList(newsList);
+        return newsMessage;
     }
 }

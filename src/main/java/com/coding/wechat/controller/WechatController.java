@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
+import com.coding.wechat.DO.BaseMessage;
 import com.coding.wechat.DO.TextMessage;
 import com.coding.wechat.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -76,9 +77,8 @@ public class WechatController {
     }
 
     @PostMapping(value = "/message", produces = MediaType.APPLICATION_XML_VALUE)
-    public TextMessage receiveMessage(HttpServletRequest request, HttpServletResponse response) {
-        TextMessage textMessage = new TextMessage();
-        ;
+    public BaseMessage receiveMessage(HttpServletRequest request, HttpServletResponse response) {
+        BaseMessage message = null;
         try {
             Map<String, String> map = MessageUtil.xmlToMap(request);
             String toUserName = map.get("ToUserName");
@@ -88,19 +88,17 @@ public class WechatController {
 
             if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
                 if ("1".equals(content)) {
-                    textMessage =
+                    message =
                             MessageUtil.initTextMessage(
                                     toUserName, fromUserName, MessageUtil.firstMenu());
                 } else if ("2".equals(content)) {
-                    textMessage =
-                            MessageUtil.initTextMessage(
-                                    toUserName, fromUserName, MessageUtil.secondMenu());
+                    message = MessageUtil.initNewsMessage(toUserName, fromUserName);
                 } else if ("?".equals(content)) {
-                    textMessage =
+                    message =
                             MessageUtil.initTextMessage(
                                     toUserName, fromUserName, MessageUtil.menuText());
                 } else {
-                    textMessage =
+                    message =
                             MessageUtil.initTextMessage(
                                     toUserName, fromUserName, String.format("你发送的消息是：%s", content));
                 }
@@ -108,7 +106,7 @@ public class WechatController {
                 String eventType = map.get("Event");
                 log.info("【微信接收消息】消息类型={}", eventType);
                 if (MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)) {
-                    textMessage =
+                    message =
                             MessageUtil.initTextMessage(
                                     toUserName, fromUserName, MessageUtil.menuText());
                 }
@@ -116,7 +114,7 @@ public class WechatController {
         } catch (Exception e) {
             log.error("【微信接收消息】异常", e);
         }
-        return textMessage;
+        return message;
     }
 
     @PostMapping(value = "/message2")

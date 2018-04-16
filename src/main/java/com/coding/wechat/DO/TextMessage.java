@@ -12,8 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.DO;
 
-import lombok.Data;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -27,25 +25,30 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Data
 @XmlRootElement(name = "xml")
-public class TextMessage {
-
-    /** 开发者微信号. */
-    @XmlElement private String ToUserName;
-
-    /** 发送方帐号（一个OpenID）. */
-    @XmlElement private String FromUserName;
-
-    /** 消息创建时间 （整型）. */
-    @XmlElement private Long CreateTime;
-
-    /** text. */
-    @XmlElement private String MsgType;
+public class TextMessage extends BaseMessage {
 
     /** 文本消息内容. */
-    @XmlElement private String Content;
+    private String Content;
 
     /** 消息id，64位整型. */
-    @XmlElement private String MsgId;
+    private String MsgId;
+
+    @XmlElement(name = "Content")
+    public String getContent() {
+        return Content;
+    }
+
+    public void setContent(String content) {
+        Content = content;
+    }
+
+    @XmlElement(name = "MsgId")
+    public String getMsgId() {
+        return MsgId;
+    }
+
+    public void setMsgId(String msgId) {
+        MsgId = msgId;
+    }
 }

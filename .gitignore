@@ -1,6 +1,10 @@
 /target/
 !.mvn/wrapper/maven-wrapper.jar
 
+### 临时目录 ###
+/temp/*
+!/temp/demo.xml
+
 ### STS ###
 .apt_generated
 .classpath
