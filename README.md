@@ -37,9 +37,10 @@
 ## 2.2 公众平台测试账号
 
 - 测试账号信息
-  - appID： wxf46908d1b94ffc6c
-  - appsecret： 26c765de9bbe93f5b131856bd107da25
 - 接口配置信息
   - URL： http://exp.mynatapp.cc/wechat/message
-  - Token： emonnote
+
+## 2.3 获取access_token
+
+
 
