@@ -14,9 +14,11 @@ package com.coding.wechat.controller;
 
 import com.coding.wechat.DO.BaseMessage;
 import com.coding.wechat.DO.TextMessage;
+import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.utils.MessageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +46,8 @@ import java.util.Map;
 @RestController
 @Slf4j
 public class WechatController {
+
+    @Autowired WechatConfig wechatConfig;
 
     @GetMapping(value = "/message", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String checkSignature(
@@ -86,6 +90,11 @@ public class WechatController {
             String msgType = map.get("MsgType");
             String content = map.get("Content");
 
+            log.info(
+                    "【WechatConfig】AppId={}, AppSecret={}, token={}",
+                    wechatConfig.getAppId(),
+                    wechatConfig.getAppSecret(),
+                    wechatConfig.getToken());
             if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
                 if ("1".equals(content)) {
                     message =

@@ -1,6 +1,8 @@
 server:
   context-path: /wechat
 spring:
+  profiles:
+    active: prod
   h2:
     console:
       enabled: true
