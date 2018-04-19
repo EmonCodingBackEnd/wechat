@@ -41,4 +41,7 @@ public class WechatConfig {
 
     /** 令牌(Token) */
     private String token;
+
+    /** https获取access_token的请求方式： GET */
+    private String accessTokenUrl;
 }

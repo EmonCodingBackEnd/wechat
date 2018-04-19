@@ -12,11 +12,15 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
+import com.coding.wechat.DO.AccessToken;
 import com.coding.wechat.DO.BaseMessage;
 import com.coding.wechat.DO.TextMessage;
+import com.coding.wechat.common.WechatConstant;
 import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.utils.MessageUtil;
+import com.coding.wechat.utils.WechatUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -161,5 +166,22 @@ public class WechatController {
         } finally {
             printWriter.close();
         }
+    }
+
+    @GetMapping(value = "/accessToken", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public AccessToken accessToken() {
+        AccessToken accessToken = new AccessToken();
+        String accessTokenUrl =
+                wechatConfig
+                        .getAccessTokenUrl()
+                        .replace(WechatConstant.BaseInfo.APP_ID, wechatConfig.getAppId())
+                        .replace(WechatConstant.BaseInfo.APP_SECRET, wechatConfig.getAppSecret());
+        log.info("【微信获取access_token】result={}", accessTokenUrl);
+        JSONObject jsonObject = WechatUtil.doGetStr(accessTokenUrl);
+        if (jsonObject != null) {
+            accessToken.setAccessToken(jsonObject.getString("access_token"));
+            accessToken.setExpiresIn(jsonObject.getInt("expires_in"));
+        }
+        return accessToken;
     }
 }
