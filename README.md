@@ -9,8 +9,13 @@
   - 地址： http://weixin.qq.com/
   - 微信公众平台
     - 地址： https://mp.weixin.qq.com/
-    - 开发者文档： https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1445241432
-    - 测试账号： https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
+    - 服务号：
+      - 开发者文档： https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1445241432
+    - 订阅号：
+      - 开发者文档： https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1445241432
+      - 测试账号： https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
+    - 小程序：
+      - 小程序开发文档： https://developers.weixin.qq.com/miniprogram/dev/index.html
   - 微信开放平台：
     - 地址： https://open.weixin.qq.com/
   - 微信支付：
