@@ -34,7 +34,7 @@ public class CAController {
 
     @GetMapping("/")
     public String introduction(Map<String, Object> map) {
-        String redirectUrl = "http://www.emon.vip/.well-known/pki-validation/fileauth.txt";
+        String redirectUrl = "http://www.emon.vip/wechat/.well-known/pki-validation/fileauth.txt";
         return "redirect:" + redirectUrl;
     }
 
