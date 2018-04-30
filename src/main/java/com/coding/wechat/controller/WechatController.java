@@ -120,6 +120,8 @@ public class WechatController {
                     message = MessageUtil.initNewsMessage(toUserName, fromUserName);
                 } else if ("3".equals(content)) {
                     message = MessageUtil.initImageMessage(toUserName, fromUserName);
+                } else if ("4".equals(content)) {
+                    message = MessageUtil.initMusicMessage(toUserName, fromUserName);
                 } else if ("?".equals(content)) {
                     message =
                             MessageUtil.initTextMessage(

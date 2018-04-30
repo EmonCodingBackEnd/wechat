@@ -139,7 +139,8 @@ public class MessageUtil {
         sb.append("欢迎您的关注，请按照菜单提示进行操作：\n\n");
         sb.append("1、课程介绍\n");
         sb.append("2、慕课网介绍\n");
-        sb.append("3、得到图片\n\n");
+        sb.append("3、得到图片\n");
+        sb.append("4、收听音乐\n\n");
         sb.append("回复 ? 调出此菜单。\n");
         return sb.toString();
     }
@@ -217,5 +218,34 @@ public class MessageUtil {
         imageMessage.setCreateTime(new Date().getTime());
         imageMessage.setImage(image);
         return imageMessage;
+    }
+
+    /**
+     * 组装音乐消息.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180501 00:48</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param toUserName -
+     * @param fromUserName -
+     * @return com.coding.wechat.DO.MusicMessage
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static MusicMessage initMusicMessage(String toUserName, String fromUserName) {
+        Music music = new Music();
+        music.setTitle("草庙村");
+        music.setDescription("2007诛仙世界");
+        music.setMusicUrl("http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3");
+        music.setHQMusicUrl("http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3");
+        music.setThumbMediaId("KSFXI_OoO5hgBL4gwK0kJf04Sk3GuO6Zrk0TJ5wgUzO1H1D_dSv5tGRvZ1OeXzqn");
+
+        MusicMessage musicMessage = new MusicMessage();
+        musicMessage.setFromUserName(toUserName);
+        musicMessage.setToUserName(fromUserName);
+        musicMessage.setMsgType(WechatConsts.Message.IMAGE);
+        musicMessage.setCreateTime(new Date().getTime());
+        musicMessage.setMusic(music);
+        return musicMessage;
     }
 }

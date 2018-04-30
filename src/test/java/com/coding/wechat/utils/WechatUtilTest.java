@@ -26,7 +26,8 @@ public class WechatUtilTest {
 
     @Autowired WechatConfig wechatConfig;
 
-    // [lm's ps]: 20180430 21:11 上传图片 Turg7a0ggBp3wWy06KL1CMZHDaFbMtVhD1FGtGMVRnDRg_0q3mqw7ycdgGlSJ_dX
+    // [lm's ps]: 20180430 21:11 上传图片
+    // Turg7a0ggBp3wWy06KL1CMZHDaFbMtVhD1FGtGMVRnDRg_0q3mqw7ycdgGlSJ_dX
     @Test
     public void uploadImage() throws Exception {
         String result =
@@ -48,11 +49,11 @@ public class WechatUtilTest {
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken)
                         .replace(WechatConsts.Media.TYPE, WechatConsts.Media.IMAGE);
         log.info(uploadUrl);
-        String mediaId = WechatUtil.upload(filePath, uploadUrl);
+        String mediaId = WechatUtil.upload(filePath, uploadUrl, WechatConsts.Media.IMAGE);
         log.info(mediaId);
     }
 
-    // [lm's ps]: 20180430 21:11 上传音乐
+    // [lm's ps]: 20180430 21:11 上传缩略图 KSFXI_OoO5hgBL4gwK0kJf04Sk3GuO6Zrk0TJ5wgUzO1H1D_dSv5tGRvZ1OeXzqn
     @Test
     public void uploadThumb() throws Exception {
         String result =
@@ -67,14 +68,14 @@ public class WechatUtilTest {
         // 凭证
         String accessToken = String.valueOf(map.get("access_token"));
 
-        String filePath = "C:\\Users\\LiMing\\Pictures\\LovePicture\\139-1604251II9.jpg";
+        String filePath = "C:\\Users\\LiMing\\Pictures\\LovePicture\\459090977.jpg";
         String uploadUrl =
                 wechatConfig
                         .getUploadUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken)
                         .replace(WechatConsts.Media.TYPE, WechatConsts.Media.THUMB);
         log.info(uploadUrl);
-        String mediaId = WechatUtil.upload(filePath, uploadUrl);
+        String mediaId = WechatUtil.upload(filePath, uploadUrl, WechatConsts.Media.THUMB);
         log.info(mediaId);
     }
 }

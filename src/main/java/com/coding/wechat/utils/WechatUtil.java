@@ -121,7 +121,7 @@ public class WechatUtil {
      * @author Rushing0711
      * @since 1.0.0
      */
-    public static String upload(String filePath, String uploadUrl) throws IOException {
+    public static String upload(String filePath, String uploadUrl, String type) throws IOException {
         File file = new File(filePath);
         if (!file.exists() || !file.isFile()) {
             throw new IOException("文件不存在");
@@ -200,7 +200,15 @@ public class WechatUtil {
 
         JSONObject jsonObject = JSONObject.fromObject(result);
         log.info("【新建临时素材】响应结果：{}", jsonObject);
-        String mediaId = jsonObject.getString(WechatConsts.Media.MEDIA_ID);
+
+        String mediaId = "";
+        if (WechatConsts.Media.THUMB.equals(type)) {
+            mediaId =
+                    jsonObject.getString(
+                            WechatConsts.Media.THUMB + "_" + WechatConsts.Media.MEDIA_ID);
+        } else {
+            mediaId = jsonObject.getString(WechatConsts.Media.MEDIA_ID);
+        }
         return mediaId;
     }
 }
