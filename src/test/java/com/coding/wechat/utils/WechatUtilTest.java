@@ -53,7 +53,7 @@ public class WechatUtilTest {
         log.info(mediaId);
     }
 
-    // [lm's ps]: 20180430 21:11 上传缩略图 KSFXI_OoO5hgBL4gwK0kJf04Sk3GuO6Zrk0TJ5wgUzO1H1D_dSv5tGRvZ1OeXzqn
+    // [lm's ps]: 20180430 21:11 上传缩略图 Bd8-7-QJU3G7K8lu5ofNOu2W728A5J05vCmFgf_1Q9_IQD7x4VuzYbjqRiODSZ-l
     @Test
     public void uploadThumb() throws Exception {
         String result =

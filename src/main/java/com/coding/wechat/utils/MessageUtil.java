@@ -238,12 +238,12 @@ public class MessageUtil {
         music.setDescription("2007诛仙世界");
         music.setMusicUrl("http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3");
         music.setHQMusicUrl("http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3");
-        music.setThumbMediaId("KSFXI_OoO5hgBL4gwK0kJf04Sk3GuO6Zrk0TJ5wgUzO1H1D_dSv5tGRvZ1OeXzqn");
+        music.setThumbMediaId("Bd8-7-QJU3G7K8lu5ofNOu2W728A5J05vCmFgf_1Q9_IQD7x4VuzYbjqRiODSZ-l");
 
         MusicMessage musicMessage = new MusicMessage();
         musicMessage.setFromUserName(toUserName);
         musicMessage.setToUserName(fromUserName);
-        musicMessage.setMsgType(WechatConsts.Message.IMAGE);
+        musicMessage.setMsgType(WechatConsts.Message.MUSIC);
         musicMessage.setCreateTime(new Date().getTime());
         musicMessage.setMusic(music);
         return musicMessage;
