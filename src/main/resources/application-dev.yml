@@ -2,4 +2,3 @@ wechat:
   appId: wxf46908d1b94ffc6c
   appSecret: 26c765de9bbe93f5b131856bd107da25
   token: emonnote
-  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET

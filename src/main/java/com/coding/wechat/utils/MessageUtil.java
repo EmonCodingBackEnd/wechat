@@ -12,9 +12,8 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
-import com.coding.wechat.DO.News;
-import com.coding.wechat.DO.NewsMessage;
-import com.coding.wechat.DO.TextMessage;
+import com.coding.wechat.DO.*;
+import com.coding.wechat.constants.WechatConsts;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
 import org.dom4j.Document;
@@ -42,19 +41,6 @@ import java.util.*;
  */
 @Slf4j
 public class MessageUtil {
-
-    public static final String MESSAGE_TEXT = "text";
-    public static final String MESSAGE_NEWS = "news";
-    public static final String MESSAGE_IMAGE = "image";
-    public static final String MESSAGE_VOICE = "voice";
-    public static final String MESSAGE_VIDEO = "video";
-    public static final String MESSAGE_LINK = "link";
-    public static final String MESSAGE_LOCATION = "location";
-    public static final String MESSAGE_EVENT = "event";
-    public static final String MESSAGE_SUBSCRIBE = "subscribe";
-    public static final String MESSAGE_unsubscribe = "unsubscribe";
-    public static final String MESSAGE_CLICK = "CLICK";
-    public static final String MESSAGE_VIEW = "VIEW";
 
     /**
      * xml转换为Map集合.
@@ -114,16 +100,25 @@ public class MessageUtil {
         return result;
     }
 
-    public static String initText(String toUserName, String fromUserName, String content) {
-        return MessageUtil.textMessageToXml(initTextMessage(toUserName, fromUserName, content));
-    }
-
+    /**
+     * 组装文本消息.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180430 10:55</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param toUserName -
+     * @param fromUserName -
+     * @param content -
+     * @return com.coding.wechat.DO.TextMessage
+     * @author Rushing0711
+     * @since 1.0.0
+     */
     public static TextMessage initTextMessage(
             String toUserName, String fromUserName, String content) {
         TextMessage textMessage = new TextMessage();
         textMessage.setFromUserName(toUserName);
         textMessage.setToUserName(fromUserName);
-        textMessage.setMsgType(MessageUtil.MESSAGE_TEXT);
+        textMessage.setMsgType(WechatConsts.Message.TEXT);
         textMessage.setCreateTime(new Date().getTime());
         textMessage.setContent(content);
         return textMessage;
@@ -143,7 +138,8 @@ public class MessageUtil {
         StringBuffer sb = new StringBuffer();
         sb.append("欢迎您的关注，请按照菜单提示进行操作：\n\n");
         sb.append("1、课程介绍\n");
-        sb.append("2、慕课网介绍\n\n");
+        sb.append("2、慕课网介绍\n");
+        sb.append("3、得到图片\n\n");
         sb.append("回复 ? 调出此菜单。\n");
         return sb.toString();
     }
@@ -164,27 +160,7 @@ public class MessageUtil {
     }
 
     /**
-     * 图文消息转为xml.
-     *
-     * <p>创建时间: <font style="color:#00FFFF">20180416 18:57</font><br>
-     * [请在此输入功能详述]
-     *
-     * @param newsMessage -
-     * @return java.lang.String
-     * @author Rushing0711
-     * @since 1.0.0
-     */
-    public static String newsMessageToXml(NewsMessage newsMessage) {
-        XStream xStream = new XStream();
-        xStream.alias("xml", newsMessage.getClass());
-        xStream.alias("item", News.class);
-        String result = xStream.toXML(newsMessage);
-        log.info("【微信接收消息】应答消息={}", result);
-        return result;
-    }
-
-    /**
-     * 图文消息的组装.
+     * 组装图文消息.
      *
      * <p>创建时间: <font style="color:#00FFFF">20180416 19:14</font><br>
      * [请在此输入功能详述]
@@ -211,10 +187,35 @@ public class MessageUtil {
         NewsMessage newsMessage = new NewsMessage();
         newsMessage.setFromUserName(toUserName);
         newsMessage.setToUserName(fromUserName);
-        newsMessage.setMsgType(MessageUtil.MESSAGE_NEWS);
+        newsMessage.setMsgType(WechatConsts.Message.NEWS);
         newsMessage.setCreateTime(new Date().getTime());
         newsMessage.setArticleCount(newsList.size());
         newsMessage.setNewsList(newsList);
         return newsMessage;
+    }
+
+    /**
+     * 组装图片消息.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180430 19:56</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param toUserName -
+     * @param fromUserName -
+     * @return com.coding.wechat.DO.NewsMessage
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static ImageMessage initImageMessage(String toUserName, String fromUserName) {
+        Image image = new Image();
+        image.setMediaId("Turg7a0ggBp3wWy06KL1CMZHDaFbMtVhD1FGtGMVRnDRg_0q3mqw7ycdgGlSJ_dX");
+
+        ImageMessage imageMessage = new ImageMessage();
+        imageMessage.setFromUserName(toUserName);
+        imageMessage.setToUserName(fromUserName);
+        imageMessage.setMsgType(WechatConsts.Message.IMAGE);
+        imageMessage.setCreateTime(new Date().getTime());
+        imageMessage.setImage(image);
+        return imageMessage;
     }
 }

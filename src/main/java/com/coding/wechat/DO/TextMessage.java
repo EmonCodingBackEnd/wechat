@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * [请在此输入功能简述].
+ * 文本消息.
  *
  * <p>创建时间: <font style="color:#00FFFF">20180412 08:33</font><br>
  * [请在此输入功能详述]

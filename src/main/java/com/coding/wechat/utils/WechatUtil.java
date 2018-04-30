@@ -12,6 +12,8 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
+import com.coding.wechat.constants.WechatConsts;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -23,7 +25,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * [请在此输入功能简述].
@@ -35,6 +39,7 @@ import java.io.IOException;
  * @version 1.0.0
  * @since 1.0.0
  */
+@Slf4j
 public class WechatUtil {
 
     private static CloseableHttpClient httpClient;
@@ -98,5 +103,104 @@ public class WechatUtil {
         } finally {
         }
         return jsonObject;
+    }
+
+    /**
+     * 新增临时素材.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180430 13:17</font><br>
+     * 可以通过使用curl命令，用form表单方式模拟上传一个多媒体文件：<br>
+     * <code>
+     *     curl -F media=@test.jpg "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE"
+     * </code> <br>
+     * 备注：需要替换地址中的ACCESS_TOKEN和TYPE为具体的值。
+     *
+     * @param filePath -
+     * @param uploadUrl -
+     * @return java.lang.String
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static String upload(String filePath, String uploadUrl) throws IOException {
+        File file = new File(filePath);
+        if (!file.exists() || !file.isFile()) {
+            throw new IOException("文件不存在");
+        }
+
+        URL url = new URL(uploadUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        connection.setUseCaches(false);
+
+        // 设置请求头信息
+        connection.setRequestProperty("Connection", "Keep-Alive");
+        connection.setRequestProperty("Charset", "UTF-8");
+
+        // 设置边界
+        String BOUNDARY = "----------" + System.currentTimeMillis();
+        connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + BOUNDARY);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("--");
+        sb.append(BOUNDARY);
+        sb.append("\r\n");
+        sb.append(
+                "Content-Disposition:form-data;name=\"file\";filename=\""
+                        + file.getName()
+                        + "\"\r\n");
+        sb.append("Content-Type:application/octet-stream\r\n\r\n");
+
+        byte[] head = sb.toString().getBytes("utf-8");
+
+        // 获得输出流
+        OutputStream out = new DataOutputStream(connection.getOutputStream());
+        // 输出表头
+        out.write(head);
+
+        // 文件正文部分
+        // 把文件以流文件的方式，推入到url中
+        DataInputStream in = new DataInputStream(new FileInputStream(file));
+        int bytes = 0;
+        byte[] bufferOut = new byte[1024];
+        while ((bytes = in.read(bufferOut)) != -1) {
+            out.write(bufferOut, 0, bytes);
+        }
+        in.close();
+
+        // 结尾部分
+        // 定义最后数据分割线
+        byte[] foot = ("\r\n--" + BOUNDARY + "--\r\n").getBytes("utf-8");
+
+        out.write(foot);
+        out.flush();
+        out.close();
+
+        StringBuilder buf = new StringBuilder();
+        BufferedReader reader = null;
+        String result = null;
+        try {
+            // 定义BufferedReader输入流来读取URL的响应
+            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                buf.append(line);
+            }
+            if (result == null) {
+                result = buf.toString();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                reader.close();
+            }
+        }
+
+        JSONObject jsonObject = JSONObject.fromObject(result);
+        log.info("【新建临时素材】响应结果：{}", jsonObject);
+        String mediaId = jsonObject.getString(WechatConsts.Media.MEDIA_ID);
+        return mediaId;
     }
 }

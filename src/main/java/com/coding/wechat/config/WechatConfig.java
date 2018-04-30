@@ -44,4 +44,7 @@ public class WechatConfig {
 
     /** https获取access_token的请求方式： GET */
     private String accessTokenUrl;
+
+    /** https新增临时素材的请求方式： POST/FORM. */
+    private String uploadUrl;
 }
