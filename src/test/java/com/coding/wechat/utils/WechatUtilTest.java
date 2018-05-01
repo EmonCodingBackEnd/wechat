@@ -1,7 +1,7 @@
 package com.coding.wechat.utils;
 
-import com.coding.wechat.constants.WechatConsts;
 import com.coding.wechat.config.WechatConfig;
+import com.coding.wechat.constants.WechatConsts;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,8 @@ public class WechatUtilTest {
         log.info(mediaId);
     }
 
-    // [lm's ps]: 20180430 21:11 上传缩略图 Bd8-7-QJU3G7K8lu5ofNOu2W728A5J05vCmFgf_1Q9_IQD7x4VuzYbjqRiODSZ-l
+    // [lm's ps]: 20180430 21:11 上传缩略图
+    // Bd8-7-QJU3G7K8lu5ofNOu2W728A5J05vCmFgf_1Q9_IQD7x4VuzYbjqRiODSZ-l
     @Test
     public void uploadThumb() throws Exception {
         String result =
@@ -77,5 +78,29 @@ public class WechatUtilTest {
         log.info(uploadUrl);
         String mediaId = WechatUtil.upload(filePath, uploadUrl, WechatConsts.Media.THUMB);
         log.info(mediaId);
+    }
+
+    @Test
+    public void initMenu() throws Exception {
+        String result =
+                mvc.perform(MockMvcRequestBuilders.get("/accessToken"))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Gson gson = new Gson();
+        Map map = gson.fromJson(result, new TypeToken<Map>() {}.getType());
+        // 凭证
+        String accessToken = String.valueOf(map.get("access_token"));
+
+        String menu = gson.toJson(WechatUtil.initMenu());
+
+        mvc.perform(
+                        MockMvcRequestBuilders.get(
+                                        "/createMenu?accessToken={accessToken}&menu={menu}", accessToken, menu)
+                                .characterEncoding("UTF-8"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("0"));
     }
 }

@@ -13,9 +13,9 @@
 package com.coding.wechat.controller;
 
 import com.coding.wechat.DO.AccessToken;
-import com.coding.wechat.DO.BaseMessage;
-import com.coding.wechat.constants.WechatConsts;
+import com.coding.wechat.DO.message.BaseMessage;
 import com.coding.wechat.config.WechatConfig;
+import com.coding.wechat.constants.WechatConsts;
 import com.coding.wechat.utils.MessageUtil;
 import com.coding.wechat.utils.WechatUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +97,7 @@ public class WechatController {
      *
      * @param request -
      * @param response -
-     * @return com.coding.wechat.DO.BaseMessage
+     * @return com.coding.wechat.DO.message.BaseMessage
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -161,12 +161,27 @@ public class WechatController {
                         .getAccessTokenUrl()
                         .replace(WechatConsts.BaseInfo.APP_ID, wechatConfig.getAppId())
                         .replace(WechatConsts.BaseInfo.APP_SECRET, wechatConfig.getAppSecret());
-        log.info("【微信获取access_token】result={}", accessTokenUrl);
+        log.info("【微信获取access_token】accessTokenUrl={}", accessTokenUrl);
         JSONObject jsonObject = WechatUtil.doGetStr(accessTokenUrl);
         if (jsonObject != null) {
             accessToken.setAccessToken(jsonObject.getString("access_token"));
             accessToken.setExpiresIn(jsonObject.getInt("expires_in"));
         }
         return accessToken;
+    }
+
+    @GetMapping(value = "/createMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Integer createMenu(String accessToken, String menu) {
+        Integer errcode = 0;
+        String createMenuUrl =
+                wechatConfig.getCreateMenuUrl().replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+        log.info("【微信创建菜单】createMenuUrl={},menu={}", createMenuUrl, menu);
+        JSONObject jsonObject = WechatUtil.doPostStr(createMenuUrl, menu);
+        if (jsonObject != null) {
+            errcode = jsonObject.getInt("errcode");
+            String errmsg = jsonObject.getString("errmsg");
+            log.info("【微信创建菜单】errcode={},errmsg={}", errcode, errmsg);
+        }
+        return errcode;
     }
 }

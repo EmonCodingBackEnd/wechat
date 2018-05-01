@@ -4,6 +4,11 @@
       "name": "wechat.uploadUrl",
       "type": "java.lang.String",
       "description": "Description for wechat.uploadUrl."
+    },
+    {
+      "name": "wechat.createMenuUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.createMenuUrl."
     }
   ]
 }

@@ -10,3 +10,4 @@ spring:
 wechat:
   accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
   uploadUrl: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE
+  createMenuUrl: https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN

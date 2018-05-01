@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180501-01         Rushing0711     M201805010026 新建文件
  ********************************************************************************/
-package com.coding.wechat.DO;
+package com.coding.wechat.DO.message;
 
 import javax.xml.bind.annotation.XmlElement;
 

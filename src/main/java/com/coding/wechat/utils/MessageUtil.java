@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
-import com.coding.wechat.DO.*;
+import com.coding.wechat.DO.message.*;
 import com.coding.wechat.constants.WechatConsts;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
@@ -109,7 +109,7 @@ public class MessageUtil {
      * @param toUserName -
      * @param fromUserName -
      * @param content -
-     * @return com.coding.wechat.DO.TextMessage
+     * @return com.coding.wechat.DO.message.TextMessage
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -168,7 +168,7 @@ public class MessageUtil {
      *
      * @param toUserName -
      * @param fromUserName -
-     * @return com.coding.wechat.DO.NewsMessage
+     * @return com.coding.wechat.DO.message.NewsMessage
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -203,7 +203,7 @@ public class MessageUtil {
      *
      * @param toUserName -
      * @param fromUserName -
-     * @return com.coding.wechat.DO.NewsMessage
+     * @return com.coding.wechat.DO.message.NewsMessage
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -228,7 +228,7 @@ public class MessageUtil {
      *
      * @param toUserName -
      * @param fromUserName -
-     * @return com.coding.wechat.DO.MusicMessage
+     * @return com.coding.wechat.DO.message.MusicMessage
      * @author Rushing0711
      * @since 1.0.0
      */

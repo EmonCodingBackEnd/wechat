@@ -47,4 +47,7 @@ public class WechatConfig {
 
     /** https新增临时素材的请求方式： POST/FORM. */
     private String uploadUrl;
+
+    /** http创建菜单的请求方式：POST. */
+    private String createMenuUrl;
 }

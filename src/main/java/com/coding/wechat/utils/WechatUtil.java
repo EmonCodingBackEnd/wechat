@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
+import com.coding.wechat.DO.menu.*;
 import com.coding.wechat.constants.WechatConsts;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
@@ -28,6 +29,7 @@ import org.apache.http.util.EntityUtils;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 /**
  * [请在此输入功能简述].
@@ -94,13 +96,30 @@ public class WechatUtil {
         HttpPost httpPost = new HttpPost(url);
         JSONObject jsonObject = null;
         try {
-            httpPost.setEntity(new StringEntity(outStr, "UTF-8"));
+            // 构造消息头
+            httpPost.setHeader("Content-type", "application/json; charset=utf-8");
+            httpPost.setHeader("Connection", "Close");
+
+            // 构建消息实体
+            StringEntity entity = new StringEntity(outStr, Charset.forName("UTF-8"));
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType("application/json");
+            httpPost.setEntity(entity);
+
             HttpResponse response = httpClient.execute(httpPost);
             String result = EntityUtils.toString(response.getEntity(), "UTF-8");
             jsonObject = JSONObject.fromObject(result);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
+            if (httpPost != null) {
+                try {
+                    httpPost.releaseConnection();
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return jsonObject;
     }
@@ -210,5 +229,50 @@ public class WechatUtil {
             mediaId = jsonObject.getString(WechatConsts.Media.MEDIA_ID);
         }
         return mediaId;
+    }
+
+    /**
+     * 组装菜单.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180501 10:58</font><br>
+     * [请在此输入功能详述]
+     *
+     * @return com.coding.wechat.DO.menu.Menu
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static Menu initMenu() {
+        Menu menu = new Menu();
+        ClickButton clickButton1 = new ClickButton();
+        clickButton1.setName("click菜单");
+        clickButton1.setType(WechatConsts.Menu.CLICK);
+        clickButton1.setKey("1");
+
+        ViewButton viewButton21 = new ViewButton();
+        viewButton21.setName("www.emon.vip");
+        viewButton21.setType(WechatConsts.Menu.VIEW);
+        viewButton21.setUrl("http://www.emon.vip/wechat/website/introduction");
+        ViewButton viewButton22 = new ViewButton();
+        viewButton22.setName("草庙村");
+        viewButton22.setType(WechatConsts.Menu.VIEW);
+        viewButton22.setUrl("http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3");
+        Button button2 = new Button();
+        button2.setName("view");
+        button2.setSub_button(new BaseButton[] {viewButton21, viewButton22});
+
+        ClickButton clickButton31 = new ClickButton();
+        clickButton31.setName("扫码事件");
+        clickButton31.setType(WechatConsts.Menu.SCANCODE_PUSH);
+        clickButton31.setKey("31");
+        ClickButton clickButton32 = new ClickButton();
+        clickButton32.setName("地理位置");
+        clickButton32.setType(WechatConsts.Menu.LOCATION_SELECT);
+        clickButton32.setKey("32");
+        Button button3 = new Button();
+        button3.setName("菜单");
+        button3.setSub_button(new BaseButton[] {clickButton31, clickButton32});
+
+        menu.setButton(new BaseButton[] {clickButton1, button2, button3});
+        return menu;
     }
 }

@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180416-01         Rushing0711     M201804161918 新建文件
  ********************************************************************************/
-package com.coding.wechat.DO;
+package com.coding.wechat.DO.message;
 
 import javax.xml.bind.annotation.XmlElement;
 
@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class BaseMessage {
+public abstract class BaseMessage {
 
     /**
      * 对于请求消息：开发者微信号<br>
@@ -41,17 +41,18 @@ public class BaseMessage {
     /** 消息创建时间 （整型）. */
     private Long CreateTime;
 
-    /** 
+    /**
      * 被动回复消息类型.
-     * 
+     *
      * <p>创建时间: <font style="color:#00FFFF">20180430 11:05</font><br>
+     *
      * <ul>
-     *     <li>回复文本消息 - text</li>
-     *     <li>回复图片消息 - image</li>
-     *     <li>回复语音消息 - voice</li>
-     *     <li>回复视频消息 - video</li>
-     *     <li>回复音乐消息 - music</li>
-     *     <li>回复图文消息 - news</li>
+     *   <li>回复文本消息 - text
+     *   <li>回复图片消息 - image
+     *   <li>回复语音消息 - voice
+     *   <li>回复视频消息 - video
+     *   <li>回复音乐消息 - music
+     *   <li>回复图文消息 - news
      * </ul>
      *
      * @since 1.0.0
