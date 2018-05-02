@@ -81,7 +81,7 @@ public class WechatUtilTest {
     }
 
     @Test
-    public void initMenu() throws Exception {
+    public void createMenu() throws Exception {
         String result =
                 mvc.perform(MockMvcRequestBuilders.get("/accessToken"))
                         .andExpect(MockMvcResultMatchers.status().isOk())
@@ -98,7 +98,59 @@ public class WechatUtilTest {
 
         mvc.perform(
                         MockMvcRequestBuilders.get(
-                                        "/createMenu?accessToken={accessToken}&menu={menu}", accessToken, menu)
+                                        "/createMenu?accessToken={accessToken}&menu={menu}",
+                                        accessToken,
+                                        menu)
+                                .characterEncoding("UTF-8"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("0"));
+    }
+
+    @Test
+    public void queryMenu() throws Exception {
+        String result =
+                mvc.perform(MockMvcRequestBuilders.get("/accessToken"))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Gson gson = new Gson();
+        Map map = gson.fromJson(result, new TypeToken<Map>() {}.getType());
+        // 凭证
+        String accessToken = String.valueOf(map.get("access_token"));
+
+        result =
+                mvc.perform(
+                                MockMvcRequestBuilders.get(
+                                                "/queryMenu?accessToken={accessToken}", accessToken)
+                                        .characterEncoding("UTF-8"))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+        log.info(result);
+    }
+
+    @Test
+    public void deleteMenu() throws Exception {
+        String result =
+                mvc.perform(MockMvcRequestBuilders.get("/accessToken"))
+                        .andExpect(MockMvcResultMatchers.status().isOk())
+                        .andReturn()
+                        .getResponse()
+                        .getContentAsString();
+
+        Gson gson = new Gson();
+        Map map = gson.fromJson(result, new TypeToken<Map>() {}.getType());
+        // 凭证
+        String accessToken = String.valueOf(map.get("access_token"));
+
+        String menu = gson.toJson(WechatUtil.initMenu());
+
+        mvc.perform(
+                        MockMvcRequestBuilders.get(
+                                        "/deleteMenu?accessToken={accessToken}", accessToken, menu)
                                 .characterEncoding("UTF-8"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().string("0"));

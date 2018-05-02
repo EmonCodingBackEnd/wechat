@@ -196,4 +196,32 @@ public class WechatController {
         }
         return errcode;
     }
+
+    @GetMapping(value = "/queryMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public JSONObject queryMenu(String accessToken) {
+        String queryMenuUrl =
+                wechatConfig
+                        .getQueryMenuUrl()
+                        .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+        log.info("【微信查询菜单】queryMenuUrl={}", queryMenuUrl);
+        JSONObject jsonObject = WechatUtil.doGetStr(queryMenuUrl);
+        return jsonObject;
+    }
+
+    @GetMapping(value = "/deleteMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Integer createMedeleteMenunu(String accessToken) {
+        Integer errcode = 0;
+        String deleteMenuUrl =
+                wechatConfig
+                        .getDeleteMenuUrl()
+                        .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+        log.info("【微信删除菜单】deleteMenuUrl={}", deleteMenuUrl);
+        JSONObject jsonObject = WechatUtil.doGetStr(deleteMenuUrl);
+        if (jsonObject != null) {
+            errcode = jsonObject.getInt("errcode");
+            String errmsg = jsonObject.getString("errmsg");
+            log.info("【微信删除菜单】errcode={},errmsg={}", errcode, errmsg);
+        }
+        return errcode;
+    }
 }

@@ -9,6 +9,16 @@
       "name": "wechat.createMenuUrl",
       "type": "java.lang.String",
       "description": "Description for wechat.createMenuUrl."
+    },
+    {
+      "name": "wechat.queryMenuUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.queryMenuUrl."
+    },
+    {
+      "name": "wechat.deleteMenuUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.deleteMenuUrl."
     }
   ]
 }

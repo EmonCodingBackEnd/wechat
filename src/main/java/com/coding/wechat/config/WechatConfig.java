@@ -48,6 +48,11 @@ public class WechatConfig {
     /** https新增临时素材的请求方式： POST/FORM. */
     private String uploadUrl;
 
-    /** http创建菜单的请求方式：POST. */
+    /** https创建菜单的请求方式：POST. */
     private String createMenuUrl;
+
+    /** https查询菜单的请求方式（可以获取默认菜单和全部个性化菜单）：GET. */
+    private String queryMenuUrl;
+    /** https删除菜单的请求方式（可以删除默认菜单和全部个性化菜单）：GET. */
+    private String deleteMenuUrl;
 }
