@@ -133,14 +133,28 @@ public class WechatController {
                 }
             } else if (WechatConsts.Message.IMAGE.equals(msgType)) {
                 message = MessageUtil.initImageMessage(toUserName, fromUserName);
-            } else if (WechatConsts.Event.EVENT.equals(msgType)) {
-                String eventType = map.get("Event");
+            } else if (WechatConsts.Message_Event.EVENT.equals(msgType)) {
+                String eventType = map.get("Message_Event");
                 log.info("【微信接收消息】消息类型={}", eventType);
-                if (WechatConsts.Event.SUBSCRIBE.equals(eventType)) {
+                if (WechatConsts.Message_Event.SUBSCRIBE.equals(eventType)) {
                     message =
                             MessageUtil.initTextMessage(
                                     toUserName, fromUserName, MessageUtil.menuText());
+                } else if (WechatConsts.Message_Event.CLICK.equals(eventType)) {
+                    message =
+                            MessageUtil.initTextMessage(
+                                    toUserName, fromUserName, MessageUtil.menuText());
+                } else if (WechatConsts.Message_Event.VIEW.equals(eventType)) {
+                    String url = map.get("EventKey");
+                    message = MessageUtil.initTextMessage(toUserName, fromUserName, url);
+                } else if (WechatConsts.Message_Event.SCAN.equals(eventType)) {
+                    String key = map.get("EventKey");
+                    message = MessageUtil.initTextMessage(toUserName, fromUserName, key);
+                } else if (WechatConsts.Message_Event.LOCATION.equals(eventType)) {
                 }
+            } else if (WechatConsts.Message.LOCATION.equals(msgType)) {
+                String Label = map.get("Label");
+                message = MessageUtil.initTextMessage(toUserName, fromUserName, Label);
             }
         } catch (Exception e) {
             log.error("【微信接收消息】异常", e);
@@ -174,7 +188,9 @@ public class WechatController {
     public Integer createMenu(String accessToken, String menu) {
         Integer errcode = 0;
         String createMenuUrl =
-                wechatConfig.getCreateMenuUrl().replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+                wechatConfig
+                        .getCreateMenuUrl()
+                        .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
         log.info("【微信创建菜单】createMenuUrl={},menu={}", createMenuUrl, menu);
         JSONObject jsonObject = WechatUtil.doPostStr(createMenuUrl, menu);
         if (jsonObject != null) {
