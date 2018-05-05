@@ -209,7 +209,7 @@ public class WechatController {
     }
 
     @GetMapping(value = "/deleteMenu", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Integer createMedeleteMenunu(String accessToken) {
+    public Integer deleteMenunu(String accessToken) {
         Integer errcode = 0;
         String deleteMenuUrl =
                 wechatConfig
