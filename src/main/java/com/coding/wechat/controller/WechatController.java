@@ -50,6 +50,20 @@ public class WechatController {
 
     @Autowired WechatConfig wechatConfig;
 
+    /**
+     * 微信公众号、小程序消息推送验证方法.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180506 17:29</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param signature - 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
+     * @param timestamp - 时间戳
+     * @param nonce - 随机字符串
+     * @param echostr - 随机字符串
+     * @return java.lang.String
+     * @author Rushing0711
+     * @since 1.0.0
+     */
     @GetMapping(value = "/message", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String checkSignature(
             @RequestParam(value = "signature") String signature,

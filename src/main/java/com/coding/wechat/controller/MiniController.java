@@ -13,7 +13,15 @@
 package com.coding.wechat.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Arrays;
 
 /**
  * 小程序后端.
@@ -26,6 +34,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @RestController
+@RequestMapping("/mini")
 @Slf4j
 public class MiniController {
+
+    @GetMapping(value = "/message", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String checkSignature(
+            @RequestParam(value = "name") String name, @RequestParam("age") int age) {
+        log.info("name={},age={}", name, age);
+        return "测试";
+    }
 }
