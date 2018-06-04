@@ -12,19 +12,33 @@
  ********************************************************************************/
 package com.coding.wechat.utils;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHost;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
+import org.apache.http.util.EntityUtils;
 
+import javax.net.ssl.SSLContext;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,20 +53,27 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class HttpClientUtils {
+    private static final String DEFAULT_CHARSET = "UTF-8";
     private static PoolingHttpClientConnectionManager connManager;
     private static final RequestConfig defaultRequestConfig;
-    private static final CloseableHttpClient httpClient;
-    private static final CookieStore cookieStore;
-    private static final int MAX_CONNECT_TIMEOUT = 6000;
-    private static final int MAX_SOCKET_TIMEOUT = 15000;
-    private static final int MAX_CONNECT_REQUEST_TIMEOUT = 8000;
+    private static final int MAX_CONNECT_TIMEOUT = 2000;
+    private static final int MAX_SOCKET_TIMEOUT = 5000;
+    private static final int MAX_CONNECT_REQUEST_TIMEOUT = 3000;
 
     static {
+        SSLContext sslContext = SSLContexts.createSystemDefault();
+        Registry<ConnectionSocketFactory> socketFactoryRegistry =
+                RegistryBuilder.<ConnectionSocketFactory>create()
+                        .register("https", new SSLConnectionSocketFactory(sslContext))
+                        .register("http", PlainConnectionSocketFactory.INSTANCE)
+                        .build();
+
         // 设置连接池
-        connManager = new PoolingHttpClientConnectionManager();
+        connManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         // 设置连接池大小
-        connManager.setMaxTotal(100);
-        connManager.setDefaultMaxPerRoute(connManager.getMaxTotal());
+        connManager.setMaxTotal(500);
+        // 每个路由最大并发数
+        connManager.setDefaultMaxPerRoute(50);
         connManager.setValidateAfterInactivity(1000);
 
         defaultRequestConfig =
@@ -64,57 +85,129 @@ public abstract class HttpClientUtils {
                         // 设置从连接池获取连接实例的超时
                         .setConnectionRequestTimeout(MAX_CONNECT_REQUEST_TIMEOUT)
                         .build();
+    }
 
-        // Use custom cookie store if necessary.
-        cookieStore = new BasicCookieStore();
-
+    public static CloseableHttpClient getHttpClient() {
         // Create an HttpClient with the given custom dependencies and configuration.
-        httpClient =
+        CloseableHttpClient httpClient =
                 HttpClients.custom()
                         .setConnectionManager(connManager)
-                        .setDefaultCookieStore(cookieStore)
                         .setDefaultRequestConfig(defaultRequestConfig)
                         .build();
+        return httpClient;
+    }
+
+    public static CloseableHttpClient getHttpClient(int timeout) {
+        RequestConfig requestConfig =
+                RequestConfig.copy(defaultRequestConfig).setSocketTimeout(timeout).build();
+
+        // Create an HttpClient with the given custom dependencies and configuration.
+        CloseableHttpClient httpClient =
+                HttpClients.custom()
+                        .setConnectionManager(connManager)
+                        .setDefaultRequestConfig(requestConfig)
+                        .build();
+        return httpClient;
     }
 
     public static String doGet(String url, Map<String, Object> params) {
-        String apiUrl = url;
-        StringBuffer param = new StringBuffer();
-        int i = 0;
-        for (String key : params.keySet()) {
-            if (i == 0) {
-                param.append("?");
-            } else {
-                param.append("&");
+        List<BasicNameValuePair> pairList = new ArrayList<>();
+        if (params != null) {
+            for (String key : params.keySet()) {
+                pairList.add(new BasicNameValuePair(key, params.get(key).toString()));
             }
-            param.append(key).append("=").append(params.get(key));
-            i++;
+            String param = URLEncodedUtils.format(pairList, DEFAULT_CHARSET);
+            url = url + "?" + param;
         }
-        apiUrl += param;
+
+        HttpGet httpGet = new HttpGet(url);
+
         String result = null;
+        CloseableHttpResponse response = null;
+        HttpEntity entity = null;
+        try {
+            CloseableHttpClient httpClient = HttpClientUtils.getHttpClient(100000);
+            log.info("【HttpClient】请求 method=GET,uri={}", httpGet.getURI());
+            response = httpClient.execute(httpGet);
 
-        HttpGet httpGet = new HttpGet("http://httpbin.org/get");
+            int statusCode = response.getStatusLine().getStatusCode();
+            log.info(
+                    "【HttpClient】应答 method=GET,uri={},statusCode={}", httpGet.getURI(), statusCode);
+            if (HttpStatus.SC_OK == statusCode) {
+                entity = response.getEntity();
+                result = EntityUtils.toString(entity, DEFAULT_CHARSET);
+            }
+        } catch (IOException e) {
+            log.error("【HttpClient】异常", e);
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return result;
+    }
 
-        // Request configuration can be overridden at the request level.
-        // They will take precedence over the one set at the client level.
-        RequestConfig requestConfig =
-                RequestConfig.copy(defaultRequestConfig)
-                        .setSocketTimeout(5000)
-                        .setConnectTimeout(5000)
-                        .setConnectionRequestTimeout(5000)
-                        .setProxy(new HttpHost("myotherproxy", 8080))
-                        .build();
-        httpGet.setConfig(requestConfig);
+    public static String doPost(String apiUrl, Map<String, Object> params, int timeout) {
+        HttpPost httpPost = new HttpPost(apiUrl);
+        List<BasicNameValuePair> pairList = new ArrayList<>();
+        if (params != null) {
+            for (String key : params.keySet()) {
+                pairList.add(new BasicNameValuePair(key, params.get(key).toString()));
+            }
+        }
+        httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charset.forName(DEFAULT_CHARSET)));
 
-        // Execution context can be customized locally.
-        final HttpClientContext context = HttpClientContext.create();
-        // Contextual attributes set the local context level will take
-        // precedence over those set at the client level.
-        context.setCookieStore(cookieStore);
+        String result = null;
+        CloseableHttpResponse response = null;
+        HttpEntity entity = null;
+        try {
+            CloseableHttpClient httpClient = HttpClientUtils.getHttpClient(timeout);
+            log.info("【HttpClient】请求 method=POST,uri={}", httpPost.getURI());
+            response = httpClient.execute(httpPost);
 
-        log.info("【HTTP请求】uri={}", httpGet.getURI());
-        //        CloseableHttpResponse response = httpClient.execute(httpGet, context);
+            int statusCode = response.getStatusLine().getStatusCode();
+            log.info(
+                    "【HttpClient】应答 method=POST,uri={},statusCode={}",
+                    httpPost.getURI(),
+                    statusCode);
+            if (HttpStatus.SC_OK == statusCode) {
+                entity = response.getEntity();
+                result = EntityUtils.toString(entity, DEFAULT_CHARSET);
+            }
+        } catch (IOException e) {
+            log.error("【HttpClient】method=POST,异常", e);
+        } finally {
+            if (entity != null) {
+                try {
+                    EntityUtils.consume(entity);
+                } catch (IOException e) {
+                }
+            }
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return result;
+    }
 
-        return null;
+    public static void main(String[] args) throws IOException {
+        String url = "http://localhost:8080/wechat/website/introduction";
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("name", "LiMing");
+        params.put("age", 25);
+        String result = doGet(url, params);
+        log.info(result);
     }
 }
