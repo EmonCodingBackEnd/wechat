@@ -16,8 +16,10 @@ import com.coding.wechat.DO.AccessToken;
 import com.coding.wechat.DO.message.BaseMessage;
 import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.constants.WechatConsts;
+import com.coding.wechat.utils.HttpUrlUtils;
 import com.coding.wechat.utils.MessageUtil;
 import com.coding.wechat.utils.WechatUtil;
+import com.sun.deploy.net.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -265,10 +268,41 @@ public class WechatController {
                         .getListMaterialUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
         log.info("【微信获取素材列表】listMaterialUrl={}", listMaterialUrl);
-        JSONObject jsonObject = WechatUtil.doGetStr(listMaterialUrl);
+        String conent = "{\"type\":\"image\",\"offset\":0,\"count\":10}";
+        JSONObject jsonObject = WechatUtil.doPostStr(listMaterialUrl, conent);
         if (jsonObject != null) {
             log.info("【微信获取素材列表】result={}", jsonObject.toString());
         }
         return jsonObject;
+    }
+
+    @GetMapping(value = "readByUrl")
+    public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
+        /*RequestConfig config =
+                RequestConfig.custom().setConnectTimeout(60000).setSocketTimeout(15000).build();
+        CloseableHttpClient httpClient =
+                HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+        String decodeUrl = URLDecoder.decode(urlStr, "UTF-8");
+        HttpGet httpGet = new HttpGet(decodeUrl);
+        HttpResponse res = httpClient.execute(httpGet);
+        HttpEntity entity = res.getEntity();
+        InputStream in = entity.getContent();
+
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        response.setContentType("text/html;charset=UTF-8");
+        OutputStream out = response.getOutputStream();
+        while ((len = in.read(buffer)) != -1) {
+            out.write(buffer, 0, len);
+        }
+        out.flush();
+        out.close();*/
+
+        /*String result = HttpUrlUtils.doGet(urlStr);
+        response.setContentType("text/html;charset=UTF-8");
+        Writer writer = response.getWriter();
+        writer.write(result);
+        writer.flush();
+        writer.close();*/
     }
 }
