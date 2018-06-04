@@ -209,7 +209,7 @@ public class MessageUtil {
      */
     public static ImageMessage initImageMessage(String toUserName, String fromUserName) {
         Image image = new Image();
-        image.setMediaId("Turg7a0ggBp3wWy06KL1CMZHDaFbMtVhD1FGtGMVRnDRg_0q3mqw7ycdgGlSJ_dX");
+        image.setMediaId("ipb7WljcuEwJRjYrxh99i6DZugutguBmD8fr_Fru3xzLxAhnvcBeMjReZJ7L8jrA");
 
         ImageMessage imageMessage = new ImageMessage();
         imageMessage.setFromUserName(toUserName);
