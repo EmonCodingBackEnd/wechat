@@ -6,19 +6,59 @@
       "description": "Description for wechat.uploadUrl."
     },
     {
-      "name": "wechat.createMenuUrl",
+      "name": "wechat.menu.createMenuUrl",
       "type": "java.lang.String",
-      "description": "Description for wechat.createMenuUrl."
+      "description": "Description for wechat.menu.createMenuUrl."
     },
     {
-      "name": "wechat.queryMenuUrl",
+      "name": "wechat.menu.queryMenuUrl",
       "type": "java.lang.String",
-      "description": "Description for wechat.queryMenuUrl."
+      "description": "Description for wechat.menu.queryMenuUrl."
     },
     {
-      "name": "wechat.deleteMenuUrl",
+      "name": "wechat.menu.deleteMenuUrl",
       "type": "java.lang.String",
-      "description": "Description for wechat.deleteMenuUrl."
+      "description": "Description for wechat.menu.deleteMenuUrl."
+    },
+    {
+      "name": "wechat.material.createMediaUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.createMediaUrl."
+    },
+    {
+      "name": "wechat.material.queryMediaUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.queryMediaUrl."
+    },
+    {
+      "name": "wechat.material.createMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.createMaterialUrl."
+    },
+    {
+      "name": "wechat.material.queryMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.queryMaterialUrl."
+    },
+    {
+      "name": "wechat.material.deleteMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.deleteMaterialUrl."
+    },
+    {
+      "name": "wechat.material.modifyMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.modifyMaterialUrl."
+    },
+    {
+      "name": "wechat.material.countMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.countMaterialUrl."
+    },
+    {
+      "name": "wechat.material.listMaterialUrl",
+      "type": "java.lang.String",
+      "description": "Description for wechat.material.listMaterialUrl."
     }
   ]
 }

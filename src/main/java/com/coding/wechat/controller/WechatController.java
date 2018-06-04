@@ -199,6 +199,7 @@ public class WechatController {
         Integer errcode = 0;
         String createMenuUrl =
                 wechatConfig
+                        .getMenu()
                         .getCreateMenuUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
         log.info("【微信创建菜单】createMenuUrl={},menu={}", createMenuUrl, menu);
@@ -215,6 +216,7 @@ public class WechatController {
     public JSONObject queryMenu(String accessToken) {
         String queryMenuUrl =
                 wechatConfig
+                        .getMenu()
                         .getQueryMenuUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
         log.info("【微信查询菜单】queryMenuUrl={}", queryMenuUrl);
@@ -227,6 +229,7 @@ public class WechatController {
         Integer errcode = 0;
         String deleteMenuUrl =
                 wechatConfig
+                        .getMenu()
                         .getDeleteMenuUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
         log.info("【微信删除菜单】deleteMenuUrl={}", deleteMenuUrl);
@@ -237,5 +240,35 @@ public class WechatController {
             log.info("【微信删除菜单】errcode={},errmsg={}", errcode, errmsg);
         }
         return errcode;
+    }
+
+    @GetMapping(value = "countMaterial", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public JSONObject countMaterial(String accessToken) {
+        String countMaterialUrl =
+                wechatConfig
+                        .getMaterial()
+                        .getCountMaterialUrl()
+                        .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+        log.info("【微信获取素材总数】countMaterialUrl={}", countMaterialUrl);
+        JSONObject jsonObject = WechatUtil.doGetStr(countMaterialUrl);
+        if (jsonObject != null) {
+            log.info("【微信获取素材总数】result={}", jsonObject.toString());
+        }
+        return jsonObject;
+    }
+
+    @GetMapping(value = "listMaterial", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public JSONObject listMaterial(String accessToken) {
+        String listMaterialUrl =
+                wechatConfig
+                        .getMaterial()
+                        .getListMaterialUrl()
+                        .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken);
+        log.info("【微信获取素材列表】listMaterialUrl={}", listMaterialUrl);
+        JSONObject jsonObject = WechatUtil.doGetStr(listMaterialUrl);
+        if (jsonObject != null) {
+            log.info("【微信获取素材列表】result={}", jsonObject.toString());
+        }
+        return jsonObject;
     }
 }

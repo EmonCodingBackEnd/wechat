@@ -45,7 +45,8 @@ public class WechatUtilTest {
         String filePath = "C:\\Users\\LiMing\\Pictures\\LovePicture\\139-1604251II9.jpg";
         String uploadUrl =
                 wechatConfig
-                        .getUploadUrl()
+                        .getMaterial()
+                        .getCreateMediaUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken)
                         .replace(WechatConsts.Media.TYPE, WechatConsts.Media.IMAGE);
         log.info(uploadUrl);
@@ -72,7 +73,8 @@ public class WechatUtilTest {
         String filePath = "C:\\Users\\LiMing\\Pictures\\LovePicture\\459090977.jpg";
         String uploadUrl =
                 wechatConfig
-                        .getUploadUrl()
+                        .getMaterial()
+                        .getCreateMediaUrl()
                         .replace(WechatConsts.BaseInfo.ACCESS_TOKEN, accessToken)
                         .replace(WechatConsts.Media.TYPE, WechatConsts.Media.THUMB);
         log.info(uploadUrl);

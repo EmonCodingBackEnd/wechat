@@ -45,14 +45,41 @@ public class WechatConfig {
     /** https获取access_token的请求方式： GET */
     private String accessTokenUrl;
 
-    /** https新增临时素材的请求方式： POST/FORM. */
-    private String uploadUrl;
+    /** 菜单 */
+    private Menu menu;
 
-    /** https创建菜单的请求方式：POST. */
-    private String createMenuUrl;
+    /** 素材. */
+    private Material material;
 
-    /** https查询菜单的请求方式（可以获取默认菜单和全部个性化菜单）：GET. */
-    private String queryMenuUrl;
-    /** https删除菜单的请求方式（可以删除默认菜单和全部个性化菜单）：GET. */
-    private String deleteMenuUrl;
+    @Data
+    public static class Menu {
+        /** https创建菜单的请求方式：POST. */
+        private String createMenuUrl;
+
+        /** https查询菜单的请求方式（可以获取默认菜单和全部个性化菜单）：GET. */
+        private String queryMenuUrl;
+
+        /** https删除菜单的请求方式（可以删除默认菜单和全部个性化菜单）：GET. */
+        private String deleteMenuUrl;
+    }
+
+    @Data
+    public static class Material {
+        /** https新增临时素材的请求方式：POST/FORM. */
+        private String createMediaUrl;
+        /** https获取临时素材的请求方式：GET */
+        private String queryMediaUrl;
+        /** https新增永久素材的请求方式：POST. */
+        private String createMaterialUrl;
+        /** https获取永久素材的请求方式：POST. */
+        private String queryMaterialUrl;
+        /** https删除永久素材的请求方式：POST. */
+        private String deleteMaterialUrl;
+        /** https修改永久素材的请求方式：POST. */
+        private String modifyMaterialUrl;
+        /** https获取素材总数：GET. */
+        private String countMaterialUrl;
+        /** https获取素材列表：POST. */
+        private String listMaterialUrl;
+    }
 }
