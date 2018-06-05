@@ -10,16 +10,14 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180604-01         Rushing0711     M201806041939 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils;
+package com.coding.wechat.utils.http;
 
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.apache.http.HeaderElement;
+import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpEntity;
-import org.apache.http.NoHttpResponseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -29,7 +27,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
-import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -44,8 +42,10 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
+import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
@@ -53,8 +53,6 @@ import org.springframework.util.StringUtils;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.SocketTimeoutException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +78,7 @@ public abstract class HttpClientUtils {
     /** 最大支持的连接数. */
     private static final int DEFAULT_MAX_TOTAL = 512;
     /** 针对某一个域名的最大连接数. */
-    private static final int DEFAULT_MAX_PER_ROUTE = 64;
+    private static final int DEFAULT_MAX_PER_ROUTE = 100;
 
     private static final int VALIDATE_AFTER_INACTIVITY = 1000;
 
@@ -94,12 +92,11 @@ public abstract class HttpClientUtils {
     private static final ConnectionConfig defaultConnectionConfig; // 默认连接配置
     private static final RequestConfig defaultRequestConfig; // 默认请求配置
     private static final CloseableHttpClient httpSyncClient; // 同步
-    private static final CloseableHttpClient httpSyncRetryClient; // 同步重试
     private static final CloseableHttpAsyncClient asyncHttpClient; // 异步
 
     static {
 
-        // 设置默认连接配置
+        // 默认连接配置
         defaultConnectionConfig = ConnectionConfig.custom().setCharset(Charsets.UTF_8).build();
 
         // 支持http和https
@@ -126,24 +123,29 @@ public abstract class HttpClientUtils {
                         .setConnectionRequestTimeout(DEFAULT_TIMEOUT)
                         .build();
 
-        HttpRequestRetryHandler retryHandler =
-                (exception, executionCount, context) ->
-                        executionCount <= 3
-                                && (exception instanceof NoHttpResponseException
-                                        || exception instanceof ClientProtocolException
-                                        || exception instanceof SocketTimeoutException
-                                        || exception instanceof ConnectTimeoutException);
+        // 连接保持策略
+        ConnectionKeepAliveStrategy defaultConnectionStrategy =
+                (response, context) -> {
+                    HeaderElementIterator it =
+                            new BasicHeaderElementIterator(
+                                    response.headerIterator(HTTP.CONN_KEEP_ALIVE));
+                    while (it.hasNext()) {
+                        HeaderElement he = it.nextElement();
+                        String param = he.getName();
+                        String value = he.getValue();
+                        if (value != null && param.equalsIgnoreCase("timeout")) {
+                            return Long.parseLong(value) * 1000;
+                        }
+                    }
+                    return 60 * 1000; // 如果没有约定，则默认定义时长为60s
+                };
+
+
         httpSyncClient =
                 HttpClients.custom()
                         .setConnectionManager(poolingConnMgr)
                         .setDefaultRequestConfig(defaultRequestConfig)
-                        .build();
-
-        httpSyncRetryClient =
-                HttpClients.custom()
-                        .setConnectionManager(poolingConnMgr)
-                        .setDefaultRequestConfig(defaultRequestConfig)
-                        .setRetryHandler(retryHandler)
+                        .setKeepAliveStrategy(defaultConnectionStrategy)
                         .build();
 
         // ===============================================================
@@ -241,7 +243,8 @@ public abstract class HttpClientUtils {
         }
         CloseableHttpClient closeableHttpClient;
         if (needIRetry) {
-            closeableHttpClient = httpSyncRetryClient;
+            // TODO: 2018/6/6 重试请求，暂时不支持
+            closeableHttpClient = null;
         } else {
             closeableHttpClient = httpSyncClient;
         }
@@ -476,7 +479,8 @@ public abstract class HttpClientUtils {
         }
         CloseableHttpClient closeableHttpClient;
         if (needIRetry) {
-            closeableHttpClient = httpSyncRetryClient;
+            // TODO: 2018/6/6 重试请求，暂时不支持
+            closeableHttpClient = null;
         } else {
             closeableHttpClient = httpSyncClient;
         }
@@ -561,22 +565,5 @@ public abstract class HttpClientUtils {
         XML,
         JSON,
         ENCODED;
-    }
-
-    public static void main(String[] args) throws IOException {
-        String url = "http://localhost:8080/wechat/website/introduction";
-        url = "https://www.emon.vip/wechat/website/introduction?name=LiMing&age=25";
-        url = "http://192.168.1.11:8080/saas-ssp/manage/updateMedalGoodsStatus";
-        Map<String, Object> params = Maps.newHashMap();
-        params.put("id", "[{110:220}]");
-        params.put("status", 1);
-        //        url = "http://www.baidu.com";
-        // 10_Y2j1uV5RjSVtf_pXBV6PBYOJhsH2wu3dlbB8FHD2HeFNTeWg1_XV39wteh6KCCdscPSJvVSci0BE_MuX5CXG04CVM1Xo84rBbmoPwJnMHP6gzoHAc0zFGT0_f7vQ9V6kx9kTDMCeLR-kkAf9FTIbAFAOCR
-        String createMenuUrl =
-                "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=10_Y2j1uV5RjSVtf_pXBV6PBYOJhsH2wu3dlbB8FHD2HeFNTeWg1_XV39wteh6KCCdscPSJvVSci0BE_MuX5CXG04CVM1Xo84rBbmoPwJnMHP6gzoHAc0zFGT0_f7vQ9V6kx9kTDMCeLR";
-        String menu =
-                "{\"button\":[{\"key\":\"1\",\"type\":\"click\",\"name\":\"click菜单\"},{\"sub_button\":[{\"url\":\"http://www.emon.vip/wechat/website/introduction\",\"type\":\"view\",\"name\":\"www.emon.vip\"},{\"url\":\"http://exp.mynatapp.cc/wechat/musics/卢小旭 - 草庙村.mp3\",\"type\":\"view\",\"name\":\"草庙村\"}],\"name\":\"view\"},{\"sub_button\":[{\"key\":\"31\",\"type\":\"scancode_push\",\"name\":\"扫码事件\"},{\"key\":\"32\",\"type\":\"location_select\",\"name\":\"地理位置\"}],\"name\":\"菜单\"}]}";
-        String result = doPost(url, params);
-        log.info(result);
     }
 }
