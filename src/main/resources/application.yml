@@ -23,4 +23,5 @@ wechat:
     modifyMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=ACCESS_TOKEN
     countMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=ACCESS_TOKEN
     listMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=ACCESS_TOKEN
-
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml

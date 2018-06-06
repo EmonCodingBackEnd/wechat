@@ -78,16 +78,16 @@ public abstract class HttpClientUtils {
     /** 最大支持的连接数. */
     private static final int DEFAULT_MAX_TOTAL = 512;
     /** 针对某一个域名的最大连接数. */
-    private static final int DEFAULT_MAX_PER_ROUTE = 100;
+    private static final int DEFAULT_MAX_PER_ROUTE = 200;
 
     private static final int VALIDATE_AFTER_INACTIVITY = 1000;
 
     /** 跟目标服务建立连接超时时间，根据业务情况而定. */
     private static final int DEFAULT_CONNECTION_TIMEOUT = 5000;
     /** 请求的超时时间(建立连接后，等待response返回的时间). */
-    private static final int DEFAULT_SOCKET_TIMEOUT = 3000;
+    private static final int DEFAULT_SOCKET_TIMEOUT = 5000;
     /** 从连接池中获取连接的超时时间. */
-    private static final int DEFAULT_TIMEOUT = 2000;
+    private static final int DEFAULT_TIMEOUT = 5000;
 
     private static final ConnectionConfig defaultConnectionConfig; // 默认连接配置
     private static final RequestConfig defaultRequestConfig; // 默认请求配置

@@ -16,7 +16,6 @@ import com.coding.wechat.DO.AccessToken;
 import com.coding.wechat.DO.message.BaseMessage;
 import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.constants.WechatConsts;
-import com.coding.wechat.utils.http.HttpClientUtils;
 import com.coding.wechat.utils.MessageUtil;
 import com.coding.wechat.utils.WechatUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -273,14 +271,5 @@ public class WechatController {
             log.info("【微信获取素材列表】result={}", jsonObject.toString());
         }
         return jsonObject;
-    }
-
-    @GetMapping(value = "readByUrl")
-    public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        OutputStream out = response.getOutputStream();
-        HttpClientUtils.doGet(urlStr, out);
-        out.flush();
-        out.close();
     }
 }
