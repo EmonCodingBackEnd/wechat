@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
@@ -53,11 +54,9 @@ public class HttpController {
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
         String decodeUrl = URLDecoder.decode(urlStr, Charsets.UTF_8.name());
         response.setContentType("text/html;charset=UTF-8");
-        /*OutputStream out = response.getOutputStream();
-        HttpClientUtils.doGet(decodeUrl, out);
-        out.flush();
-        out.close();*/
-        String result = HttpClientUtils.doGet(decodeUrl);
+       /* OutputStream out = response.getOutputStream();
+        HttpClientUtils.doGet(decodeUrl, out);*/
+        String result = HttpClientUtils.doPost(decodeUrl);
         result =
                 result.replace(
                                 "http://www.baidu.com",
@@ -65,6 +64,7 @@ public class HttpController {
                         .replace(
                                 "https%3A%2F%2Fmp.weixin.qq.com",
                                 "https://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=https%3A%2F%2Fmp.weixin.qq.com");
+        log.info(result);
         Writer writer = response.getWriter();
         writer.write(result);
         writer.flush();

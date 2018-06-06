@@ -176,20 +176,20 @@ public abstract class HttpClientUtils {
     }
 
     public static String doGet(String apiUrl) throws IOException {
-        return doGetEncoded(apiUrl, null, null, new BasicResponseHandler());
+        return doGetEncoded(apiUrl, null, null, new StringResponseHandler());
     }
 
     public static String doGet(String apiUrl, Map<String, Object> params) throws IOException {
-        return doGetEncoded(apiUrl, params, null, new BasicResponseHandler());
+        return doGetEncoded(apiUrl, params, null, new StringResponseHandler());
     }
 
     public static String doGetTimeout(String apiUrl, int timeout) throws IOException {
-        return doGetEncoded(apiUrl, null, timeout, new BasicResponseHandler());
+        return doGetEncoded(apiUrl, null, timeout, new StringResponseHandler());
     }
 
     public static String doGetTimeout(String apiUrl, Map<String, Object> params, int timeout)
             throws IOException {
-        return doGetEncoded(apiUrl, params, timeout, new BasicResponseHandler());
+        return doGetEncoded(apiUrl, params, timeout, new StringResponseHandler());
     }
 
     public static void doGet(String apiUrl, OutputStream out) throws IOException {
@@ -201,6 +201,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -216,6 +218,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -283,7 +287,6 @@ public abstract class HttpClientUtils {
             httpGet.setConfig(requestConfig);
         }
         httpGet.setHeader("accept", "*/*");
-        httpGet.setHeader("Accept-Charset", "utf-8");
         httpGet.setHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 
         T result;
@@ -301,54 +304,54 @@ public abstract class HttpClientUtils {
     }
 
     public static String doPost(String apiUrl) throws IOException {
-        return doPostEncoded(apiUrl, null, null, new BasicResponseHandler());
+        return doPostEncoded(apiUrl, null, null, new StringResponseHandler());
     }
 
     public static String doPost(String apiUrl, Map<String, Object> params) throws IOException {
-        return doPostEncoded(apiUrl, params, null, new BasicResponseHandler());
+        return doPostEncoded(apiUrl, params, null, new StringResponseHandler());
     }
 
     public static String doPostTimeout(String apiUrl, int timeout) throws IOException {
-        return doPostEncoded(apiUrl, null, timeout, new BasicResponseHandler());
+        return doPostEncoded(apiUrl, null, timeout, new StringResponseHandler());
     }
 
     public static String doPostTimeout(String apiUrl, Map<String, Object> params, int timeout)
             throws IOException {
-        return doPostEncoded(apiUrl, params, timeout, new BasicResponseHandler());
+        return doPostEncoded(apiUrl, params, timeout, new StringResponseHandler());
     }
 
     public static String doPostJson(String apiUrl) throws IOException {
-        return doPostJson(apiUrl, null, null, new BasicResponseHandler());
+        return doPostJson(apiUrl, null, null, new StringResponseHandler());
     }
 
     public static String doPostJson(String apiUrl, String paramJson) throws IOException {
-        return doPostJson(apiUrl, paramJson, null, new BasicResponseHandler());
+        return doPostJson(apiUrl, paramJson, null, new StringResponseHandler());
     }
 
     public static String doPostJsonTimeout(String apiUrl, int timeout) throws IOException {
-        return doPostJson(apiUrl, null, timeout, new BasicResponseHandler());
+        return doPostJson(apiUrl, null, timeout, new StringResponseHandler());
     }
 
     public static String doPostJsonTimeout(String apiUrl, String paramJson, int timeout)
             throws IOException {
-        return doPostJson(apiUrl, paramJson, timeout, new BasicResponseHandler());
+        return doPostJson(apiUrl, paramJson, timeout, new StringResponseHandler());
     }
 
     public static String doPostXml(String apiUrl) throws IOException {
-        return doPostXml(apiUrl, null, null, new BasicResponseHandler());
+        return doPostXml(apiUrl, null, null, new StringResponseHandler());
     }
 
     public static String doPostXml(String apiUrl, String paramJson) throws IOException {
-        return doPostXml(apiUrl, paramJson, null, new BasicResponseHandler());
+        return doPostXml(apiUrl, paramJson, null, new StringResponseHandler());
     }
 
     public static String doPostXmlTimeout(String apiUrl, int timeout) throws IOException {
-        return doPostXml(apiUrl, null, timeout, new BasicResponseHandler());
+        return doPostXml(apiUrl, null, timeout, new StringResponseHandler());
     }
 
     public static String doPostXmlTimeout(String apiUrl, String paramJson, int timeout)
             throws IOException {
-        return doPostXml(apiUrl, paramJson, timeout, new BasicResponseHandler());
+        return doPostXml(apiUrl, paramJson, timeout, new StringResponseHandler());
     }
 
     public static void doPost(String apiUrl, OutputStream out) throws IOException {
@@ -360,6 +363,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -375,6 +380,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -389,6 +396,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -404,6 +413,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -418,6 +429,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -433,6 +446,8 @@ public abstract class HttpClientUtils {
                     @Override
                     public Object handleEntity(HttpEntity entity) throws IOException {
                         entity.writeTo(out);
+                        out.flush();
+                        out.close();
                         return null;
                     }
                 });
@@ -519,7 +534,10 @@ public abstract class HttpClientUtils {
                     pairList.add(new BasicNameValuePair(key, params.get(key).toString()));
                 }
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(pairList, Charsets.UTF_8));
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairList, Charsets.UTF_8);
+            entity.setContentEncoding(Charsets.UTF_8.name());
+            entity.setContentType(MediaType.APPLICATION_XML_VALUE);
+            httpPost.setEntity(entity);
         }
         if (ContentType.XML.equals(contentType)) {
             if (!StringUtils.isEmpty(paramStr)) {
