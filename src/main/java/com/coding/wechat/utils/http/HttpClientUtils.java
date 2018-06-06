@@ -140,7 +140,6 @@ public abstract class HttpClientUtils {
                     return 60 * 1000; // 如果没有约定，则默认定义时长为60s
                 };
 
-
         httpSyncClient =
                 HttpClients.custom()
                         .setConnectionManager(poolingConnMgr)
@@ -284,6 +283,7 @@ public abstract class HttpClientUtils {
             httpGet.setConfig(requestConfig);
         }
         httpGet.setHeader("accept", "*/*");
+        httpGet.setHeader("Accept-Charset", "utf-8");
         httpGet.setHeader("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 
         T result;
@@ -291,7 +291,7 @@ public abstract class HttpClientUtils {
             log.info("【HttpClient】请求 method=GET,uri={}", httpGet.getURI());
             // 创建响应处理器处理服务器响应内容
             result = closeableHttpClient.execute(httpGet, responseHandler);
-            log.info("【HttpClient】应答 method=GET,uri={}", httpGet.getURI());
+            log.info("【HttpClient】应答 method=GET,uri={},param={}", httpGet.getURI(), pairList);
         } catch (IOException e) {
             log.error("【HttpClient】异常", e);
             throw e;
