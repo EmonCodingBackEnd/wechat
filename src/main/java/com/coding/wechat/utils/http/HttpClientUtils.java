@@ -142,10 +142,10 @@ public abstract class HttpClientUtils {
 
         httpSyncClient =
                 HttpClients.custom()
-                        .setConnectionManager(poolingConnMgr)
-                        .setDefaultRequestConfig(defaultRequestConfig)
-                        .setKeepAliveStrategy(defaultConnectionStrategy)
-                        .build();
+                .setConnectionManager(poolingConnMgr)
+                .setDefaultRequestConfig(defaultRequestConfig)
+                .setKeepAliveStrategy(defaultConnectionStrategy)
+                .build();
 
         // ===============================================================
 
