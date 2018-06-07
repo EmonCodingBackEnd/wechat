@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806072036 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.exception;
+package com.coding.wechat.utils.http;
 
 /**
  * [请在此输入功能简述].
@@ -22,9 +22,17 @@ package com.coding.wechat.utils.http.exception;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class HttpClientException extends Exception {
+public class HttpException extends RuntimeException {
 
-    public HttpClientException(String message) {
+    public HttpException(String message) {
         super(message);
+    }
+
+    public HttpException(Throwable cause) {
+        super(cause);
+    }
+
+    public HttpException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

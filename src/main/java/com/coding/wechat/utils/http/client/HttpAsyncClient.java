@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.utils.http.client;
 
+import com.coding.wechat.utils.http.HttpConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -32,7 +33,7 @@ import org.apache.http.nio.reactor.IOReactorException;
  * @since 1.0.0
  */
 @Slf4j
-public class HttpAsyncClient extends BaseHttpClient {
+public class HttpAsyncClient {
 
     private static final CloseableHttpAsyncClient asyncHttpClient;
 
@@ -48,9 +49,9 @@ public class HttpAsyncClient extends BaseHttpClient {
 
         PoolingNHttpClientConnectionManager poolingNConnMgr =
                 new PoolingNHttpClientConnectionManager(ioReactor);
-        poolingNConnMgr.setMaxTotal(DEFAULT_MAX_TOTAL);
-        poolingNConnMgr.setDefaultMaxPerRoute(DEFAULT_MAX_PER_ROUTE);
-        poolingNConnMgr.setDefaultConnectionConfig(defaultConnectionConfig);
+        poolingNConnMgr.setMaxTotal(HttpConfig.DEFAULT_MAX_TOTAL);
+        poolingNConnMgr.setDefaultMaxPerRoute(HttpConfig.DEFAULT_MAX_PER_ROUTE);
+        poolingNConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
 
         asyncHttpClient =
                 HttpAsyncClients.custom()
@@ -59,9 +60,9 @@ public class HttpAsyncClient extends BaseHttpClient {
                                         .namingPattern("AysncHttpThread-%d")
                                         .build())
                         .setConnectionManager(poolingNConnMgr)
-                        .setDefaultRequestConfig(defaultRequestConfig)
-                        .setKeepAliveStrategy(defaultConnectionStrategy)
-                        .setUserAgent(userAgent)
+                        .setDefaultRequestConfig(HttpConfig.defaultRequestConfig)
+                        .setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy)
+                        .setUserAgent(HttpConfig.userAgent)
                         .build();
         asyncHttpClient.start();
     }
