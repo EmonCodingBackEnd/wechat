@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContexts;
+import org.springframework.util.Assert;
 
 import javax.net.ssl.*;
 import java.io.File;
@@ -34,23 +35,12 @@ import java.security.cert.X509Certificate;
 public class SSLGenerator {
     private static final SSLHandler simpleVerifier = new SSLHandler();
 
-    private static SSLConnectionSocketFactory sslConnFactory;
+    private SSLConnectionSocketFactory sslConnFactory;
 
-    private static SSLContext sslContext;
-
-    private static final SSLGenerator ssl = new SSLGenerator();
+    private SSLContext sslContext;
 
     /**
-     * 返回固定的sslGenerator实例
-     *
-     * @return -
-     */
-    public static SSLGenerator getInstance() {
-        return ssl;
-    }
-
-    /**
-     * 返回新的sslGenerator实例
+     * 返回自定义实例
      *
      * @return -
      */
@@ -59,13 +49,29 @@ public class SSLGenerator {
     }
 
     /**
-     * 为SSLGenerator实例配置指定证书上下文sslContext.
+     * 设置为默认ssl
+     *
+     * @return
+     */
+    public synchronized SSLGenerator ssl() {
+        try {
+            sslContext = SSLContext.getInstance("SSLv3");
+        } catch (NoSuchAlgorithmException e) {
+            throw new HttpException(e);
+        }
+        return this;
+    }
+
+    /**
+     * 自定义ssl
      *
      * @param keyStorePath - 密钥库路径
      * @param keyStorePass - 密钥库密码
      * @return -
      */
-    public SSLGenerator ssl(String keyStorePath, String keyStorePass) {
+    public synchronized SSLGenerator ssl(String keyStorePath, String keyStorePass) {
+        Assert.notNull(keyStorePath, "keyStorePath must be not null");
+        Assert.notNull(keyStorePass, "keyStorePass must be not null");
         KeyStore keyStore;
         FileInputStream inputStream = null;
 
@@ -101,7 +107,7 @@ public class SSLGenerator {
      *
      * @return -
      */
-    public synchronized SSLContext getSSLContext() {
+    private synchronized SSLContext getSSLContext() {
         try {
             if (sslContext == null) {
                 // sslContext = SSLContexts.createSystemDefault();

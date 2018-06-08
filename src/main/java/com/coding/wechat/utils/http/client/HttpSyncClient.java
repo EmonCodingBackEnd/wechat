@@ -12,7 +12,8 @@
  ********************************************************************************/
 package com.coding.wechat.utils.http.client;
 
-import com.coding.wechat.utils.http.HttpException;
+import com.coding.wechat.utils.http.HttpConfig;
+import com.coding.wechat.utils.http.HttpConsts;
 import com.coding.wechat.utils.http.generator.HttpSyncClientGenerator;
 import com.coding.wechat.utils.http.support.HttpMethod;
 import com.coding.wechat.utils.http.support.HttpSupport;
@@ -23,14 +24,13 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,56 +54,47 @@ import java.util.Map;
 @Slf4j
 public abstract class HttpSyncClient {
 
-    private static final CloseableHttpClient httpSyncClient;
+    public static final CloseableHttpClient httpSyncClient;
 
-    private static final CloseableHttpClient httpSyncRetryClient;
+    public static final CloseableHttpClient httpSyncRetryClient;
 
     static {
         httpSyncClient = HttpSyncClientGenerator.custom().pool().timeout().build();
         httpSyncRetryClient = HttpSyncClientGenerator.custom().pool().timeout().retry().build();
     }
 
-    public static CloseableHttpClient getInstance() {
-        return httpSyncClient;
-    }
-
-    public static String send(
-            HttpClient client,
-            HttpMethod httpMethod,
-            String url,
-            String paramString,
-            Header[] headers,
-            Charset charset)
-            throws IOException {
-        return send(client, httpMethod, url, null, paramString, headers, charset);
-    }
-
-    public static String send(
-            HttpClient client,
-            HttpMethod httpMethod,
-            String url,
-            Map<String, String> paramMap,
-            Header[] headers,
-            Charset charset)
-            throws IOException {
-        return send(client, httpMethod, url, paramMap, null, headers, charset);
-    }
-
-    private static String send(
+    /**
+     * 该方法返回字符串格式的应答，因此会占用内存，不适用于应答内容超过1MB的请求.
+     *
+     * <p>特殊说明：paramMap与paramString二选一
+     *
+     * @param client - 自定义的同步HttpClient
+     * @param httpMethod - 请求方法，参见{@linkplain HttpMethod}
+     * @param url - 请求地址
+     * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
+     * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
+     * @param headers - 请求头
+     * @param charset - 请求体编码
+     * @throws IOException -
+     */
+    public static String execute(
             HttpClient client,
             HttpMethod httpMethod,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
-        return send(
+        return execute(
                 client,
                 httpMethod,
                 url,
                 paramMap,
                 paramString,
+                timeout,
                 headers,
                 charset,
                 new AbstractResponseHandler<String>() {
@@ -115,22 +105,40 @@ public abstract class HttpSyncClient {
                 });
     }
 
-    public static void send(
+    /**
+     * 无返回结果调用，应答数据会输出到给定的输出流，该方法不会自动关闭输出流.
+     *
+     * <p>特殊说明：paramMap与paramString二选一
+     *
+     * @param client - 自定义的同步HttpClient
+     * @param httpMethod - 请求方法，参见{@linkplain HttpMethod}
+     * @param url - 请求地址
+     * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
+     * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
+     * @param headers - 请求头
+     * @param charset - 请求体编码
+     * @param outputStream - 存放应答的输出流
+     * @throws IOException -
+     */
+    public static void execute(
             HttpClient client,
             HttpMethod httpMethod,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            int timeout,
             Header[] headers,
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        send(
+        execute(
                 client,
                 httpMethod,
                 url,
                 paramMap,
                 paramString,
+                timeout,
                 headers,
                 charset,
                 new AbstractResponseHandler<String>() {
@@ -142,28 +150,45 @@ public abstract class HttpSyncClient {
                 });
     }
 
-    protected static <T> T send(
+    /**
+     * 基本请求方法，内部使用.
+     *
+     * <p>特殊说明：paramMap与paramString二选一
+     *
+     * @param client - 自定义的同步HttpClient
+     * @param httpMethod - 请求方法，参见{@linkplain HttpMethod}
+     * @param url - 请求地址
+     * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
+     * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
+     * @param headers - 请求头
+     * @param charset - 请求体编码
+     * @param responseHandler - 应答处理器，用来处理应答数据
+     * @param <T> - 处理后的应答数据返回类型
+     * @return - 应答结果
+     * @throws IOException -
+     */
+    public static <T> T execute(
             HttpClient client,
             HttpMethod httpMethod,
             String url,
-            Object params,
+            Map<String, String> paramMap,
+            String paramString,
+            int timeout,
             Header[] headers,
             Charset charset,
             ResponseHandler<T> responseHandler)
-            throws IOException, HttpException {
+            throws IOException {
         Assert.notNull(url, "url must be not null");
-        Assert.notNull(params, "params must be not null");
 
         HttpRequestBase httpRequest = HttpMethod.getHttpRequest(url, httpMethod);
         httpRequest.setHeaders(headers);
 
-        String urlHost;
-        String urlParam;
+        String urlHost = HttpConsts.EMPTY;
+        String urlParam = HttpConsts.EMPTY;
         // 实现了接口HttpEntityEnclosingRequest的类，可以支持设置Entity
         if (HttpEntityEnclosingRequest.class.isAssignableFrom(httpRequest.getClass())) {
-            if (Map.class.isInstance(params)) {
-                Map<String, String> paramMap = (HashMap<String, String>) params;
-
+            if (paramMap != null) {
                 List<NameValuePair> pairList = new ArrayList<>();
 
                 // 检查url中是否存在参数
@@ -178,20 +203,29 @@ public abstract class HttpSyncClient {
                         .setEntity(new UrlEncodedFormEntity(pairList, charset));
                 urlHost = url;
                 urlParam = paramList.toString();
-            } else if (String.class.isInstance(params)) {
-                String paramString = (String) params;
+            } else if (paramString != null) {
                 // 设置参数
                 ((HttpEntityEnclosingRequestBase) httpRequest)
                         .setEntity(new StringEntity(paramString, charset));
                 urlHost = url;
                 urlParam = paramString;
-            } else {
-                throw new HttpException("【Http】无效的请求参数");
             }
         } else {
             int idx = url.indexOf("?");
             urlHost = url.substring(0, (idx > 0 ? idx - 1 : url.length() - 1));
             urlParam = url.substring(idx + 1);
+        }
+        if (timeout != Integer.MIN_VALUE) {
+            if (timeout < -1) {
+                timeout = HttpConfig.DEFAULT_SOCKET_TIMEOUT;
+            }
+            RequestConfig requestConfig =
+                    RequestConfig.custom()
+                            .setConnectTimeout(timeout)
+                            .setSocketTimeout(timeout)
+                            .setConnectionRequestTimeout(timeout)
+                            .build();
+            httpRequest.setConfig(requestConfig);
         }
         if (log.isDebugEnabled()) {
             log.info("【Http】请求url={},params={}", urlHost, urlParam);

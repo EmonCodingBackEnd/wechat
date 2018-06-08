@@ -60,7 +60,8 @@ public class HttpAsyncClient {
                                         .namingPattern("AysncHttpThread-%d")
                                         .build())
                         .setConnectionManager(poolingNConnMgr)
-                        .setDefaultRequestConfig(HttpConfig.defaultRequestConfig)
+                        //
+                        // .setDefaultRequestConfig(HttpConfig.defaultRequestConfig)
                         .setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy)
                         .setUserAgent(HttpConfig.userAgent)
                         .build();

@@ -24,24 +24,38 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /** Http同步客户端生成器 */
 public class HttpSyncClientGenerator extends HttpClientBuilder {
 
-    private AtomicBoolean hasSetPool = new AtomicBoolean();
-    private AtomicBoolean isNewSSL = new AtomicBoolean();
-
     /** 默认的ssl生成器，可以通过带参ssl方法重新指定证书. */
-    private SSLGenerator defaultSSL = SSLGenerator.getInstance();
+    private SSLGenerator defaultSSL = SSLGenerator.custom();
+
+    private PoolingHttpClientConnectionManager poolingConnMgr;
 
     private HttpSyncClientGenerator() {}
 
+    public static HttpSyncClientGenerator create() {
+        return new HttpSyncClientGenerator();
+    }
+
     public static HttpSyncClientGenerator custom() {
-        HttpSyncClientGenerator clientGenerator = new HttpSyncClientGenerator();
-        clientGenerator.setUserAgent(HttpConfig.userAgent);
-        clientGenerator.setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy);
+        HttpSyncClientGenerator clientGenerator =
+                (HttpSyncClientGenerator)
+                        HttpSyncClientGenerator.create()
+                                .setUserAgent(HttpConfig.userAgent)
+                                .setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy);
         return clientGenerator;
+    }
+
+    /**
+     * 设置默认证书
+     *
+     * @return -
+     * @throws HttpException -
+     */
+    public HttpSyncClientGenerator ssl() throws HttpException {
+        this.defaultSSL = SSLGenerator.custom().ssl();
+        return pool();
     }
 
     /**
@@ -56,7 +70,7 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
     }
 
     /**
-     * 设置自定义的sslContext
+     * 设置自定义证书
      *
      * @param keyStorePath - 密钥库路径
      * @param keyStorePass - 密钥库密码
@@ -65,37 +79,10 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      */
     public HttpSyncClientGenerator ssl(String keyStorePath, String keyStorePass) {
         this.defaultSSL = SSLGenerator.custom().ssl(keyStorePath, keyStorePass);
-        isNewSSL.compareAndSet(false, true);
-        return ssl();
-    }
-
-    /**
-     * 根据证书的配置情况，设置HttpClient.
-     *
-     * @return -
-     * @throws HttpException -
-     */
-    public HttpSyncClientGenerator ssl() throws HttpException {
-        if (hasSetPool.get()) {
-            if (isNewSSL.get()) {
-                throw new HttpException(
-                        "指定ssl时调用顺序[defaultSSL->pool]:pool的创建依赖于ssl的设置，新设置的ssl在pool构建之后，不会生效");
-            }
-            return this;
+        if (poolingConnMgr != null) {
+            return pool(poolingConnMgr.getMaxTotal(), poolingConnMgr.getDefaultMaxPerRoute());
         }
-        Registry<ConnectionSocketFactory> socketFactoryRegistry =
-                RegistryBuilder.<ConnectionSocketFactory>create()
-                        .register("http", PlainConnectionSocketFactory.INSTANCE)
-                        .register("https", defaultSSL.getSslConnFactory())
-                        .build();
-        PoolingHttpClientConnectionManager poolingConnMgr =
-                new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        poolingConnMgr.setMaxTotal(HttpConfig.DEFAULT_MAX_TOTAL);
-        poolingConnMgr.setDefaultMaxPerRoute(HttpConfig.DEFAULT_MAX_PER_ROUTE);
-        poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
-        poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
-
-        return (HttpSyncClientGenerator) this.setConnectionManager(poolingConnMgr);
+        return pool();
     }
 
     /**
@@ -122,13 +109,11 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
                         .register("http", PlainConnectionSocketFactory.INSTANCE)
                         .register("https", defaultSSL.getSslConnFactory())
                         .build();
-        PoolingHttpClientConnectionManager poolingConnMgr =
-                new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        poolingConnMgr = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         poolingConnMgr.setMaxTotal(maxTotal);
         poolingConnMgr.setDefaultMaxPerRoute(maxPerRoute);
         poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
         poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
-        hasSetPool.compareAndSet(false, true);
         return (HttpSyncClientGenerator) this.setConnectionManager(poolingConnMgr);
     }
 

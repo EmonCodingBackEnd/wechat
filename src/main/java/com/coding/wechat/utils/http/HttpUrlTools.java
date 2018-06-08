@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.utils.http;
 
+import com.coding.wechat.utils.http.support.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 
@@ -26,24 +27,16 @@ import java.net.URLDecoder;
  * <p>创建时间: <font style="color:#00FFFF">20180604 18:45</font><br>
  * 缺点：不太容易支持SSL。
  *
+ * @deprecated 不推荐使用JDK自带的HttpURLConnection直接使用
  * @author Rushing0711
  * @version 1.0.0
  * @since 1.0.0
  */
 @Slf4j
-public abstract class HttpUrlUtils {
+@Deprecated
+public abstract class HttpUrlTools {
 
     private static final int TIMEOUT_IN_MILLIONS = 5000;
-
-    private enum Method {
-        GET,
-        POST,
-        HEAD,
-        OPTIONS,
-        PUT,
-        DELETE,
-        TRACE;
-    }
 
     public interface CallBack {
         void onRequestComplete(String result);
@@ -52,8 +45,8 @@ public abstract class HttpUrlUtils {
     /**
      * 异步的Get请求
      *
-     * @param urlStr
-     * @param callBack
+     * @param urlStr -
+     * @param callBack -
      */
     public static void doGetAsyn(final String urlStr, final CallBack callBack) {
         new Thread(
@@ -140,7 +133,7 @@ public abstract class HttpUrlUtils {
             connection = (HttpURLConnection) realUrl.openConnection();
             connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
             connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setRequestMethod(Method.GET.name());
+            connection.setRequestMethod(HttpMethod.GET.name());
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty(
@@ -232,7 +225,7 @@ public abstract class HttpUrlUtils {
             HttpURLConnection connection = (HttpURLConnection) realUrl.openConnection();
             connection.setConnectTimeout(TIMEOUT_IN_MILLIONS);
             connection.setReadTimeout(TIMEOUT_IN_MILLIONS);
-            connection.setRequestMethod(Method.POST.name());
+            connection.setRequestMethod(HttpMethod.POST.name());
             connection.setRequestProperty("accept", "*/*");
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
