@@ -10,10 +10,10 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806072026 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.generator;
+package com.coding.wechat.component.http.generator;
 
-import com.coding.wechat.utils.http.HttpConfig;
-import com.coding.wechat.utils.http.HttpException;
+import com.coding.wechat.component.http.HttpConfig;
+import com.coding.wechat.component.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -112,6 +112,8 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
         poolingConnMgr = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         poolingConnMgr.setMaxTotal(maxTotal);
         poolingConnMgr.setDefaultMaxPerRoute(maxPerRoute);
+        /// TODO: 2018/6/9 分route设置连接池数量
+        //        poolingConnMgr.setMaxPerRoute();
         poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
         poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
         return (HttpSyncClientGenerator) this.setConnectionManager(poolingConnMgr);
@@ -145,7 +147,7 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
                         .setSocketTimeout(socketTimeout)
                         .setConnectionRequestTimeout(connectionRequestTimeout)
                         .build();
-        return (HttpSyncClientGenerator) setDefaultRequestConfig(requestConfig);
+        return (HttpSyncClientGenerator) this.setDefaultRequestConfig(requestConfig);
     }
 
     /**

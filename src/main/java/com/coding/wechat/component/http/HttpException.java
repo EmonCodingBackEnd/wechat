@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806072036 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http;
+package com.coding.wechat.component.http;
 
 /**
  * [请在此输入功能简述].

@@ -13,6 +13,7 @@
 package com.coding.wechat.controller;
 
 import com.coding.wechat.config.WechatConfig;
+import com.coding.wechat.component.http.HttpTools;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.net.URLEncoder;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -52,9 +54,9 @@ public class HttpController {
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
         String decodeUrl = URLDecoder.decode(urlStr, Charsets.UTF_8.name());
         response.setContentType("text/html;charset=UTF-8");
-       /* OutputStream out = response.getOutputStream();
+        /* OutputStream out = response.getOutputStream();
         HttpClientUtils.doGet(decodeUrl, out);*/
-        String result = HttpClientUtils.doPost(decodeUrl);
+        String result = HttpTools.doGet(decodeUrl);
         result =
                 result.replace(
                                 "http://www.baidu.com",
@@ -62,7 +64,6 @@ public class HttpController {
                         .replace(
                                 "https%3A%2F%2Fmp.weixin.qq.com",
                                 "https://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=https%3A%2F%2Fmp.weixin.qq.com");
-        log.info(result);
         Writer writer = response.getWriter();
         writer.write(result);
         writer.flush();
@@ -70,24 +71,31 @@ public class HttpController {
     }
 
     @GetMapping(value = "readByUrlBatch")
-    public String readByUrlBatch(HttpServletResponse response, int threadCount, String urlStr)
+    public String readByUrlBatch(
+            HttpServletResponse response, int concurrencyCount, int threadCount, String[] urlStr)
             throws IOException, InterruptedException {
         long start = System.currentTimeMillis();
-        log.info("【readByUrlTest】start");
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        log.info("【readByUrlBatchTest】start");
+
+        final Semaphore semaphore = new Semaphore(concurrencyCount);
         final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+        ExecutorService executorService = Executors.newCachedThreadPool();
         final AtomicInteger[] statistic = {new AtomicInteger(0), new AtomicInteger(0)};
         for (int i = 0; i < threadCount; i++) {
+            semaphore.acquireUninterruptibly();
             executorService.execute(
                     () -> {
                         try {
-                            HttpClientUtils.doGet(urlStr);
+                            for (String url : urlStr) {
+                                HttpTools.doGet(url);
+                            }
                             statistic[0].incrementAndGet();
                         } catch (IOException e) {
-                            log.error("【readByUrlTest】exception", e);
+                            log.error("【readByUrlBatchTest】exception", e);
                             statistic[1].incrementAndGet();
                         } finally {
                             countDownLatch.countDown();
+                            semaphore.release();
                         }
                     });
         }
@@ -98,7 +106,7 @@ public class HttpController {
                 String.format(
                         "总用时=%sms,success=%s,failure=%s",
                         (end - start), statistic[0], statistic[1]);
-        log.info("【readByUrlTest】finish,{}", result);
+        log.info("【readByUrlBatchTest】finish,{}", result);
         return result;
     }
 

@@ -10,9 +10,9 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180604-01         Rushing0711     M201806041845 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http;
+package com.coding.wechat.component.http;
 
-import com.coding.wechat.utils.http.support.HttpMethod;
+import com.coding.wechat.component.http.support.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

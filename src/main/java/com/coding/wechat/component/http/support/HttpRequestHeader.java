@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180608-01         Rushing0711     M201806081416 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.support;
+package com.coding.wechat.component.http.support;
 
 import org.springframework.http.HttpHeaders;
 

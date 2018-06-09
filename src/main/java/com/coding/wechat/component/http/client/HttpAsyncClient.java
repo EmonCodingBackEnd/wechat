@@ -10,9 +10,9 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806070748 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.client;
+package com.coding.wechat.component.http.client;
 
-import com.coding.wechat.utils.http.HttpConfig;
+import com.coding.wechat.component.http.HttpConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;

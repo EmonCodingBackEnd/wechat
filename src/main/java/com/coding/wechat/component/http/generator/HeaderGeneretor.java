@@ -10,9 +10,9 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180608-01         Rushing0711     M201806081216 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.generator;
+package com.coding.wechat.component.http.generator;
 
-import com.coding.wechat.utils.http.support.HttpRequestHeader;
+import com.coding.wechat.component.http.support.HttpRequestHeader;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 

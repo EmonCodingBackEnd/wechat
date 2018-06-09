@@ -10,9 +10,9 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806072226 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.generator;
+package com.coding.wechat.component.http.generator;
 
-import com.coding.wechat.utils.http.HttpException;
+import com.coding.wechat.component.http.HttpException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;

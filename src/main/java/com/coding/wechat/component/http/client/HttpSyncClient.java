@@ -10,13 +10,11 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180607-01         Rushing0711     M201806070748 新建文件
  ********************************************************************************/
-package com.coding.wechat.utils.http.client;
+package com.coding.wechat.component.http.client;
 
-import com.coding.wechat.utils.http.HttpConfig;
-import com.coding.wechat.utils.http.HttpConsts;
-import com.coding.wechat.utils.http.generator.HttpSyncClientGenerator;
-import com.coding.wechat.utils.http.support.HttpMethod;
-import com.coding.wechat.utils.http.support.HttpSupport;
+import com.coding.wechat.component.http.HttpConfig;
+import com.coding.wechat.component.http.support.HttpMethod;
+import com.coding.wechat.component.http.support.HttpSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -30,7 +28,6 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
@@ -53,15 +50,6 @@ import java.util.Map;
  */
 @Slf4j
 public abstract class HttpSyncClient {
-
-    public static final CloseableHttpClient httpSyncClient;
-
-    public static final CloseableHttpClient httpSyncRetryClient;
-
-    static {
-        httpSyncClient = HttpSyncClientGenerator.custom().pool().timeout().build();
-        httpSyncRetryClient = HttpSyncClientGenerator.custom().pool().timeout().retry().build();
-    }
 
     /**
      * 该方法返回字符串格式的应答，因此会占用内存，不适用于应答内容超过1MB的请求.
@@ -184,8 +172,8 @@ public abstract class HttpSyncClient {
         HttpRequestBase httpRequest = HttpMethod.getHttpRequest(url, httpMethod);
         httpRequest.setHeaders(headers);
 
-        String urlHost = HttpConsts.EMPTY;
-        String urlParam = HttpConsts.EMPTY;
+        String urlHost = HttpConfig.EMPTY;
+        String urlParam = HttpConfig.EMPTY;
         // 实现了接口HttpEntityEnclosingRequest的类，可以支持设置Entity
         if (HttpEntityEnclosingRequest.class.isAssignableFrom(httpRequest.getClass())) {
             if (paramMap != null) {
@@ -212,7 +200,7 @@ public abstract class HttpSyncClient {
             }
         } else {
             int idx = url.indexOf("?");
-            urlHost = url.substring(0, (idx > 0 ? idx - 1 : url.length() - 1));
+            urlHost = url.substring(0, (idx > 0 ? idx : url.length()));
             urlParam = url.substring(idx + 1);
         }
         if (timeout != Integer.MIN_VALUE) {
@@ -240,7 +228,12 @@ public abstract class HttpSyncClient {
             HttpClient client, HttpRequestBase httpRequest, ResponseHandler<T> responseHandler)
             throws IOException {
         T result = client.execute(httpRequest, responseHandler);
-        log.debug("【Http】应答result={}", result.toString());
+        if (log.isDebugEnabled()) {
+            log.debug("【Http】应答result={}", result.toString());
+        } else {
+            log.info("【Http】应答内容长度={}", result.toString().length());
+        }
+
         return result;
     }
 }
