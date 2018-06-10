@@ -12,9 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.http.property;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 
 /**
  * Http支持的方法定义.
@@ -37,32 +35,32 @@ public enum HttpMethod {
     TRACE;
 
     public static HttpRequestBase getHttpRequest(String url, HttpMethod httpMethod) {
-        HttpRequestBase httpRequest = null;
+        HttpRequestBase httpRequest;
 
         switch (httpMethod) {
             case GET:
                 httpRequest = new HttpGet(url);
                 break;
             case HEAD:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpHead(url);
                 break;
             case POST:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpPost(url);
                 break;
             case PUT:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpPut(url);
                 break;
             case PATCH:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpPatch(url);
                 break;
             case DELETE:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpDelete(url);
                 break;
             case OPTIONS:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpOptions(url);
                 break;
             case TRACE:
-                httpRequest = new HttpGet(url);
+                httpRequest = new HttpTrace(url);
                 break;
             default:
                 httpRequest = new HttpPost(url);

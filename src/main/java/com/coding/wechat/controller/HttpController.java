@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
+import com.coding.wechat.component.http.HttpException;
 import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.component.http.HttpTools;
 import lombok.extern.slf4j.Slf4j;
@@ -19,18 +20,18 @@ import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
+import java.util.Map;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -49,6 +50,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class HttpController {
 
     @Autowired WechatConfig wechatConfig;
+
+    @RequestMapping(value = "test")
+    public String test(
+            HttpServletRequest request,
+            @RequestParam(value = "timeout", defaultValue = "0") int timeout,
+            String key)
+            throws IOException {
+        String result;
+        if (timeout != 0) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(timeout);
+            } catch (InterruptedException e) {
+                throw new HttpException("【test】睡眠异常");
+            }
+        }
+        if (key != null) {
+            result = key;
+            log.info("【test】你请求的参数是param", key);
+        } else {
+            result = "no param";
+            log.info("【test】收到请求");
+        }
+        return result;
+    }
 
     @GetMapping(value = "readByUrl")
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {

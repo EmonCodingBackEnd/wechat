@@ -13,8 +13,13 @@
 package com.coding.wechat.component.http.client;
 
 import com.coding.wechat.component.http.HttpConfig;
+import com.coding.wechat.component.http.HttpException;
 import com.coding.wechat.component.http.property.HttpMethod;
 import com.coding.wechat.component.http.support.HttpSupport;
+import com.coding.wechat.component.regex.RegexSupport;
+import com.coding.wechat.component.regex.result.UriRegexResult;
+import com.coding.wechat.component.regex.result.UrlParamRegexResult;
+import com.coding.wechat.component.regex.result.UrlRegexResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,14 +31,19 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,40 +187,84 @@ public abstract class HttpSyncClient {
             ResponseHandler<T> responseHandler)
             throws IOException {
         Assert.notNull(url, "url must be not null");
+        if (!CollectionUtils.isEmpty(paramMap) && !StringUtils.isEmpty(paramString)) {
+            log.error(
+                    "【Http】{}请求paramMap={}与paramString={}不能同时存在",
+                    httpMethod.name(),
+                    paramMap,
+                    paramString);
+            throw new HttpException("【Http】请求paramMap与paramString不能同时存在");
+        }
 
-        HttpRequestBase httpRequest = HttpMethod.getHttpRequest(url, httpMethod);
+        String uri;
+        String param;
+        List<NameValuePair> pairList = new ArrayList<>();
+
+        boolean isXmlOrJson = false;
+
+        if (CollectionUtils.isEmpty(paramMap) && StringUtils.isEmpty(paramString)) {
+            UrlRegexResult urlRegexResult = RegexSupport.matchUrl(url);
+            if (!urlRegexResult.isMatched()) {
+                log.error("【Http】{}请求不合法url={}", httpMethod.name(), url);
+                throw new HttpException("【Http】url不合法");
+            }
+            uri = urlRegexResult.getUri();
+            param = urlRegexResult.getParam();
+            List<NameValuePair> paramList =
+                    HttpSupport.convertToPairList(
+                            HttpSupport.buildParams(urlRegexResult.getParam()));
+            pairList.addAll(paramList);
+        } else if (!CollectionUtils.isEmpty(paramMap) && StringUtils.isEmpty(paramString)) {
+            UriRegexResult uriRegexResult = RegexSupport.matchUri(url);
+            if (!uriRegexResult.isMatched()) {
+                log.error("【Http】{}请求不合法url={}", httpMethod.name(), url);
+                throw new HttpException("【Http】参数paramMap或者paramString存在时，url不能附带参数及定位信息");
+            }
+            List<NameValuePair> paramList = HttpSupport.convertToPairList(paramMap);
+            pairList.addAll(paramList);
+            uri = url;
+            param = URLEncodedUtils.format(pairList, charset);
+        } else {
+            UriRegexResult uriRegexResult = RegexSupport.matchUri(url);
+            if (!uriRegexResult.isMatched()) {
+                log.error("【Http】{}请求不合法url={}", httpMethod.name(), url);
+                throw new HttpException("【Http】参数paramMap或者paramString存在时，url不能附带参数及定位信息");
+            }
+            UrlParamRegexResult urlParamRegexResult = RegexSupport.matchUrlParam(paramString);
+            if (urlParamRegexResult.isMatched()) {
+                List<NameValuePair> paramList =
+                        HttpSupport.convertToPairList(
+                                HttpSupport.buildParams(urlParamRegexResult.getParam()));
+                pairList.addAll(paramList);
+                param = URLEncodedUtils.format(pairList, charset);
+            } else {
+                isXmlOrJson = true;
+                param = paramString;
+            }
+            uri = url;
+        }
+
+        HttpRequestBase httpRequest = HttpMethod.getHttpRequest(uri, httpMethod);
         httpRequest.setHeaders(headers);
 
-        String urlHost = HttpConfig.EMPTY;
-        String urlParam = HttpConfig.EMPTY;
         // 实现了接口HttpEntityEnclosingRequest的类，可以支持设置Entity
         if (HttpEntityEnclosingRequest.class.isAssignableFrom(httpRequest.getClass())) {
-            if (paramMap != null) {
-                List<NameValuePair> pairList = new ArrayList<>();
-
-                // 检查url中是否存在参数
-                url = HttpSupport.checkHasParams(url, pairList);
-
-                // 追加参数
-                List<NameValuePair> paramList = HttpSupport.convertToPairList(paramMap);
-                pairList.addAll(paramList);
-
-                // 设置参数
-                ((HttpEntityEnclosingRequestBase) httpRequest)
-                        .setEntity(new UrlEncodedFormEntity(pairList, charset));
-                urlHost = url;
-                urlParam = paramList.toString();
-            } else if (paramString != null) {
-                // 设置参数
+            if (isXmlOrJson) {
                 ((HttpEntityEnclosingRequestBase) httpRequest)
                         .setEntity(new StringEntity(paramString, charset));
-                urlHost = url;
-                urlParam = paramString;
+            } else {
+                ((HttpEntityEnclosingRequestBase) httpRequest)
+                        .setEntity(new UrlEncodedFormEntity(pairList, charset));
             }
         } else {
-            int idx = url.indexOf("?");
-            urlHost = url.substring(0, (idx > 0 ? idx : url.length()));
-            urlParam = url.substring(idx + 1);
+            try {
+                if (!StringUtils.isEmpty(param)) {
+                    httpRequest.setURI(new URI(String.format("%s?%s", uri, param)));
+                }
+            } catch (URISyntaxException e) {
+                log.error("【Http】{}请求地址解析错误", e);
+                throw new HttpException(e);
+            }
         }
         if (timeout != Integer.MIN_VALUE) {
             if (timeout < -1) {
@@ -225,9 +279,9 @@ public abstract class HttpSyncClient {
             httpRequest.setConfig(requestConfig);
         }
         if (log.isDebugEnabled()) {
-            log.info("【Http】请求url={},params={}", urlHost, urlParam);
+            log.debug("【Http】{}请求url={},params=[{}]", httpMethod.name(), uri, param);
         } else {
-            log.info("【Http】请求url={}", urlHost);
+            log.info("【Http】{}请求url={}", httpMethod.name(), uri);
         }
 
         return execute(client, httpRequest, charset, responseHandler, context);
@@ -250,7 +304,7 @@ public abstract class HttpSyncClient {
             log.debug(
                     "【Http】应答内容大小={},应答内容={}",
                     HttpSupport.getNetContentSize(result.toString().getBytes(charset).length),
-                    result.toString());
+                    result);
         } else {
             log.info(
                     "【Http】应答内容大小={}",
