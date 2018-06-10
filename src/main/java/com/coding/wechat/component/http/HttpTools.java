@@ -24,9 +24,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.protocol.HttpContext;
+import org.hibernate.cfg.annotations.HCANNHelper;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.channels.ShutdownChannelGroupException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,6 +50,8 @@ public abstract class HttpTools {
 
     // ==============================GET-Beg==============================
 
+    // ----------------------------------------Segment-1-Beg-----------------------------------------
+
     public static String doGet(String url) throws IOException {
         return doGet(url, new HashMap<>());
     }
@@ -65,6 +70,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramMap,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8);
@@ -74,15 +80,46 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             Map<String, String> paramMap,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
-        return doGet(client, url, paramMap, null, timeout, headers, charset);
+        return doGet(client, url, paramMap, null, context, timeout, headers, charset);
     }
 
+    public static String doGet(String url, HttpContext context) throws IOException {
+        return doGet(url, new HashMap<>(), context);
+    }
+
+    public static String doGet(String url, HttpContext context, int timeout) throws IOException {
+        return doGet(url, new HashMap<>(), context, timeout);
+    }
+
+    public static String doGet(String url, Map<String, String> paramMap, HttpContext context)
+            throws IOException {
+        return doGet(url, paramMap, context, Integer.MIN_VALUE);
+    }
+
+    public static String doGet(
+            String url, Map<String, String> paramMap, HttpContext context, int timeout)
+            throws IOException {
+        return doGet(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    // ----------------------------------------Segment-1-End-----------------------------------------
+
+    // ----------------------------------------Segment-2-Beg-----------------------------------------
+
     public static String doGet(String url, String paramString) throws IOException {
-        return doGet(url, paramString, 1);
+        return doGet(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doGet(String url, String paramString, int timeout) throws IOException {
@@ -90,6 +127,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8);
@@ -99,13 +137,34 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
-        return doGet(client, url, null, paramString, timeout, headers, charset);
+        return doGet(client, url, null, paramString, context, timeout, headers, charset);
     }
 
+    public static String doGet(String url, String paramString, HttpContext context)
+            throws IOException {
+        return doGet(url, paramString, context, Integer.MIN_VALUE);
+    }
+
+    public static String doGet(String url, String paramString, HttpContext context, int timeout)
+            throws IOException {
+        return doGet(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    // ----------------------------------------Segment-2-End-----------------------------------------
+
+    // ----------------------------------------Segment-3-Beg-----------------------------------------
     public static String doGetRetry(
             String url, Map<String, String> paramMap, String paramString, int timeout)
             throws IOException {
@@ -114,25 +173,58 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8);
     }
+
+    public static String doGetRetry(
+            String url,
+            Map<String, String> paramMap,
+            String paramString,
+            HttpContext context,
+            int timeout)
+            throws IOException {
+        return doGet(
+                ClientSupport.httpSyncRetryClient,
+                url,
+                paramMap,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    // ----------------------------------------Segment-3-End-----------------------------------------
 
     private static String doGet(
             HttpClient client,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.GET, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.GET,
+                url,
+                paramMap,
+                paramString,
+                context,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
+    // ----------------------------------------Segment-1-Beg-----------------------------------------
+
     public static void doGet(String url, OutputStream outputStream) throws IOException {
         doGet(url, new HashMap<>(), outputStream);
     }
@@ -154,6 +246,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramMap,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8,
@@ -164,13 +257,56 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             Map<String, String> paramMap,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        doGet(client, url, paramMap, null, timeout, headers, charset, outputStream);
+        doGet(client, url, paramMap, context, timeout, headers, charset, outputStream);
     }
+
+    public static void doGet(String url, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doGet(url, new HashMap<>(), context, outputStream);
+    }
+
+    public static void doGet(
+            String url, HttpContext context, int timeout, OutputStream outputStream)
+            throws IOException {
+        doGet(url, new HashMap<>(), context, timeout, outputStream);
+    }
+
+    public static void doGet(
+            String url,
+            Map<String, String> paramMap,
+            HttpContext context,
+            OutputStream outputStream)
+            throws IOException {
+        doGet(url, paramMap, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doGet(
+            String url,
+            Map<String, String> paramMap,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doGet(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    // ----------------------------------------Segment-1-End-----------------------------------------
+
+    // ----------------------------------------Segment-2-Beg-----------------------------------------
 
     public static void doGet(String url, String paramString, OutputStream outputStream)
             throws IOException {
@@ -183,6 +319,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8,
@@ -193,13 +330,42 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        doGet(client, url, null, paramString, timeout, headers, charset, outputStream);
+        doGet(client, url, null, paramString, context, timeout, headers, charset, outputStream);
     }
+
+    public static void doGet(
+            String url, String paramString, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doGet(url, paramString, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doGet(
+            String url,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doGet(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    // ----------------------------------------Segment-2-End-----------------------------------------
+
+    // ----------------------------------------Segment-3-Beg-----------------------------------------
 
     public static void doGetRetry(
             String url,
@@ -213,17 +379,41 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8,
                 outputStream);
     }
 
+    public static void doGetRetry(
+            String url,
+            Map<String, String> paramMap,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doGet(
+                ClientSupport.httpSyncRetryClient,
+                url,
+                paramMap,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    // ----------------------------------------Segment-3-End-----------------------------------------
+
     private static void doGet(
             HttpClient client,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
@@ -235,6 +425,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 headers,
                 charset,
@@ -259,7 +450,13 @@ public abstract class HttpTools {
 
     public static String doHead(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doHead(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doHead(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doHead(
@@ -274,12 +471,17 @@ public abstract class HttpTools {
     }
 
     public static String doHead(String url, String paramString) throws IOException {
-        return doHead(url, paramString, 1);
+        return doHead(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doHead(String url, String paramString, int timeout) throws IOException {
         return doHead(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doHead(
@@ -316,10 +518,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.HEAD, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.HEAD,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doHead(String url, OutputStream outputStream) throws IOException {
         doHead(url, new HashMap<>(), outputStream);
     }
@@ -423,6 +634,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -433,6 +645,7 @@ public abstract class HttpTools {
 
     // ==============================POST-Beg==============================
 
+    // ----------------------------------------Segment-1-Beg-----------------------------------------
     public static String doPost(String url) throws IOException {
         return doPost(url, new HashMap<>());
     }
@@ -447,37 +660,76 @@ public abstract class HttpTools {
 
     public static String doPost(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doPost(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                null,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doPost(
             HttpClient client,
             String url,
             Map<String, String> paramMap,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
-        return doPost(client, url, paramMap, null, timeout, headers, charset);
+        return doPost(client, url, paramMap, null, context, timeout, headers, charset);
     }
 
+    public static String doPost(String url, HttpContext context) throws IOException {
+        return doPost(url, new HashMap<>(), context);
+    }
+
+    public static String doPost(String url, HttpContext context, int timeout) throws IOException {
+        return doPost(url, new HashMap<>(), context, timeout);
+    }
+
+    public static String doPost(String url, Map<String, String> paramMap, HttpContext context)
+            throws IOException {
+        return doPost(url, paramMap, context, Integer.MIN_VALUE);
+    }
+
+    public static String doPost(
+            String url, Map<String, String> paramMap, HttpContext context, int timeout)
+            throws IOException {
+        return doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                null,
+                context,
+                timeout,
+                null,
+                Charsets.UTF_8);
+    }
+
+    // ----------------------------------------Segment-1-End-----------------------------------------
+
+    // ----------------------------------------Segment-2-Beg-----------------------------------------
+
     public static String doPost(String url, String paramString) throws IOException {
-        return doPost(url, paramString, 1);
+        return doPost(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doPost(String url, String paramString, int timeout) throws IOException {
         return doPost(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
-    }
-
-    public static String doPostJson(String url, String paramString) throws IOException {
-        return doPost(
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
-                Integer.MIN_VALUE,
-                HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
+                null,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8);
+    }
+
+    public static String doPostJson(String url, String paramString) throws IOException {
+        return doPostJson(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doPostJson(String url, String paramString, int timeout)
@@ -486,19 +738,14 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
                 Charsets.UTF_8);
     }
 
     public static String doPostXml(String url, String paramString) throws IOException {
-        return doPost(
-                ClientSupport.httpSyncClient,
-                url,
-                paramString,
-                Integer.MIN_VALUE,
-                HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8);
+        return doPostXml(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doPostXml(String url, String paramString, int timeout) throws IOException {
@@ -506,6 +753,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
                 Charsets.UTF_8);
@@ -515,40 +763,120 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
-        return doPost(client, url, null, paramString, timeout, headers, charset);
+        return doPost(client, url, null, paramString, context, timeout, headers, charset);
     }
+
+    public static String doPost(String url, String paramString, HttpContext context)
+            throws IOException {
+        return doPost(url, paramString, context, Integer.MIN_VALUE);
+    }
+
+    public static String doPost(String url, String paramString, HttpContext context, int timeout)
+            throws IOException {
+        return doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    public static String doPostJson(String url, String paramString, HttpContext context)
+            throws IOException {
+        return doPostJson(url, paramString, context, Integer.MIN_VALUE);
+    }
+
+    public static String doPostJson(
+            String url, String paramString, HttpContext context, int timeout) throws IOException {
+        return doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    public static String doPostXml(String url, String paramString, HttpContext context)
+            throws IOException {
+        return doPostXml(url, paramString, context, Integer.MIN_VALUE);
+    }
+
+    public static String doPostXml(String url, String paramString, HttpContext context, int timeout)
+            throws IOException {
+        return doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
+                Charsets.UTF_8);
+    }
+
+    // ----------------------------------------Segment-2-End-----------------------------------------
+
+    // ----------------------------------------Segment-3-Beg-----------------------------------------
 
     public static String doPostRetry(
             String url, Map<String, String> paramMap, String paramString, int timeout)
+            throws IOException {
+        return doPostRetry(url, paramMap, paramString, null, timeout);
+    }
+
+    public static String doPostRetry(
+            String url,
+            Map<String, String> paramMap,
+            String paramString,
+            HttpContext context,
+            int timeout)
             throws IOException {
         return doPost(
                 ClientSupport.httpSyncRetryClient,
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8);
     }
+    // ----------------------------------------Segment-3-End-----------------------------------------
 
     private static String doPost(
             HttpClient client,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.POST, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.POST,
+                url,
+                paramMap,
+                paramString,
+                context,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
+    // ----------------------------------------Segment-1-Beg-----------------------------------------
+
     public static void doPost(String url, OutputStream outputStream) throws IOException {
         doPost(url, new HashMap<>(), outputStream);
     }
@@ -570,6 +898,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramMap,
+                null,
                 timeout,
                 null,
                 Charsets.UTF_8,
@@ -580,13 +909,56 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             Map<String, String> paramMap,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        doPost(client, url, paramMap, null, timeout, headers, charset, outputStream);
+        doPost(client, url, paramMap, null, context, timeout, headers, charset, outputStream);
     }
+
+    public static void doPost(String url, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doPost(url, new HashMap<>(), context, outputStream);
+    }
+
+    public static void doPost(
+            String url, HttpContext context, int timeout, OutputStream outputStream)
+            throws IOException {
+        doPost(url, new HashMap<>(), context, timeout, outputStream);
+    }
+
+    public static void doPost(
+            String url,
+            Map<String, String> paramMap,
+            HttpContext context,
+            OutputStream outputStream)
+            throws IOException {
+        doPost(url, paramMap, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doPost(
+            String url,
+            Map<String, String> paramMap,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    // ----------------------------------------Segment-1-End-----------------------------------------
+
+    // ----------------------------------------Segment-2-Beg-----------------------------------------
 
     public static void doPost(String url, String paramString, OutputStream outputStream)
             throws IOException {
@@ -600,22 +972,16 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
-                timeout,
                 null,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8,
                 outputStream);
     }
 
     public static void doPostJson(String url, String paramString, OutputStream outputStream)
             throws IOException {
-        doPost(
-                ClientSupport.httpSyncClient,
-                url,
-                paramString,
-                Integer.MIN_VALUE,
-                HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
-                Charsets.UTF_8,
-                outputStream);
+        doPostJson(url, paramString, Integer.MIN_VALUE, outputStream);
     }
 
     public static void doPostJson(
@@ -625,6 +991,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
                 Charsets.UTF_8,
@@ -633,14 +1000,7 @@ public abstract class HttpTools {
 
     public static void doPostXml(String url, String paramString, OutputStream outputStream)
             throws IOException {
-        doPost(
-                ClientSupport.httpSyncClient,
-                url,
-                paramString,
-                Integer.MIN_VALUE,
-                HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8,
-                outputStream);
+        doPostXml(url, paramString, Integer.MIN_VALUE, outputStream);
     }
 
     public static void doPostXml(
@@ -650,6 +1010,7 @@ public abstract class HttpTools {
                 ClientSupport.httpSyncClient,
                 url,
                 paramString,
+                null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
                 Charsets.UTF_8,
@@ -660,13 +1021,90 @@ public abstract class HttpTools {
             HttpClient client,
             String url,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        doPost(client, url, null, paramString, timeout, headers, charset, outputStream);
+        doPost(client, url, null, paramString, context, timeout, headers, charset, outputStream);
     }
+
+    public static void doPost(
+            String url, String paramString, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doPost(url, paramString, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doPost(
+            String url,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    public static void doPostJson(
+            String url, String paramString, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doPostJson(url, paramString, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doPostJson(
+            String url,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    public static void doPostXml(
+            String url, String paramString, HttpContext context, OutputStream outputStream)
+            throws IOException {
+        doPostXml(url, paramString, context, Integer.MIN_VALUE, outputStream);
+    }
+
+    public static void doPostXml(
+            String url,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
+        doPost(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                context,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
+                Charsets.UTF_8,
+                outputStream);
+    }
+
+    // ----------------------------------------Segment-2-End-----------------------------------------
+
+    // ----------------------------------------Segment-3-Beg-----------------------------------------
 
     public static void doPostRetry(
             String url,
@@ -675,22 +1113,37 @@ public abstract class HttpTools {
             int timeout,
             OutputStream outputStream)
             throws IOException {
+        doPostRetry(url, paramMap, paramString, null, timeout, outputStream);
+    }
+
+    public static void doPostRetry(
+            String url,
+            Map<String, String> paramMap,
+            String paramString,
+            HttpContext context,
+            int timeout,
+            OutputStream outputStream)
+            throws IOException {
         doPost(
                 ClientSupport.httpSyncRetryClient,
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
                 Charsets.UTF_8,
                 outputStream);
     }
 
+    // ----------------------------------------Segment-3-End-----------------------------------------
+
     private static void doPost(
             HttpClient client,
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
@@ -702,6 +1155,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 headers,
                 charset,
@@ -726,7 +1180,13 @@ public abstract class HttpTools {
 
     public static String doPut(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doPut(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doPut(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doPut(
@@ -741,11 +1201,17 @@ public abstract class HttpTools {
     }
 
     public static String doPut(String url, String paramString) throws IOException {
-        return doPut(url, paramString, 1);
+        return doPut(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doPut(String url, String paramString, int timeout) throws IOException {
-        return doPut(ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+        return doPut(
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doPut(
@@ -782,10 +1248,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.PUT, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.PUT,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doPut(String url, OutputStream outputStream) throws IOException {
         doPut(url, new HashMap<>(), outputStream);
     }
@@ -888,6 +1363,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -912,7 +1388,13 @@ public abstract class HttpTools {
 
     public static String doPatch(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doPatch(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doPatch(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doPatch(
@@ -927,12 +1409,17 @@ public abstract class HttpTools {
     }
 
     public static String doPatch(String url, String paramString) throws IOException {
-        return doPatch(url, paramString, 1);
+        return doPatch(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doPatch(String url, String paramString, int timeout) throws IOException {
         return doPatch(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doPatch(
@@ -969,10 +1456,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.PATCH, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.PATCH,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doPatch(String url, OutputStream outputStream) throws IOException {
         doPatch(url, new HashMap<>(), outputStream);
     }
@@ -1076,6 +1572,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -1100,7 +1597,13 @@ public abstract class HttpTools {
 
     public static String doDelete(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doDelete(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doDelete(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doDelete(
@@ -1115,12 +1618,17 @@ public abstract class HttpTools {
     }
 
     public static String doDelete(String url, String paramString) throws IOException {
-        return doDelete(url, paramString, 1);
+        return doDelete(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doDelete(String url, String paramString, int timeout) throws IOException {
         return doDelete(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doDelete(
@@ -1157,10 +1665,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.DELETE, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.DELETE,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doDelete(String url, OutputStream outputStream) throws IOException {
         doDelete(url, new HashMap<>(), outputStream);
     }
@@ -1264,6 +1781,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -1289,7 +1807,12 @@ public abstract class HttpTools {
     public static String doOptions(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
         return doOptions(
-                ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doOptions(
@@ -1304,12 +1827,17 @@ public abstract class HttpTools {
     }
 
     public static String doOptions(String url, String paramString) throws IOException {
-        return doOptions(url, paramString, 1);
+        return doOptions(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doOptions(String url, String paramString, int timeout) throws IOException {
         return doOptions(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doOptions(
@@ -1346,10 +1874,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.OPTIONS, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.OPTIONS,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doOptions(String url, OutputStream outputStream) throws IOException {
         doOptions(url, new HashMap<>(), outputStream);
     }
@@ -1454,6 +1991,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -1478,7 +2016,13 @@ public abstract class HttpTools {
 
     public static String doTrace(String url, Map<String, String> paramMap, int timeout)
             throws IOException {
-        return doTrace(ClientSupport.httpSyncClient, url, paramMap, timeout, null, Charsets.UTF_8);
+        return doTrace(
+                ClientSupport.httpSyncClient,
+                url,
+                paramMap,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doTrace(
@@ -1493,12 +2037,17 @@ public abstract class HttpTools {
     }
 
     public static String doTrace(String url, String paramString) throws IOException {
-        return doTrace(url, paramString, 1);
+        return doTrace(url, paramString, Integer.MIN_VALUE);
     }
 
     public static String doTrace(String url, String paramString, int timeout) throws IOException {
         return doTrace(
-                ClientSupport.httpSyncClient, url, paramString, timeout, null, Charsets.UTF_8);
+                ClientSupport.httpSyncClient,
+                url,
+                paramString,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                Charsets.UTF_8);
     }
 
     public static String doTrace(
@@ -1535,10 +2084,19 @@ public abstract class HttpTools {
             Charset charset)
             throws IOException {
         return HttpSyncClient.execute(
-                client, HttpMethod.TRACE, url, paramMap, paramString, timeout, headers, charset);
+                client,
+                HttpMethod.TRACE,
+                url,
+                paramMap,
+                paramString,
+                null,
+                timeout,
+                headers,
+                charset);
     }
 
     // ================================================================================
+
     public static void doTrace(String url, OutputStream outputStream) throws IOException {
         doTrace(url, new HashMap<>(), outputStream);
     }
@@ -1642,6 +2200,7 @@ public abstract class HttpTools {
                 url,
                 paramMap,
                 paramString,
+                null,
                 timeout,
                 headers,
                 charset,
@@ -1649,37 +2208,5 @@ public abstract class HttpTools {
     }
 
     // ==============================TRACE-End==============================
-    private static final Semaphore concurrency = new Semaphore(1024);
 
-    public static void main(String[] args) {
-        concurrency.acquireUninterruptibly();
-        // step2 设置HttpUrlRequest
-
-        HttpGet httpGet = new HttpGet("http://www.baidu.com");
-
-        // step3 执行异步调用
-        HttpAsyncClient.getInstance()
-                .execute(
-                        httpGet,
-                        new FutureCallback<HttpResponse>() {
-                            @Override
-                            public void completed(HttpResponse httpResponse) {
-                                // 处理Http响应
-                                log.info("【Http异步】completed");
-                            }
-
-                            @Override
-                            public void failed(Exception e) {
-                                // 根据情况进行重试
-                                log.error("【Http异步】异常", e);
-                            }
-
-                            @Override
-                            public void cancelled() {
-                                // 记录失败日志
-                                log.info("【Http异步】canceller");
-                            }
-                        });
-        concurrency.release();
-    }
 }

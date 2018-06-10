@@ -15,12 +15,14 @@ package com.coding.wechat.component.http.generator;
 import com.coding.wechat.component.http.HttpConfig;
 import com.coding.wechat.component.http.HttpException;
 import org.apache.http.HttpHost;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -33,32 +35,29 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
     /** 默认的ssl生成器，可以通过带参ssl方法重新指定证书. */
     private SSLGenerator defaultSSL = SSLGenerator.custom();
 
-    private PoolingHttpClientConnectionManager poolingConnMgr;
+    /** 默认的连接池定义. */
+    private int maxTotal = HttpConfig.DEFAULT_MAX_TOTAL;
+
+    private int maxPerRoute = HttpConfig.DEFAULT_MAX_PER_ROUTE;
+    private Map<String, Integer> maxPerRouteMap = HttpConfig.maxPerRouteMap;
 
     private HttpSyncClientGenerator() {}
 
-    public static HttpSyncClientGenerator create() {
-        return new HttpSyncClientGenerator();
-    }
-
     public static HttpSyncClientGenerator custom() {
-        HttpSyncClientGenerator clientGenerator =
-                (HttpSyncClientGenerator)
-                        HttpSyncClientGenerator.create()
-                                .setUserAgent(HttpConfig.userAgent)
-                                .setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy);
-        return clientGenerator;
+        return (HttpSyncClientGenerator)
+                new HttpSyncClientGenerator()
+                        .setUserAgent(HttpConfig.userAgent)
+                        .setKeepAliveStrategy(HttpConfig.defaultConnectionStrategy);
     }
 
     /**
      * 设置默认证书
      *
      * @return -
-     * @throws HttpException -
      */
     public HttpSyncClientGenerator ssl() throws HttpException {
         this.defaultSSL = SSLGenerator.custom().ssl();
-        return pool();
+        return this;
     }
 
     /**
@@ -66,7 +65,6 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      *
      * @param keyStorePath - 密钥库路径
      * @return -
-     * @throws HttpException -
      */
     public HttpSyncClientGenerator ssl(String keyStorePath) {
         return ssl(keyStorePath, "nopassword");
@@ -78,21 +76,16 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      * @param keyStorePath - 密钥库路径
      * @param keyStorePass - 密钥库密码
      * @return -
-     * @throws HttpException -
      */
     public HttpSyncClientGenerator ssl(String keyStorePath, String keyStorePass) {
         this.defaultSSL = SSLGenerator.custom().ssl(keyStorePath, keyStorePass);
-        if (poolingConnMgr != null) {
-            return pool(poolingConnMgr.getMaxTotal(), poolingConnMgr.getDefaultMaxPerRoute());
-        }
-        return pool();
+        return this;
     }
 
     /**
      * 设置默认连接池.
      *
      * @return -
-     * @throws HttpException -
      */
     public HttpSyncClientGenerator pool() {
         return pool(HttpConfig.DEFAULT_MAX_TOTAL, HttpConfig.DEFAULT_MAX_PER_ROUTE);
@@ -103,27 +96,32 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      *
      * @param maxTotal - 最大连接数
      * @param maxPerRoute - 每个路由默认连接数
-     * @return
-     * @throws HttpException
+     * @return -
      */
     public HttpSyncClientGenerator pool(int maxTotal, int maxPerRoute) {
-        Registry<ConnectionSocketFactory> socketFactoryRegistry =
-                RegistryBuilder.<ConnectionSocketFactory>create()
-                        .register("http", PlainConnectionSocketFactory.INSTANCE)
-                        .register("https", defaultSSL.getSslConnFactory())
-                        .build();
-        poolingConnMgr = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
-        poolingConnMgr.setMaxTotal(maxTotal);
-        poolingConnMgr.setDefaultMaxPerRoute(maxPerRoute);
-        if (HttpConfig.maxPerRouteMap != null) {
-            for (Map.Entry<String, Integer> entry : HttpConfig.maxPerRouteMap.entrySet()) {
-                poolingConnMgr.setMaxPerRoute(
-                        new HttpRoute(HttpHost.create(entry.getKey())), entry.getValue());
-            }
+        return pool(maxTotal, maxPerRoute, null);
+    }
+
+    /**
+     * 设置连接池
+     *
+     * @param maxTotal - 最大连接数
+     * @param maxPerRoute - 路由默认的最大连接数
+     * @param maxPerRouteMap - 针对具体具体路由的足底啊连接数，参见{@linkplain HttpConfig#maxPerRouteMap}
+     * @return -
+     */
+    public HttpSyncClientGenerator pool(
+            int maxTotal, int maxPerRoute, Map<String, Integer> maxPerRouteMap) {
+        if (maxTotal > 0) {
+            this.maxTotal = maxTotal;
         }
-        poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
-        poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
-        return (HttpSyncClientGenerator) this.setConnectionManager(poolingConnMgr);
+        if (maxPerRoute > 0) {
+            this.maxPerRoute = maxPerRoute;
+        }
+        if (maxPerRouteMap != null) {
+            this.maxPerRouteMap = maxPerRouteMap;
+        }
+        return this;
     }
 
     /**
@@ -176,7 +174,32 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      * @return -
      */
     public HttpSyncClientGenerator retry() {
-        return (HttpSyncClientGenerator)
-                this.setRetryHandler(HttpConfig.defaultHttpRequestRetryHandler);
+        return retry(HttpConfig.defaultHttpRequestRetryHandler);
+    }
+
+    public HttpSyncClientGenerator retry(HttpRequestRetryHandler httpRequestRetryHandler) {
+        this.setRetryHandler(httpRequestRetryHandler);
+        return this;
+    }
+
+    @Override
+    public CloseableHttpClient build() {
+        Registry<ConnectionSocketFactory> socketFactoryRegistry =
+                RegistryBuilder.<ConnectionSocketFactory>create()
+                        .register("http", PlainConnectionSocketFactory.INSTANCE)
+                        .register("https", defaultSSL.getSslConnFactory())
+                        .build();
+        PoolingHttpClientConnectionManager poolingConnMgr =
+                new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+        poolingConnMgr.setMaxTotal(this.maxTotal);
+        poolingConnMgr.setDefaultMaxPerRoute(this.maxPerRoute);
+        for (Map.Entry<String, Integer> entry : this.maxPerRouteMap.entrySet()) {
+            poolingConnMgr.setMaxPerRoute(
+                    new HttpRoute(HttpHost.create(entry.getKey())), entry.getValue());
+        }
+        poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
+        poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
+        this.setConnectionManager(poolingConnMgr);
+        return super.build();
     }
 }

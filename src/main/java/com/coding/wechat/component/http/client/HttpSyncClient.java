@@ -28,6 +28,7 @@ import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.springframework.util.Assert;
 
@@ -64,6 +65,7 @@ public abstract class HttpSyncClient {
      * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
      * @param headers - 请求头
      * @param charset - 请求体编码
+     * @param context - 上下文
      * @throws IOException -
      */
     public static String execute(
@@ -72,6 +74,7 @@ public abstract class HttpSyncClient {
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset)
@@ -82,6 +85,7 @@ public abstract class HttpSyncClient {
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 headers,
                 charset,
@@ -107,6 +111,7 @@ public abstract class HttpSyncClient {
      * @param headers - 请求头
      * @param charset - 请求体编码
      * @param outputStream - 存放应答的输出流
+     * @param context - 上下文
      * @throws IOException -
      */
     public static void execute(
@@ -115,6 +120,7 @@ public abstract class HttpSyncClient {
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
@@ -126,6 +132,7 @@ public abstract class HttpSyncClient {
                 url,
                 paramMap,
                 paramString,
+                context,
                 timeout,
                 headers,
                 charset,
@@ -153,6 +160,7 @@ public abstract class HttpSyncClient {
      * @param charset - 请求体编码
      * @param responseHandler - 应答处理器，用来处理应答数据
      * @param <T> - 处理后的应答数据返回类型
+     * @param context - 上下文
      * @return - 应答结果
      * @throws IOException -
      */
@@ -162,6 +170,7 @@ public abstract class HttpSyncClient {
             String url,
             Map<String, String> paramMap,
             String paramString,
+            HttpContext context,
             int timeout,
             Header[] headers,
             Charset charset,
@@ -221,18 +230,27 @@ public abstract class HttpSyncClient {
             log.info("【Http】请求url={}", urlHost);
         }
 
-        return execute(client, httpRequest, charset, responseHandler);
+        return execute(client, httpRequest, charset, responseHandler, context);
     }
 
     private static <T> T execute(
             HttpClient client,
             HttpRequestBase httpRequest,
             Charset charset,
-            ResponseHandler<T> responseHandler)
+            ResponseHandler<T> responseHandler,
+            HttpContext context)
             throws IOException {
-        T result = client.execute(httpRequest, responseHandler);
+        T result;
+        if (context != null) {
+            result = client.execute(httpRequest, responseHandler, context);
+        } else {
+            result = client.execute(httpRequest, responseHandler);
+        }
         if (log.isDebugEnabled()) {
-            log.debug("【Http】应答result={}", result.toString());
+            log.debug(
+                    "【Http】应答内容大小={},应答内容={}",
+                    HttpSupport.getNetContentSize(result.toString().getBytes(charset).length),
+                    result.toString());
         } else {
             log.info(
                     "【Http】应答内容大小={}",
