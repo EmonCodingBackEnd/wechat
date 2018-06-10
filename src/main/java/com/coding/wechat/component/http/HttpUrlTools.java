@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.http;
 
-import com.coding.wechat.component.http.support.HttpMethod;
+import com.coding.wechat.component.http.property.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

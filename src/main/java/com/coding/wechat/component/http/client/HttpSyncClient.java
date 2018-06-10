@@ -13,7 +13,7 @@
 package com.coding.wechat.component.http.client;
 
 import com.coding.wechat.component.http.HttpConfig;
-import com.coding.wechat.component.http.support.HttpMethod;
+import com.coding.wechat.component.http.property.HttpMethod;
 import com.coding.wechat.component.http.support.HttpSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
@@ -221,17 +221,22 @@ public abstract class HttpSyncClient {
             log.info("【Http】请求url={}", urlHost);
         }
 
-        return execute(client, httpRequest, responseHandler);
+        return execute(client, httpRequest, charset, responseHandler);
     }
 
     private static <T> T execute(
-            HttpClient client, HttpRequestBase httpRequest, ResponseHandler<T> responseHandler)
+            HttpClient client,
+            HttpRequestBase httpRequest,
+            Charset charset,
+            ResponseHandler<T> responseHandler)
             throws IOException {
         T result = client.execute(httpRequest, responseHandler);
         if (log.isDebugEnabled()) {
             log.debug("【Http】应答result={}", result.toString());
         } else {
-            log.info("【Http】应答内容长度={}", result.toString().length());
+            log.info(
+                    "【Http】应答内容大小={}",
+                    HttpSupport.getNetContentSize(result.toString().getBytes(charset).length));
         }
 
         return result;

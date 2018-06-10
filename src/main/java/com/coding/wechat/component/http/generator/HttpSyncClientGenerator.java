@@ -18,11 +18,14 @@ import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+
+import java.util.Map;
 
 /** Http同步客户端生成器 */
 public class HttpSyncClientGenerator extends HttpClientBuilder {
@@ -112,8 +115,12 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
         poolingConnMgr = new PoolingHttpClientConnectionManager(socketFactoryRegistry);
         poolingConnMgr.setMaxTotal(maxTotal);
         poolingConnMgr.setDefaultMaxPerRoute(maxPerRoute);
-        /// TODO: 2018/6/9 分route设置连接池数量
-        //        poolingConnMgr.setMaxPerRoute();
+        if (HttpConfig.maxPerRouteMap != null) {
+            for (Map.Entry<String, Integer> entry : HttpConfig.maxPerRouteMap.entrySet()) {
+                poolingConnMgr.setMaxPerRoute(
+                        new HttpRoute(HttpHost.create(entry.getKey())), entry.getValue());
+            }
+        }
         poolingConnMgr.setValidateAfterInactivity(HttpConfig.DEFAULT_VALIDATE_AFTER_INACTIVITY);
         poolingConnMgr.setDefaultConnectionConfig(HttpConfig.defaultConnectionConfig);
         return (HttpSyncClientGenerator) this.setConnectionManager(poolingConnMgr);
@@ -158,7 +165,7 @@ public class HttpSyncClientGenerator extends HttpClientBuilder {
      * @return -
      */
     public HttpSyncClientGenerator proxy(String hostOrIP, int port) {
-        HttpHost proxy = new HttpHost(hostOrIP, port, "http");
+        HttpHost proxy = new HttpHost(hostOrIP, port, HttpHost.DEFAULT_SCHEME_NAME);
         DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
         return (HttpSyncClientGenerator) this.setRoutePlanner(routePlanner);
     }

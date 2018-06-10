@@ -70,7 +70,7 @@ public class HttpConfig {
     /** 请求的超时时间(建立连接后，等待response返回的时间). */
     public static final int DEFAULT_SOCKET_TIMEOUT = 5000;
     /** 从连接池中获取连接的超时时间. */
-    public static final int DEFAULT_TIMEOUT = 2000;
+    public static final int DEFAULT_TIMEOUT = 3000;
 
     /** 默认连接配置. */
     public static final ConnectionConfig defaultConnectionConfig;
@@ -96,13 +96,31 @@ public class HttpConfig {
 
     public static final boolean activeIdleConnectionMonitor = false;
 
-    // TODO: 2018/6/9 分route设置连接池数量的Support
-    //    private static final Map<String, Integer> keepAliveHostMap;
+    /**
+     * 建议所有的maxPerRoute的总和，小于系统支持线程总量的一半.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180610 09:59</font><br>
+     *
+     * <p>示例如下： <br>
+     * key=www.baidu.com, value=100<br>
+     * key=http:www.baidu.com, value=100<br>
+     * key=https:www.baidu.com, value=100<br>
+     * key=http:www.baidu.com:80, value=100<br>
+     * key=https:www.baidu.com:80, value=100<br>
+     * 其中，key的默认schema是http，默认端口是80
+     *
+     * @since 1.0.0
+     */
+    public static final Map<String, Integer> maxPerRouteMap;
 
     static {
         keepAliveHostMap = new HashMap<>();
         keepAliveHostMap.put("www.baidu.com", 30);
         keepAliveHostMap.put("exp.mynatapp.cc", 10);
+
+        maxPerRouteMap = new HashMap<>();
+        maxPerRouteMap.put("www.baidu.com", 100);
+        maxPerRouteMap.put("exp.mynatapp.cc", 20);
     }
 
     static {

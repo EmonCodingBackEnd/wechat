@@ -13,6 +13,7 @@
 package com.coding.wechat.component.http.support;
 
 import com.coding.wechat.component.http.generator.HeaderGeneretor;
+import com.coding.wechat.component.http.property.ContentType;
 import org.apache.http.Header;
 import org.apache.http.protocol.HTTP;
 

@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180609-01         Rushing0711     M201806091026 新建文件
  ********************************************************************************/
-package com.coding.wechat.component.http.support;
+package com.coding.wechat.component.http.property;
 
 /**
  * Http的ContentType定义.

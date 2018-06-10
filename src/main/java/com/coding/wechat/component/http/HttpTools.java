@@ -15,7 +15,7 @@ package com.coding.wechat.component.http;
 import com.coding.wechat.component.http.client.HttpAsyncClient;
 import com.coding.wechat.component.http.client.HttpSyncClient;
 import com.coding.wechat.component.http.support.ClientSupport;
-import com.coding.wechat.component.http.support.HttpMethod;
+import com.coding.wechat.component.http.property.HttpMethod;
 import com.coding.wechat.component.http.support.HeaderSupport;
 import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;

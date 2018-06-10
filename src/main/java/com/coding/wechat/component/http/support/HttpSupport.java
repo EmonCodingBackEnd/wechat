@@ -16,6 +16,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.util.Assert;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,8 @@ public abstract class HttpSupport {
      *
      * @param url - url，形如：http://www.baidu.com?key1=val1&key2=val2
      * @param pairList - 以NameValuePair<key,val>作为元素的List
-     * @return java.lang.String - 处理后的url，http://www.baidu.com?key1=val1&key2=val2 <font style="color:#FF0000"></font>=>
-     *     http://www.baidu.com
+     * @return java.lang.String - 处理后的url，http://www.baidu.com?key1=val1&key2=val2 <font
+     *     style="color:#FF0000"></font>=> http://www.baidu.com
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -117,5 +118,30 @@ public abstract class HttpSupport {
             map.put(param[0], param[1]);
         }
         return map;
+    }
+
+    public static String getNetContentSize(int size) {
+        int GB = 1024 * 1024 * 1024; // 定义GB的计算常量
+        int MB = 1024 * 1024; // 定义MB的计算常量
+        int KB = 1024; // 定义KB的计算常量
+        DecimalFormat decimalFormat = new DecimalFormat("#,###.000"); // 格式化小数
+        String result = "";
+        if (size / GB >= 1) {
+            // 如果当前Byte的值大于等于1GB
+            result = decimalFormat.format(size / (float) GB) + "GB";
+        } else if (size / MB >= 1) {
+            // 如果当前Byte的值大于等于1MB
+            result = decimalFormat.format(size / (float) MB) + "MB";
+        } else if (size / KB >= 1) {
+            // 如果当前Byte的值大于等于1KB
+            result = decimalFormat.format(size / (float) KB) + "KB";
+        } else {
+            if (size < 0) {
+                result = "0B";
+            } else {
+                result = size + "B";
+            }
+        }
+        return result;
     }
 }

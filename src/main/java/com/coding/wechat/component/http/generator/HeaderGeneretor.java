@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.http.generator;
 
-import com.coding.wechat.component.http.support.HttpRequestHeader;
+import com.coding.wechat.component.http.property.HttpRequestHeader;
 import org.apache.http.Header;
 import org.apache.http.message.BasicHeader;
 
