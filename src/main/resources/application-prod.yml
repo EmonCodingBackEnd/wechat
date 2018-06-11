@@ -2,3 +2,23 @@ wechat:
   appId: wx4d1f59cc41e1c601
   appSecret: 5cb8a75bd031b350957fa7e7d5e357eb
   token: emonnote
+
+# 项目通用配置
+common:
+  uploadUrl: https://img.tamizoo.cn/upload
+  orderTimeOut: 15
+  wxOderTimeDiff: 5
+
+#spring:
+#  cache:
+#    type: redis
+#    cache-names: redisCache
+#  redis:
+#    database: 0
+#    host: 172.19.219.184
+#    port: 6379
+#    timeout: 0
+#    password: ss541018
+#    sentinel:
+#      master: mymaster
+#      nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399

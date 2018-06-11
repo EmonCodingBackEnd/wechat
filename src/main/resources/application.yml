@@ -25,3 +25,9 @@ wechat:
     listMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=ACCESS_TOKEN
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
+
+# 定时任务线程池配置
+timerPool:
+  corePoolSize: 10
+  maxPoolSize: 200
+  queueCapacity: 10

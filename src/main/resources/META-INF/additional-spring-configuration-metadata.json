@@ -59,6 +59,21 @@
       "name": "wechat.material.listMaterialUrl",
       "type": "java.lang.String",
       "description": "Description for wechat.material.listMaterialUrl."
+    },
+    {
+      "name": "timerPool.corePoolSize",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.corePoolSize."
+    },
+    {
+      "name": "timerPool.maxPoolSize",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.maxPoolSize."
+    },
+    {
+      "name": "timerPool.queueCapacity",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.queueCapacity."
     }
   ]
 }
