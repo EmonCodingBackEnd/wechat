@@ -13,29 +13,19 @@
 package com.coding.wechat.component.http;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.Charsets;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.ConnectionConfig;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
-import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.message.BasicHeaderElementIterator;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.ssl.SSLContexts;
-import org.springframework.util.StringUtils;
 
-import javax.net.ssl.SSLContext;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TooManyListenersException;
 
 /**
  * Http配置参数.
@@ -125,7 +115,7 @@ public class HttpConfig {
 
     static {
         // 默认连接配置
-        defaultConnectionConfig = ConnectionConfig.custom().setCharset(Charsets.UTF_8).build();
+        defaultConnectionConfig = ConnectionConfig.custom().setCharset(StandardCharsets.UTF_8).build();
 
         // 连接保持策略
         defaultConnectionStrategy =

@@ -12,28 +12,21 @@
  ********************************************************************************/
 package com.coding.wechat.component.http;
 
-import com.coding.wechat.component.http.client.HttpAsyncClient;
 import com.coding.wechat.component.http.client.HttpSyncClient;
-import com.coding.wechat.component.http.support.ClientSupport;
 import com.coding.wechat.component.http.property.HttpMethod;
+import com.coding.wechat.component.http.support.ClientSupport;
 import com.coding.wechat.component.http.support.HeaderSupport;
-import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.protocol.HttpContext;
-import org.hibernate.cfg.annotations.HCANNHelper;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.channels.ShutdownChannelGroupException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 
 /**
  * Http工具.
@@ -73,7 +66,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doGet(
@@ -111,7 +104,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     // ----------------------------------------Segment-1-End-----------------------------------------
@@ -130,7 +123,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doGet(
@@ -159,7 +152,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     // ----------------------------------------Segment-2-End-----------------------------------------
@@ -176,7 +169,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doGetRetry(
@@ -194,7 +187,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     // ----------------------------------------Segment-3-End-----------------------------------------
@@ -249,7 +242,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -300,7 +293,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -322,7 +315,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -359,7 +352,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -382,7 +375,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -402,7 +395,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -456,7 +449,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doHead(
@@ -481,7 +474,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doHead(
@@ -505,7 +498,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doHead(
@@ -554,7 +547,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -584,7 +577,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -614,7 +607,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -667,7 +660,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPost(
@@ -706,7 +699,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 null,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     // ----------------------------------------Segment-1-End-----------------------------------------
@@ -725,7 +718,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPostJson(String url, String paramString) throws IOException {
@@ -741,7 +734,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPostXml(String url, String paramString) throws IOException {
@@ -756,7 +749,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPost(
@@ -785,7 +778,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPostJson(String url, String paramString, HttpContext context)
@@ -802,7 +795,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPostXml(String url, String paramString, HttpContext context)
@@ -819,7 +812,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     // ----------------------------------------Segment-2-End-----------------------------------------
@@ -847,7 +840,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
     // ----------------------------------------Segment-3-End-----------------------------------------
 
@@ -901,7 +894,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -952,7 +945,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -975,7 +968,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -994,7 +987,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1013,7 +1006,7 @@ public abstract class HttpTools {
                 null,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1050,7 +1043,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1074,7 +1067,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_JSON_UTF8_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1098,7 +1091,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_XML_UTF8_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1132,7 +1125,7 @@ public abstract class HttpTools {
                 context,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1186,7 +1179,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPut(
@@ -1211,7 +1204,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPut(
@@ -1235,7 +1228,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doPut(
@@ -1284,7 +1277,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1313,7 +1306,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1343,7 +1336,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1394,7 +1387,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPatch(
@@ -1419,7 +1412,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doPatch(
@@ -1443,7 +1436,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doPatch(
@@ -1492,7 +1485,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1522,7 +1515,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1552,7 +1545,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1603,7 +1596,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doDelete(
@@ -1628,7 +1621,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doDelete(
@@ -1652,7 +1645,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doDelete(
@@ -1701,7 +1694,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1731,7 +1724,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1761,7 +1754,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1812,7 +1805,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doOptions(
@@ -1837,7 +1830,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doOptions(
@@ -1861,7 +1854,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doOptions(
@@ -1911,7 +1904,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1941,7 +1934,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -1971,7 +1964,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -2022,7 +2015,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doTrace(
@@ -2047,7 +2040,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     public static String doTrace(
@@ -2071,7 +2064,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8);
+                StandardCharsets.UTF_8);
     }
 
     private static String doTrace(
@@ -2120,7 +2113,7 @@ public abstract class HttpTools {
                 paramMap,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -2150,7 +2143,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 null,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 
@@ -2180,7 +2173,7 @@ public abstract class HttpTools {
                 paramString,
                 timeout,
                 HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                Charsets.UTF_8,
+                StandardCharsets.UTF_8,
                 outputStream);
     }
 

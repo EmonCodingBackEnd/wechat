@@ -5,10 +5,10 @@
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.
  * 功能说明：[请在此处输入功能说明]
  * 开发人员：Rushing0711
- * 创建日期：20180611 00:45
+ * 创建日期：20180424 15:10
  * 修改记录：
  * <Version>        <DateSerial>        <Author>        <Description>
- * 1.0.0            20180611-01         Rushing0711     M201806110045 新建文件
+ * 1.0.0            20180424-01         Rushing0711     M201804241510 新建文件
  ********************************************************************************/
 package com.coding.wechat.component.regex;
 
@@ -18,10 +18,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 正则表达式匹配结果类.
+ * 正则表达式解析结果类.
  *
- * <p>创建时间: <font style="color:#00FFFF">20180611 00:45</font><br>
- * [请在此输入功能详述]
+ * <p>创建时间: <font style="color:#00FFFF">20180424 18:08</font><br>
+ * 一般而言，使用RegResult就可以了；如果要更方便的获取正则解析结果，可以自定义子类，继承RegexResult。<br>
+ * 重点要实现：<br>
+ *
+ * <ul>
+ *   <li>私有无参构造函数
+ *   <li>公有静态instance()方法，创建实例
+ *   <li>该类及其子类并不是单例模式，但屏蔽了无参构造器的调用，强制统一调用instance构造
+ * </ul>
  *
  * @author Rushing0711
  * @version 1.0.0
@@ -40,8 +47,8 @@ public class RegexResult {
     protected RegexResult() {
         super();
         this.matched = false;
-        this.result = new HashMap<String, Object>();
-        this.extraData = new HashMap<String, Object>();
+        this.result = new HashMap<>();
+        this.extraData = new HashMap<>();
     }
 
     public boolean isMatched() {
