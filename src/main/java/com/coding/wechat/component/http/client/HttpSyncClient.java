@@ -72,10 +72,10 @@ public abstract class HttpSyncClient {
      * @param url - 请求地址
      * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
      * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param context - 上下文
      * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
      * @param headers - 请求头
      * @param charset - 请求体编码
-     * @param context - 上下文
      * @throws IOException -
      */
     public static String execute(
@@ -117,11 +117,11 @@ public abstract class HttpSyncClient {
      * @param url - 请求地址
      * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
      * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param context - 上下文
      * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
      * @param headers - 请求头
      * @param charset - 请求体编码
      * @param outputStream - 存放应答的输出流
-     * @param context - 上下文
      * @throws IOException -
      */
     public static void execute(
@@ -262,7 +262,7 @@ public abstract class HttpSyncClient {
                     httpRequest.setURI(new URI(String.format("%s?%s", uri, param)));
                 }
             } catch (URISyntaxException e) {
-                log.error("【Http】{}请求地址解析错误", e);
+                log.error("【Http】请求地址解析错误", e);
                 throw new HttpException(e);
             }
         }
