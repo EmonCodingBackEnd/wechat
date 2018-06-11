@@ -19,6 +19,7 @@ import com.coding.wechat.component.http.support.HeaderSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
@@ -256,7 +257,7 @@ public abstract class HttpTools {
             Charset charset,
             OutputStream outputStream)
             throws IOException {
-        doGet(client, url, paramMap, context, timeout, headers, charset, outputStream);
+        doGet(client, url, paramMap, null, context, timeout, headers, charset, outputStream);
     }
 
     public static void doGet(String url, HttpContext context, OutputStream outputStream)
@@ -367,16 +368,7 @@ public abstract class HttpTools {
             int timeout,
             OutputStream outputStream)
             throws IOException {
-        doGet(
-                ClientSupport.httpSyncRetryClient,
-                url,
-                paramMap,
-                paramString,
-                null,
-                timeout,
-                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
-                StandardCharsets.UTF_8,
-                outputStream);
+        doGetRetry(url, paramMap, paramString, null, timeout, outputStream);
     }
 
     public static void doGetRetry(
@@ -423,6 +415,25 @@ public abstract class HttpTools {
                 headers,
                 charset,
                 outputStream);
+    }
+
+    public static Long doGet(String url, ResponseHandler<Long> responseHandler) throws IOException {
+        return doGet(url, Integer.MIN_VALUE, responseHandler);
+    }
+
+    public static Long doGet(String url, int timeout, ResponseHandler<Long> responseHandler)
+            throws IOException {
+        return HttpSyncClient.execute(
+                ClientSupport.httpSyncClient,
+                HttpMethod.GET,
+                url,
+                null,
+                null,
+                null,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                StandardCharsets.UTF_8,
+                responseHandler);
     }
 
     // ==============================GET-End==============================
@@ -1153,6 +1164,26 @@ public abstract class HttpTools {
                 headers,
                 charset,
                 outputStream);
+    }
+
+    public static Long doPost(String url, ResponseHandler<Long> responseHandler)
+            throws IOException {
+        return doPost(url, Integer.MIN_VALUE, responseHandler);
+    }
+
+    public static Long doPost(String url, int timeout, ResponseHandler<Long> responseHandler)
+            throws IOException {
+        return HttpSyncClient.execute(
+                ClientSupport.httpSyncClient,
+                HttpMethod.POST,
+                url,
+                null,
+                null,
+                null,
+                timeout,
+                HeaderSupport.KEEP_ALIVE_ENCODED_HEADERS,
+                StandardCharsets.UTF_8,
+                responseHandler);
     }
 
     // ==============================POST-End==============================

@@ -120,7 +120,7 @@ public abstract class HttpSupport {
         return map;
     }
 
-    public static String getNetContentSize(int size) {
+    public static String getNetContentSize(long size) {
         int GB = 1024 * 1024 * 1024; // 定义GB的计算常量
         int MB = 1024 * 1024; // 定义MB的计算常量
         int KB = 1024; // 定义KB的计算常量

@@ -72,10 +72,10 @@ public abstract class HttpSyncClient {
      * @param url - 请求地址
      * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
      * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
-     * @param context - 上下文
      * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
      * @param headers - 请求头
      * @param charset - 请求体编码
+     * @param context - 上下文
      * @throws IOException -
      */
     public static String execute(
@@ -149,6 +149,9 @@ public abstract class HttpSyncClient {
                 new AbstractResponseHandler<String>() {
                     @Override
                     public String handleEntity(HttpEntity entity) throws IOException {
+                        log.info(
+                                "【Http】应答内容大小={}",
+                                HttpSupport.getNetContentSize(entity.getContentLength()));
                         entity.writeTo(outputStream);
                         return null;
                     }
@@ -165,12 +168,12 @@ public abstract class HttpSyncClient {
      * @param url - 请求地址
      * @param paramMap - <key,value>格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法
      * @param paramString - 字符串格式的请求参数，仅限于POST、PUT、PATCH、DELETE方法，适用于json、xml等请求参数
+     * @param context - 上下文
      * @param timeout - 超时时间，-1表示永不超时，小于-1会被重置为默认值，单位：毫秒
      * @param headers - 请求头
      * @param charset - 请求体编码
      * @param responseHandler - 应答处理器，用来处理应答数据
      * @param <T> - 处理后的应答数据返回类型
-     * @param context - 上下文
      * @return - 应答结果
      * @throws IOException -
      */
@@ -210,10 +213,12 @@ public abstract class HttpSyncClient {
             }
             uri = urlRegexResult.getUri();
             param = urlRegexResult.getParam();
-            List<NameValuePair> paramList =
-                    HttpSupport.convertToPairList(
-                            HttpSupport.buildParams(urlRegexResult.getParam()));
-            pairList.addAll(paramList);
+            if (!StringUtils.isEmpty(param)) {
+                List<NameValuePair> paramList =
+                        HttpSupport.convertToPairList(
+                                HttpSupport.buildParams(urlRegexResult.getParam()));
+                pairList.addAll(paramList);
+            }
         } else if (!CollectionUtils.isEmpty(paramMap) && StringUtils.isEmpty(paramString)) {
             UriRegexResult uriRegexResult = RegexSupport.matchUri(url);
             if (!uriRegexResult.isMatched()) {
@@ -300,15 +305,24 @@ public abstract class HttpSyncClient {
         } else {
             result = client.execute(httpRequest, responseHandler);
         }
-        if (log.isDebugEnabled()) {
-            log.debug(
-                    "【Http】应答内容大小={},应答内容={}",
-                    HttpSupport.getNetContentSize(result.toString().getBytes(charset).length),
-                    result);
-        } else {
-            log.info(
-                    "【Http】应答内容大小={}",
-                    HttpSupport.getNetContentSize(result.toString().getBytes(charset).length));
+        if (result != null) {
+            if (Long.class.isAssignableFrom(result.getClass())
+                    || Integer.class.isAssignableFrom(result.getClass())) {
+                log.info("【Http】应答内容大小={}", HttpSupport.getNetContentSize((Long) result));
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug(
+                            "【Http】应答内容大小={},应答内容={}",
+                            HttpSupport.getNetContentSize(
+                                    result.toString().getBytes(charset).length),
+                            result);
+                } else {
+                    log.info(
+                            "【Http】应答内容大小={}",
+                            HttpSupport.getNetContentSize(
+                                    result.toString().getBytes(charset).length));
+                }
+            }
         }
 
         return result;
