@@ -13,8 +13,8 @@
 package com.coding.wechat.controller;
 
 import com.coding.wechat.component.http.HttpException;
-import com.coding.wechat.config.WechatConfig;
 import com.coding.wechat.component.http.HttpTools;
+import com.coding.wechat.config.WechatConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.Charsets;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -78,9 +77,12 @@ public class HttpController {
     @GetMapping(value = "readByUrl")
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
         String decodeUrl = URLDecoder.decode(urlStr, Charsets.UTF_8.name());
+        /*response.setContentType("audio/mpeg");
+        OutputStream out = response.getOutputStream();
+        HttpTools.doGet(decodeUrl, out);
+        out.flush();
+        out.close();*/
         response.setContentType("text/html;charset=UTF-8");
-        /* OutputStream out = response.getOutputStream();
-        HttpClientUtils.doGet(decodeUrl, out);*/
         String result = HttpTools.doGet(decodeUrl);
         result =
                 result.replace(

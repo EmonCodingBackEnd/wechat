@@ -18,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executor;
 
@@ -34,8 +32,7 @@ import java.util.concurrent.Executor;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Component
-@EnableAsync
+//@Component
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer {
 

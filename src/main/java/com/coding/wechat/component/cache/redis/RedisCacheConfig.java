@@ -33,8 +33,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @version 1.0.0
  * @since 1.0.0
  */
-//@Configuration
-//@EnableCaching
+// @Configuration
 public class RedisCacheConfig {
 
     /**

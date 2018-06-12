@@ -14,8 +14,9 @@ package com.coding.wechat.component.timer.schedule.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Scheduled;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时器任务类.
@@ -27,8 +28,7 @@ import org.springframework.stereotype.Component;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Component
-@EnableScheduling
+// @Component
 @Async
 @Slf4j
 public class ScheduledTask {
@@ -44,29 +44,60 @@ public class ScheduledTask {
      * - 秒(0-59)         , - * /
      * - 分(0-59)         , - * /
      * - 时(0-23)         , - * /
-     * - 天(0-31)         , - * /
-     * - 月(0-11)         , - * / ?
+     * - 天(0-31)         , - * / ?
+     * - 月(1-12)         , - * /
      * - 星期(1-7 1=SUN，或者SUN,MON,TUE,WED,THU,FRI,AST)    , - * / ? L C #
      * - 年(1970-2099)    , - * /                        【Spring不支持年位定制】
      * 其中： , 表示单值，比如： 0 0 10,14,16 * * ?    含义：每天上午10点，下午2点和4点执行
      *       - 表示区间，比如： 0 0 10-16 * * ?       含义：每天上午10点到下午4点的每个小时
      *       / 表示每隔，比如： 0/5 * * * * *         含义：每隔5秒
      *       ? 只能用于月与星期，月与星期的天数，可能冲突，所以可以用?指定其中某一个指不需要设置
+     *       # 只能用于星期，表示第几个星期；比如2#2，表示第二个星期二。
      * 其他的使用方式，请自行搜索cron表达式。
      * 这里有一个cron表达式生成器： http://cron.qqe2.com/
      */
 
-    /*@Scheduled(cron = "0 0/1 * * * *")
-    public void scheduled() throws InterruptedException {
-        log.info("=====>>>>>使用cron1  {}", System.currentTimeMillis() / 1000);
-        TimeUnit.SECONDS.sleep(10);
-        log.info(Thread.currentThread().getId() + "今夕何夕1");
+    // 上一次任务执行完毕，到下一次任务执行开始的时间
+    @Scheduled(fixedDelay = 10000)
+    public void scheduled11() throws InterruptedException {
+        log.info("=====>>>>>开始fixedDelay1  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束fixedDelay1  {}", Thread.currentThread().getId());
     }
 
-    @Scheduled(cron = "0/30 * * * * *")
-    public void scheduled2() throws InterruptedException {
-        log.info("=====>>>>>使用cron2  {}", System.currentTimeMillis() / 1000);
-        TimeUnit.SECONDS.sleep(10);
-        log.info(Thread.currentThread().getId() + "今夕何夕2");
+    /*@Scheduled(fixedDelay = 10000)
+    public void scheduled12() throws InterruptedException {
+        log.info("=====>>>>>开始fixedDelay2  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束fixedDelay2  {}", Thread.currentThread().getId());
+    }*/
+
+    // 上一次任务执行开始，到下一次任务执行开始的时间
+    @Scheduled(fixedRate = 10000)
+    public void scheduled21() throws InterruptedException {
+        log.info("=====>>>>>开始fixedRate1  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束fixedRate1  {}", Thread.currentThread().getId());
+    }
+
+    /*@Scheduled(fixedRate = 10000)
+    public void scheduled22() throws InterruptedException {
+        log.info("=====>>>>>开始fixedRate2  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束fixedRate2  {}", Thread.currentThread().getId());
+    }*/
+
+    @Scheduled(cron = "0/10 * * * * *")
+    public void scheduled31() throws InterruptedException {
+        log.info("=====>>>>>开始cron1  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getId());
+    }
+
+    /*@Scheduled(cron = "0/10 * * * * *")
+    public void scheduled32() throws InterruptedException {
+        log.info("=====>>>>>开始cron2  {}", System.currentTimeMillis() / 1000);
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束cron2  {}", Thread.currentThread().getId());
     }*/
 }
