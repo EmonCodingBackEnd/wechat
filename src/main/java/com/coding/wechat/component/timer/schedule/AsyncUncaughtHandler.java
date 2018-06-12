@@ -32,7 +32,7 @@ public class AsyncUncaughtHandler implements AsyncUncaughtExceptionHandler {
 
     @Override
     public void handleUncaughtException(Throwable throwable, Method method, Object... objects) {
-        String message = String.format("【异步方法执行异常】method=%s", method.getName());
+        String message = String.format("【异步方法执行】异常,method=%s", method.getName());
         log.error(message, throwable);
     }
 }

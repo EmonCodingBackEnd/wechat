@@ -31,3 +31,5 @@ timerPool:
   corePoolSize: 10
   maxPoolSize: 200
   queueCapacity: 10
+  keeyAliveSecond: 60
+  awaitTerminationSeconds: 60

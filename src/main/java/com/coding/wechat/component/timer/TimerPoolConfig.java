@@ -26,4 +26,8 @@ public class TimerPoolConfig {
     private int maxPoolSize;
 
     private int queueCapacity;
+
+    private int keeyAliveSecond;
+
+    private int awaitTerminationSeconds;
 }

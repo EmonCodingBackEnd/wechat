@@ -74,6 +74,16 @@
       "name": "timerPool.queueCapacity",
       "type": "java.lang.String",
       "description": "Description for timerPool.queueCapacity."
+    },
+    {
+      "name": "timerPool.keeyAliveSecond",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.keeyAliveSecond."
+    },
+    {
+      "name": "timerPool.awaitTerminationSeconds",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.awaitTerminationSeconds."
     }
   ]
 }

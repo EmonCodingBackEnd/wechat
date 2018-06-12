@@ -51,7 +51,7 @@ public class DelayQueueDaemonThread {
         delayQueueExecutor.setCorePoolSize(timerPoolConfig.getCorePoolSize());
         delayQueueExecutor.setMaxPoolSize(timerPoolConfig.getMaxPoolSize());
         delayQueueExecutor.setQueueCapacity(timerPoolConfig.getQueueCapacity());
-        delayQueueExecutor.setThreadNamePrefix(Consts.C_COMMON.DELAY_THREAD_PREFIX);
+        delayQueueExecutor.setThreadNamePrefix(Consts.C_COMMON.TIMER_DELAY_THREAD_PREFIX);
         delayQueueExecutor.initialize();
 
         Thread daemonThread = new Thread(() -> execute());

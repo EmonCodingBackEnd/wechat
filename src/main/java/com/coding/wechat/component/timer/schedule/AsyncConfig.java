@@ -19,8 +19,10 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 异步任务配置.
@@ -32,7 +34,7 @@ import java.util.concurrent.Executor;
  * @version 1.0.0
  * @since 1.0.0
  */
-//@Component
+@Component
 @Slf4j
 public class AsyncConfig implements AsyncConfigurer {
 
@@ -49,7 +51,13 @@ public class AsyncConfig implements AsyncConfigurer {
         executor.setCorePoolSize(timerPoolConfig.getCorePoolSize());
         executor.setMaxPoolSize(timerPoolConfig.getMaxPoolSize());
         executor.setQueueCapacity(timerPoolConfig.getQueueCapacity());
-        executor.setThreadNamePrefix(Consts.C_COMMON.SCHEDULE_THREAD_PREFIX);
+        executor.setKeepAliveSeconds(timerPoolConfig.getKeeyAliveSecond());
+        executor.setThreadNamePrefix(Consts.C_COMMON.TIMER_ASYNC_THREAD_PREFIX);
+        /*
+         * Rejected-policy：当pool已经达到max size的时候，如何处理新任务。
+         * CALLER_RUNS：不在新县城中执行任务，而是由调用者所在的线程来执行。
+         */
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         executor.initialize();
         return executor;
     }
