@@ -21,13 +21,47 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "timerPool")
 public class TimerPoolConfig {
 
-    private int corePoolSize;
+    private Delay delay;
 
-    private int maxPoolSize;
+    private Schedule schedule;
 
-    private int queueCapacity;
+    private Async async;
 
-    private int keeyAliveSecond;
+    @Data
+    public static class Delay {
+        private String threadNamePrefix;
 
-    private int awaitTerminationSeconds;
+        private int corePoolSize;
+
+        private int maxPoolSize;
+
+        private int queueCapacity;
+
+        private int keeyAliveSecond;
+
+        private String delayTaskQueueDaemonThreadName;
+    }
+
+    @Data
+    public static class Schedule {
+
+        private String threadNamePrefix;
+
+        private int poolSize;
+
+        private int awaitTerminationSeconds;
+    }
+
+    @Data
+    public static class Async {
+        private String threadNamePrefix;
+
+        private int corePoolSize;
+
+        private int maxPoolSize;
+
+        private int queueCapacity;
+
+        private int keeyAliveSecond;
+    }
 }

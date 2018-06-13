@@ -28,8 +28,20 @@ logging:
 
 # 定时任务线程池配置
 timerPool:
-  corePoolSize: 10
-  maxPoolSize: 200
-  queueCapacity: 10
-  keeyAliveSecond: 60
-  awaitTerminationSeconds: 60
+  delay:
+    threadNamePrefix: TIMER_DELAY-
+    corePoolSize: 10
+    maxPoolSize: 200
+    queueCapacity: 1000
+    keeyAliveSecond: 60
+    delayTaskQueueDaemonThreadName: DelayTaskQueueDaemonThread
+  schedule:
+    threadNamePrefix: TIMER_SCHEDULE-
+    poolSize: 50
+    awaitTerminationSeconds: 60
+  async:
+    threadNamePrefix: TIMER_ASYNC-
+    corePoolSize: 10
+    maxPoolSize: 50
+    queueCapacity: 100
+    keeyAliveSecond: 60

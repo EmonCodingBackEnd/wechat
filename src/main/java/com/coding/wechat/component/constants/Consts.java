@@ -23,15 +23,6 @@ public interface Consts {
 
         /** 系统中使用到的默认编码 */
         Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
-        /** 并行定时器线程名称前缀 * */
-        String TIMER_SYNC_THREAD_PREFIX = "TIMER_SYNC-";
-        
-        /** 异步定时器线程名称前缀 * */
-        String TIMER_ASYNC_THREAD_PREFIX = "TIMER_ASYNC-";
-
-        /** 延迟队列线程名称前缀 */
-        String TIMER_DELAY_THREAD_PREFIX = "TIMER_DELAY-";
     }
 
     /*

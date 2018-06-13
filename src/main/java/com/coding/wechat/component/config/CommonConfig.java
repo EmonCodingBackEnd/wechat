@@ -43,7 +43,16 @@ public class CommonConfig {
     // 超时时间和微信预支付有效时间的时间差 单位秒
     private Integer wxOderTimeDiff;
 
-    @PostConstruct
+
+    private int corePoolSize;
+
+    private int maxPoolSize;
+
+    private int queueCapacity;
+
+    private int keeyAliveSecond;
+
+    private int awaitTerminationSeconds;    @PostConstruct
     public void init() {
         log.info("【系统常量初始化】开始......");
         log.info("【系统常量初始化】结束");

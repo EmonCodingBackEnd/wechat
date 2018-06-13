@@ -13,7 +13,6 @@
 package com.coding.wechat.component.timer.schedule.task;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 1.0.0
  */
- @Component
-//@Async
+@Component
 @Slf4j
 public class ScheduledTask {
 
@@ -58,47 +56,41 @@ public class ScheduledTask {
      * 这里有一个cron表达式生成器： http://cron.qqe2.com/
      */
 
-    // 上一次任务执行完毕，到下一次任务执行开始的时间
+    /*// 上一次任务执行完毕，到下一次任务执行开始的时间
     @Scheduled(fixedDelay = 10000)
     public void scheduled11() throws InterruptedException {
-        log.info("=====>>>>>开始fixedDelay1  {}", System.currentTimeMillis() / 1000);
+        log.info(
+                "=====>>>>>开始fixedDelay1  {}",
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
         log.info("=====>>>>>结束fixedDelay1  {}", Thread.currentThread().getId());
     }
 
-    /*@Scheduled(fixedDelay = 10000)
-    public void scheduled12() throws InterruptedException {
-        log.info("=====>>>>>开始fixedDelay2  {}", System.currentTimeMillis() / 1000);
-        TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束fixedDelay2  {}", Thread.currentThread().getId());
-    }*/
-
     // 上一次任务执行开始，到下一次任务执行开始的时间
     @Scheduled(fixedRate = 10000)
     public void scheduled21() throws InterruptedException {
-        log.info("=====>>>>>开始fixedRate1  {}", System.currentTimeMillis() / 1000);
+        log.info(
+                "=====>>>>>开始fixedRate1  {}",
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
         log.info("=====>>>>>结束fixedRate1  {}", Thread.currentThread().getId());
     }
 
-    /*@Scheduled(fixedRate = 10000)
-    public void scheduled22() throws InterruptedException {
-        log.info("=====>>>>>开始fixedRate2  {}", System.currentTimeMillis() / 1000);
-        TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束fixedRate2  {}", Thread.currentThread().getId());
-    }*/
-
     @Scheduled(cron = "0/10 * * * * *")
     public void scheduled31() throws InterruptedException {
-        log.info("=====>>>>>开始cron1  {}", System.currentTimeMillis() / 1000);
+        log.info(
+                "=====>>>>>开始cron1  {}",
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        TimeUnit.SECONDS.sleep(5);
+        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getId());
+    }*/
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void scheduled() throws InterruptedException {
+        log.info(
+                "=====>>>>>开始cron1  {}",
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
         log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getId());
     }
-
-    /*@Scheduled(cron = "0/10 * * * * *")
-    public void scheduled32() throws InterruptedException {
-        log.info("=====>>>>>开始cron2  {}", System.currentTimeMillis() / 1000);
-        TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束cron2  {}", Thread.currentThread().getId());
-    }*/
 }

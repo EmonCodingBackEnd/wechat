@@ -61,29 +61,69 @@
       "description": "Description for wechat.material.listMaterialUrl."
     },
     {
-      "name": "timerPool.corePoolSize",
+      "name": "timerPool.delay.threadNamePrefix",
       "type": "java.lang.String",
-      "description": "Description for timerPool.corePoolSize."
+      "description": "Description for timerPool.delay.threadNamePrefix."
     },
     {
-      "name": "timerPool.maxPoolSize",
+      "name": "timerPool.delay.corePoolSize",
       "type": "java.lang.String",
-      "description": "Description for timerPool.maxPoolSize."
+      "description": "Description for timerPool.delay.corePoolSize."
     },
     {
-      "name": "timerPool.queueCapacity",
+      "name": "timerPool.delay.maxPoolSize",
       "type": "java.lang.String",
-      "description": "Description for timerPool.queueCapacity."
+      "description": "Description for timerPool.delay.maxPoolSize."
     },
     {
-      "name": "timerPool.keeyAliveSecond",
+      "name": "timerPool.delay.queueCapacity",
       "type": "java.lang.String",
-      "description": "Description for timerPool.keeyAliveSecond."
+      "description": "Description for timerPool.delay.queueCapacity."
     },
     {
-      "name": "timerPool.awaitTerminationSeconds",
+      "name": "timerPool.delay.keeyAliveSecond",
       "type": "java.lang.String",
-      "description": "Description for timerPool.awaitTerminationSeconds."
+      "description": "Description for timerPool.delay.keeyAliveSecond."
+    },
+    {
+      "name": "timerPool.schedule.threadNamePrefix",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.schedule.threadNamePrefix."
+    },
+    {
+      "name": "timerPool.schedule.poolSize",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.schedule.poolSize."
+    },
+    {
+      "name": "timerPool.schedule.awaitTerminationSeconds",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.schedule.awaitTerminationSeconds."
+    },
+    {
+      "name": "timerPool.async.threadNamePrefix",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.async.threadNamePrefix."
+    },
+    {
+      "name": "timerPool.async.corePoolSize",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.async.corePoolSize."
+    },
+    {
+      "name": "timerPool.async.maxPoolSize",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.async.maxPoolSize."
+    },
+    {
+      "name": "timerPool.async.queueCapacity",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.async.queueCapacity."
+    },
+    {
+      "name": "timerPool.async.keeyAliveSecond",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.async.keeyAliveSecond."
     }
   ]
 }

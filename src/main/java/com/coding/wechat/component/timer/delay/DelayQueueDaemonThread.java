@@ -12,7 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.timer.delay;
 
-import com.coding.wechat.component.constants.Consts;
 import com.coding.wechat.component.timer.TimerPoolConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 延迟队列守护线程.
@@ -43,20 +43,28 @@ public class DelayQueueDaemonThread {
     @PostConstruct
     private void init() {
         log.info(
-                "【延迟队列线程池配置】corePoolSize={},maxPoolSize={},queueCapacity={}",
-                timerPoolConfig.getCorePoolSize(),
-                timerPoolConfig.getMaxPoolSize(),
-                timerPoolConfig.getQueueCapacity());
+                "【延时任务线程池配置】threadNamePrefix={},corePoolSize={},maxPoolSize={},queueCapacity={},keeyAliveSecond={}",
+                timerPoolConfig.getDelay().getThreadNamePrefix(),
+                timerPoolConfig.getDelay().getCorePoolSize(),
+                timerPoolConfig.getDelay().getMaxPoolSize(),
+                timerPoolConfig.getDelay().getQueueCapacity(),
+                timerPoolConfig.getDelay().getKeeyAliveSecond());
         delayQueueExecutor = new ThreadPoolTaskExecutor();
-        delayQueueExecutor.setCorePoolSize(timerPoolConfig.getCorePoolSize());
-        delayQueueExecutor.setMaxPoolSize(timerPoolConfig.getMaxPoolSize());
-        delayQueueExecutor.setQueueCapacity(timerPoolConfig.getQueueCapacity());
-        delayQueueExecutor.setThreadNamePrefix(Consts.C_COMMON.TIMER_DELAY_THREAD_PREFIX);
+        delayQueueExecutor.setThreadNamePrefix(timerPoolConfig.getDelay().getThreadNamePrefix());
+        delayQueueExecutor.setCorePoolSize(timerPoolConfig.getDelay().getCorePoolSize());
+        delayQueueExecutor.setMaxPoolSize(timerPoolConfig.getDelay().getMaxPoolSize());
+        delayQueueExecutor.setQueueCapacity(timerPoolConfig.getDelay().getQueueCapacity());
+        delayQueueExecutor.setKeepAliveSeconds(timerPoolConfig.getDelay().getKeeyAliveSecond());
+        /*
+         * Rejected-policy：当pool已经达到max size的时候，如何处理新任务。
+         * CALLER_RUNS：不在新线程中执行任务，而是由调用者所在的线程来执行。
+         */
+        delayQueueExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         delayQueueExecutor.initialize();
 
         Thread daemonThread = new Thread(() -> execute());
         daemonThread.setDaemon(true);
-        daemonThread.setName("Delay Task Queue Daemon Thread");
+        daemonThread.setName(timerPoolConfig.getDelay().getDelayTaskQueueDaemonThreadName());
         daemonThread.start();
     }
 

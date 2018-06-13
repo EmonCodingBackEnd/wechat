@@ -12,7 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.timer.schedule;
 
-import com.coding.wechat.component.constants.Consts;
 import com.coding.wechat.component.timer.TimerPoolConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,13 +54,18 @@ public class ScheduleConfig implements SchedulingConfigurer {
      *
      * @return -
      */
-    @Bean /*(destroyMethod = "shutdown")*/
+    @Bean
     public Executor taskExecutor() {
-        log.info("【定时器线程池配置】corePoolSize={}", timerPoolConfig.getCorePoolSize());
+        log.info(
+                "【定时器线程池配置】threadNamePrefix={},poolSize={},awaitTerminationSeconds={}",
+                timerPoolConfig.getSchedule().getThreadNamePrefix(),
+                timerPoolConfig.getSchedule().getPoolSize(),
+                timerPoolConfig.getSchedule().getAwaitTerminationSeconds());
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(timerPoolConfig.getCorePoolSize());
-        scheduler.setThreadNamePrefix(Consts.C_COMMON.TIMER_SYNC_THREAD_PREFIX);
-        scheduler.setAwaitTerminationSeconds(timerPoolConfig.getAwaitTerminationSeconds());
+        scheduler.setThreadNamePrefix(timerPoolConfig.getSchedule().getThreadNamePrefix());
+        scheduler.setPoolSize(timerPoolConfig.getSchedule().getPoolSize());
+        scheduler.setAwaitTerminationSeconds(
+                timerPoolConfig.getSchedule().getAwaitTerminationSeconds());
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
         return scheduler;
     }
