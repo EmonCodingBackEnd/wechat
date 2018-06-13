@@ -26,12 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.net.URLDecoder.decode;
 
 /**
  * Http工具类测试接口.
@@ -74,27 +76,43 @@ public class HttpController {
         return result;
     }
 
-    @GetMapping(value = "readByUrl")
+    @GetMapping(value = "/readByUrl")
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
-        String decodeUrl = URLDecoder.decode(urlStr, Charsets.UTF_8.name());
+        String decodeUrl = decode(urlStr, com.google.common.base.Charsets.UTF_8.name());
         /*response.setContentType("audio/mpeg");
         OutputStream out = response.getOutputStream();
         HttpTools.doGet(decodeUrl, out);
         out.flush();
         out.close();*/
+//        String endStr = "http://192.168.1.88:8080/saas-ssp/app/readByUrl?urlStr=";
+        String endStr = "https://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=";
+//        String endStrImg = "http://192.168.1.88:8080/saas-ssp/app/readByUrlImg?urlStr=";
+        String endStrImg = "https://exp.mynatapp.cc/wechat/http/readByUrlImg?urlStr=";
         response.setContentType("text/html;charset=UTF-8");
         String result = HttpTools.doGet(decodeUrl);
         result =
-                result.replace(
-                                "http://www.baidu.com",
-                                "https://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=http://www.baidu.com")
-                        .replace(
-                                "https%3A%2F%2Fmp.weixin.qq.com",
-                                "https://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=https%3A%2F%2Fmp.weixin.qq.com");
+                result.replace("http://www.baidu.com", endStr + "http://www.baidu.com")
+                        .replace("https://mp.weixin.qq.com", endStr + "https://mp.weixin.qq.com");
+//                        .replace("https://mmbiz.qpic.cn", endStrImg + "https://mmbiz.qpic.cn");
         Writer writer = response.getWriter();
         writer.write(result);
         writer.flush();
         writer.close();
+    }
+
+    @GetMapping(value = "/readByUrlImg")
+    public void readByUrlImg(HttpServletResponse response, String urlStr) throws IOException {
+        String decodeUrl = decode(urlStr, com.google.common.base.Charsets.UTF_8.name());
+        /*response.setContentType("audio/mpeg");
+        OutputStream out = response.getOutputStream();
+        HttpTools.doGet(decodeUrl, out);
+        out.flush();
+        out.close();*/
+        response.setContentType("image/jpeg");
+        OutputStream out = response.getOutputStream();
+        HttpTools.doGet(decodeUrl, out);
+        out.flush();
+        out.close();
     }
 
     @GetMapping(value = "readByUrlBatch")
