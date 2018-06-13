@@ -1,7 +1,7 @@
 /*
  * 文件名称：OrderDelayTask.java
  * 系统名称：[系统名称]
- * 模块名称：订单延迟任务
+ * 模块名称：订单延时任务
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.
  * 功能说明：[请在此处输入功能说明]
  * 开发人员：Rushing0711
@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 订单延迟任务.
+ * 订单延时任务.
  *
  * <p>
  *
@@ -42,12 +42,12 @@ public class OrderDelayTask extends DelayRetryTask {
     public void run() {
         try {
         } catch (Exception e) {
-            log.info("【延迟任务】执行异常,taskId={},异常:{}", this.getTaskId(), e.getMessage());
+            log.info("【延时任务】执行异常,taskId={},异常:{}", this.getTaskId(), e.getMessage());
             if (canIRetry()) {
                 this.retry();
-                log.info("【延迟任务】重试次数={},taskId={}", this.getRetryTimes(), this.getTaskId());
+                log.info("【延时任务】重试次数={},taskId={}", this.getRetryTimes(), this.getTaskId());
             } else {
-                log.warn("【延迟任务】重试已达最大次数={},taskId={}", this.getMaxRetryTimes(), this.getTaskId());
+                log.warn("【延时任务】重试已达最大次数={},taskId={}", this.getMaxRetryTimes(), this.getTaskId());
             }
         }
     }

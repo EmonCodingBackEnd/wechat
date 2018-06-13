@@ -26,7 +26,7 @@ wechat:
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 
-# 定时任务线程池配置
+# 特殊任务线程池配置
 timerPool:
   delay:
     threadNamePrefix: TIMER_DELAY-

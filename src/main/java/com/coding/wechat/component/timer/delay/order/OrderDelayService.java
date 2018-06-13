@@ -1,7 +1,7 @@
 /*
  * 文件名称：OrderDelayService.java
  * 系统名称：[系统名称]
- * 模块名称：订单延迟业务
+ * 模块名称：订单延时业务
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.
  * 功能说明：[请在此处输入功能说明]
  * 开发人员：Rushing0711
@@ -49,7 +49,7 @@ public class OrderDelayService implements ApplicationListener<ContextRefreshedEv
             // 获取一个100秒之内的数字
             Integer randomMillis = random.nextInt(90000) + 10000;
             log.info(
-                    "【延迟任务】taskId={},任务已过期,随机延迟={}s",
+                    "【延时任务】taskId={},任务已过期,随机延时={}s",
                     orderDelayTask.getTaskId(),
                     TimeUnit.MILLISECONDS.toSeconds(randomMillis));
             time = randomMillis;

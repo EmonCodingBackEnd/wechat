@@ -1,7 +1,7 @@
 /*
  * 文件名称：OrderDelayItem.java
  * 系统名称：[系统名称]
- * 模块名称：延迟处理类
+ * 模块名称：延时处理类
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.
  * 功能说明：[请在此处输入功能说明]
  * 开发人员：Rushing0711
@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 延迟处理类.
+ * 延时处理类.
  *
  * <p>创建时间: <font style="color:#00FFFF">20180515 13:23</font><br>
  * [请在此输入功能详述]
@@ -44,7 +44,7 @@ public class DelayedItem<T extends DelayTask> implements Delayed {
     }
 
     /**
-     * 返回与此对象相关的剩余延迟时间，以给定的时间单位表示.
+     * 返回与此对象相关的剩余延时时间，以给定的时间单位表示.
      *
      * <p>创建时间: <font style="color:#00FFFF">20180515 13:29</font><br>
      * [请在此输入功能详述]
