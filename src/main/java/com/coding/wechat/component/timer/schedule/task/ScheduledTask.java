@@ -63,7 +63,7 @@ public class ScheduledTask {
                 "=====>>>>>开始fixedDelay1  {}",
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束fixedDelay1  {}", Thread.currentThread().getId());
+        log.info("=====>>>>>结束fixedDelay1  {}", Thread.currentThread().getName());
     }
 
     // 上一次任务执行开始，到下一次任务执行开始的时间
@@ -73,7 +73,7 @@ public class ScheduledTask {
                 "=====>>>>>开始fixedRate1  {}",
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束fixedRate1  {}", Thread.currentThread().getId());
+        log.info("=====>>>>>结束fixedRate1  {}", Thread.currentThread().getName());
     }
 
     @Scheduled(cron = "0/10 * * * * *")
@@ -82,7 +82,7 @@ public class ScheduledTask {
                 "=====>>>>>开始cron1  {}",
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getId());
+        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getName());
     }*/
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -91,6 +91,6 @@ public class ScheduledTask {
                 "=====>>>>>开始cron1  {}",
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
-        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getId());
+        log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getName());
     }
 }

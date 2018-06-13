@@ -14,6 +14,11 @@ package com.coding.wechat.component.timer.schedule.task;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.stereotype.Component;
+
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 异步任务.
@@ -25,6 +30,34 @@ import org.springframework.scheduling.annotation.Async;
  * @version 1.0.0
  * @since 1.0.0
  */
+@Component
 @Async
 @Slf4j
-public class AsyncTask {}
+public class AsyncTask {
+
+    // 获取异步结果
+    public Future<Long> asyncTask11(int startNumber, int endNumber) throws InterruptedException {
+        long beg = System.currentTimeMillis();
+        long sum = 0;
+        for (int i = startNumber; i <= endNumber; i++) {
+            sum += i;
+        }
+        TimeUnit.SECONDS.sleep(2);
+        long end = System.currentTimeMillis();
+        log.info("asyncTask11执行耗时={}ms", end - beg);
+        return new AsyncResult<>(sum);
+    }
+
+    // 获取异步结果
+    public Future<Long> asyncTask12(int startNumber, int endNumber) throws InterruptedException {
+        long beg = System.currentTimeMillis();
+        long sum = 0;
+        for (int i = startNumber; i <= endNumber; i++) {
+            sum += i;
+        }
+        TimeUnit.SECONDS.sleep(3);
+        long end = System.currentTimeMillis();
+        log.info("asyncTask12执行耗时={}ms", end - beg);
+        return new AsyncResult<>(sum);
+    }
+}
