@@ -37,9 +37,11 @@
                 </video>
                 <br>
                 <h3>
-                    <a href="https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzU4MzUwODI5MA%3D%3D%26mid%3D2247483939%26idx%3D1%26sn%3D56b847ff7b577f4b56f75a47ea77e09b%26chksm%3Dfda94a0ecadec318f611d9df7012b1063618b9d8067707b468b0c1502c798a7ffb3d79a68710%26mpshare%3D1%26scene%3D1%26srcid%3D0606k5jhxoCl1OJuwxaAuPsg">嗒咪公众号萌物文章地址</a>
+                    <a href="http://exp.mynatapp.cc/wechat/http/readByUrl?urlStr=https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzU4MzUwODI5MA%3D%3D%26mid%3D2247483939%26idx%3D1%26sn%3D56b847ff7b577f4b56f75a47ea77e09b%26chksm%3Dfda94a0ecadec318f611d9df7012b1063618b9d8067707b468b0c1502c798a7ffb3d79a68710%26mpshare%3D1%26scene%3D1%26srcid%3D0606k5jhxoCl1OJuwxaAuPsg">嗒咪公众号萌物文章地址</a>
                 </h3>
-                <img id="js_pc_qr_code_img" class="qr_code_pc_img" src="/mp/qrcode?scene=10000004&amp;size=102&amp;__biz=MzU4MzUwODI5MA==&amp;mid=2247483939&amp;idx=1&amp;sn=56b847ff7b577f4b56f75a47ea77e09b&amp;send_time=">
+                <img id="js_pc_qr_code_img" class="qr_code_pc_img"
+                     src="/mp/qrcode?scene=10000004&amp;size=102&amp;__biz=MzU4MzUwODI5MA==&amp;mid=2247483939&amp;idx=1&amp;sn=56b847ff7b577f4b56f75a47ea77e09b&amp;send_time="><br>
+                <img width="200" height="200" src="https://img.tamizoo.cn/img/c360afe4f56e416ad28bb3bfa458b34a"><br>
 
                 2018年02月27日-${currentDate} 建站${websiteRanDay}天
                 2018年03月20日-${currentDate} 解析${websiteParseDay}天
