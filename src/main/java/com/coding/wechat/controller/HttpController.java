@@ -22,6 +22,7 @@ import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.net.URLDecoder.decode;
@@ -99,29 +100,28 @@ public class HttpController {
 
         Pattern wxUrlPattern = RegexDefine.WX_URL_REGEX_PATTERN;
         response.setContentType("text/html;charset=UTF-8");
-        OutputStream out = response.getOutputStream();
-        //        Writer writer = response.getWriter();
-        //        String result = HttpTools.doGet(decodeUrl);
-        //        writer.write(result);
+        Writer writer = response.getWriter();
         HttpTools.doGet(
                 decodeUrl,
                 10000,
                 new AbstractResponseHandler<Long>() {
                     @Override
                     public Long handleEntity(HttpEntity entity) throws IOException {
-                        entity.writeTo(out);
-                        long len = entity.getContentLength();
-                        /*BufferedReader bufferedReader =
+                        log.info("【{}={}】", entity.isStreaming(), entity.isChunked());
+                        long contentLength = 0;
+                        BufferedReader bufferedReader =
                                 new BufferedReader(new InputStreamReader(entity.getContent()));
 
                         String result;
                         while ((result = bufferedReader.readLine()) != null) {
-                            Matcher wxUrlMatcher = wxUrlPattern.matcher(result);
+                            contentLength += result.getBytes(StandardCharsets.UTF_8).length;
+                            /*Matcher wxUrlMatcher = wxUrlPattern.matcher(result);
                             while (wxUrlMatcher.find()) {
                                 String wxUrl = null;
                                 for (int i = 1; i <= wxUrlMatcher.groupCount(); i++) {
                                     if (wxUrlMatcher.group(i) != null) {
-                                        wxUrl = wxUrlMatcher.group(i);
+                                        switch (wxUrl = wxUrlMatcher.group(i)) {
+                                        }
                                         break;
                                     }
                                 }
@@ -145,19 +145,15 @@ public class HttpController {
                                         }
                                     }
                                 }
-                            }
+                            }*/
                             writer.write(result);
                         }
-                        bufferedReader.close();*/
-                        long len2 = entity.getContentLength();
-                        log.info("【长度】len={},len2={}", len, len2);
-                        return entity.getContentLength();
+                        bufferedReader.close();
+                        return contentLength;
                     }
                 });
-//        writer.flush();
-//        writer.close();
-        out.flush();
-        out.close();
+        writer.flush();
+        writer.close();
     }
 
     @GetMapping(value = "/readByUrlImg")

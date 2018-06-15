@@ -86,6 +86,11 @@
       "description": "Description for timerPool.delay.keeyAliveSecond."
     },
     {
+      "name": "timerPool.delay.delayTaskQueueDaemonThreadName",
+      "type": "java.lang.String",
+      "description": "Description for timerPool.delay.delayTaskQueueDaemonThreadName."
+    },
+    {
       "name": "timerPool.schedule.threadNamePrefix",
       "type": "java.lang.String",
       "description": "Description for timerPool.schedule.threadNamePrefix."
