@@ -86,11 +86,6 @@ public class HttpController {
     @GetMapping(value = "/readByUrl")
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
         String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
-        /*response.setContentType("audio/mpeg");
-        OutputStream out = response.getOutputStream();
-        HttpTools.doGet(decodeUrl, out);
-        out.flush();
-        out.close();*/
         Map<String, String> replaceMap = Maps.newHashMap();
         replaceMap.put(
                 "https://mp.weixin.qq.com",
@@ -100,12 +95,8 @@ public class HttpController {
                 "https://exp.mynatapp.cc/wechat/http/readByUrlImg?urlStr=");
 
         response.setContentType("text/html;charset=UTF-8");
-        Pattern wxUrlPattern = RegexDefine.PROXY_GOOD_URL_REGEX_PATTERN;
-        /*String re = HttpTools.doGet(decodeUrl, 10000);
-        Matcher wxUrlMatcher = wxUrlPattern.matcher(re);
-        while (wxUrlMatcher.find()) {
-            System.out.println("来了");
-        }*/
+        Pattern goodUrlPattern = RegexDefine.PROXY_GOOD_URL_REGEX_PATTERN;
+        Pattern badUrlPattern = RegexDefine.PROXY_BAD_URL_REGEX_PATTERN;
         HttpTools.doGet(
                 decodeUrl,
                 10000,
@@ -117,6 +108,7 @@ public class HttpController {
                                 entity.isStreaming(),
                                 entity.isChunked(),
                                 entity.isRepeatable());
+                        final Writer writer = response.getWriter();
 
                         long contentLength = 0;
                         final InputStream instream = entity.getContent();
@@ -128,64 +120,61 @@ public class HttpController {
                             final Reader reader =
                                     new InputStreamReader(instream, StandardCharsets.UTF_8);
                             final CharArrayBuffer buffer = new CharArrayBuffer(capacity);
-                            final char[] tmp = new char[1024];
+                            final char[] tmp = new char[Consts.C_COMMON.DEFAULT_BUFFER_SIZE];
                             int l;
+                            String tempContent;
                             while ((l = reader.read(tmp)) != -1) {
                                 buffer.append(tmp, 0, l);
-//                                buffer.
+                                tempContent = buffer.toString();
+                                Matcher badUrlMatcher = badUrlPattern.matcher(tempContent);
+                                if (badUrlMatcher.find()) {
+                                    log.info("【Http】发现badUrl，增加读取量");
+                                } else {
+                                    contentLength +=
+                                            tempContent.getBytes(StandardCharsets.UTF_8).length;
+                                    Matcher goodUrlMatcher = goodUrlPattern.matcher(tempContent);
+                                    while (goodUrlMatcher.find()) {
+                                        String goodUrl = null;
+                                        for (int i = 1; i <= goodUrlMatcher.groupCount(); i++) {
+                                            if (goodUrlMatcher.group(i) != null) {
+                                                goodUrl = goodUrlMatcher.group(i);
+                                                break;
+                                            }
+                                        }
+                                        String goodUrlParsed;
+                                        if (!StringUtils.isEmpty(goodUrl)) {
+                                            for (Map.Entry<String, String> entry :
+                                                    replaceMap.entrySet()) {
+                                                if (goodUrl.startsWith(entry.getKey())) {
+                                                    goodUrlParsed =
+                                                            entry.getValue()
+                                                                    + URLEncoder.encode(
+                                                                            goodUrl,
+                                                                            StandardCharsets.UTF_8
+                                                                                    .name());
+                                                    tempContent =
+                                                            tempContent.replace(
+                                                                    goodUrl, goodUrlParsed);
+                                                    log.info(
+                                                            "在索引区间[{}, {}]找到匹配组[{}]<==>[{}]",
+                                                            goodUrlMatcher.start(),
+                                                            goodUrlMatcher.end(),
+                                                            goodUrl,
+                                                            goodUrlParsed);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    writer.write(tempContent);
+                                    writer.flush();
+                                    buffer.clear();
+                                }
                             }
                         } finally {
                             instream.close();
                         }
-
-                        OutputStream outputStream = response.getOutputStream();
-
-                        final Writer writer = response.getWriter();
-                        BufferedReader bufferedReader =
-                                new BufferedReader(
-                                        new InputStreamReader(
-                                                entity.getContent(), StandardCharsets.UTF_8));
-
-                        String result;
-                        long len = 0;
-                        while ((result = bufferedReader.readLine()) != null) {
-                            len++;
-                            contentLength += result.getBytes(StandardCharsets.UTF_8).length;
-                            Matcher wxUrlMatcher = wxUrlPattern.matcher(result);
-                            while (wxUrlMatcher.find()) {
-                                String wxUrl = null;
-                                for (int i = 1; i <= wxUrlMatcher.groupCount(); i++) {
-                                    if (wxUrlMatcher.group(i) != null) {
-                                        wxUrl = wxUrlMatcher.group(i);
-                                        break;
-                                    }
-                                }
-                                String wxUrlParsed;
-                                if (!StringUtils.isEmpty(wxUrl)) {
-                                    for (Map.Entry<String, String> entry : replaceMap.entrySet()) {
-                                        if (wxUrl.startsWith(entry.getKey())) {
-                                            wxUrlParsed =
-                                                    entry.getValue()
-                                                            + URLEncoder.encode(
-                                                                    wxUrl,
-                                                                    StandardCharsets.UTF_8.name());
-                                            result = result.replace(wxUrl, wxUrlParsed);
-                                            log.info(
-                                                    "在索引区间[{}, {}]找到匹配组[{}]<==>[{}]",
-                                                    wxUrlMatcher.start(),
-                                                    wxUrlMatcher.end(),
-                                                    wxUrl,
-                                                    wxUrlParsed);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            writer.write(result);
-                            writer.flush();
-                        }
                         writer.close();
-                        log.info("【Http】len={}", len);
                         return contentLength;
                     }
                 });
@@ -194,13 +183,27 @@ public class HttpController {
     @GetMapping(value = "/readByUrlImg")
     public void readByUrlImg(HttpServletResponse response, String urlStr) throws IOException {
         String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
-        /*response.setContentType("audio/mpeg");
+        response.setContentType("image/jpeg");
+        OutputStream out = response.getOutputStream();
+        HttpTools.doGet(decodeUrl, 10000, out);
+        out.flush();
+        out.close();
+    }
+
+    @GetMapping(value = "/readByUrlAudio")
+    public void readByUrlAudio(HttpServletResponse response, String urlStr) throws IOException {
+        String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
+        response.setContentType("audio/mpeg");
         OutputStream out = response.getOutputStream();
         HttpTools.doGet(decodeUrl, out);
         out.flush();
-        out.close();*/
-        response.setContentType("image/jpeg");
-        //        response.setContentType("application/octet-stream");
+        out.close();
+    }
+
+    @GetMapping(value = "/readByUrlFile")
+    public void readByUrlFile(HttpServletResponse response, String urlStr) throws IOException {
+        String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
+        response.setContentType("application/octet-stream");
         OutputStream out = response.getOutputStream();
         HttpTools.doGet(decodeUrl, 10000, out);
         out.flush();
