@@ -149,10 +149,21 @@ public abstract class HttpSyncClient {
                 new AbstractResponseHandler<String>() {
                     @Override
                     public String handleEntity(HttpEntity entity) throws IOException {
-                        log.info(
-                                "【Http】应答内容大小={}",
-                                HttpSupport.getNetContentSize(entity.getContentLength()));
                         entity.writeTo(outputStream);
+                        if (entity.isChunked()) {
+                            log.info(
+                                    "【Http】isStreaming={},isChunked={},isRepeatable={},Transfer-Encoding: chunked类型暂不支持应答内容大小的估算",
+                                    entity.isStreaming(),
+                                    entity.isChunked(),
+                                    entity.isRepeatable());
+                        } else {
+                            log.info(
+                                    "【Http】isStreaming={},isChunked={},isRepeatable={},应答内容大小={}",
+                                    entity.isStreaming(),
+                                    entity.isChunked(),
+                                    entity.isRepeatable(),
+                                    HttpSupport.getNetContentSize(entity.getContentLength()));
+                        }
                         return null;
                     }
                 });

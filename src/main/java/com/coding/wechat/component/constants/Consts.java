@@ -23,6 +23,8 @@ public interface Consts {
 
         /** 系统中使用到的默认编码 */
         Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
+
+        int DEFAULT_BUFFER_SIZE = 4096;
     }
 
     /*

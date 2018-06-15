@@ -94,8 +94,12 @@ public abstract class RegexDefine {
     public static final String URL_PARAM_REGEX = "\\??([-\\+=&;%@.\\w_]*)#?(?:[\\w]*)";
     public static final Pattern URL_PARAM_REGEX_PATTERN = Pattern.compile(URL_PARAM_REGEX);
 
-    public static final String WX_URL_REGEX =
+    public static final String PROXY_GOOD_URL_REGEX =
             "(?:url|src)=(?:\"([^\\n\\r\"']+)\"|'([^\\n\\r\"']+)')|url\\((?:\"([^\\n\\r\"']+)\"|'([^\\n\\r\"']+)'|&quot;([^\\n\\r\"']+)&quot;)\\)";
+    public static final Pattern PROXY_GOOD_URL_REGEX_PATTERN =
+            Pattern.compile(PROXY_GOOD_URL_REGEX);
 
-    public static final Pattern WX_URL_REGEX_PATTERN = Pattern.compile(WX_URL_REGEX);
+    public static final String PROXY_BAD_URL_REGEX =
+            "(?:href|url|src)=(?:\"([^\\n\\r\"']+)|'([^\\n\\r\"']+))$|url\\((?:\"([^\\n\\r\"']+)|'([^\\n\\r\"']+)|&quot;([^\\n\\r\"']+))$";
+    public static final Pattern PROXY_BAD_URL_REGEX_PATTERN = Pattern.compile(PROXY_BAD_URL_REGEX);
 }

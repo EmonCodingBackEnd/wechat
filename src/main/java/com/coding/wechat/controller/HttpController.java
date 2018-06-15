@@ -12,15 +12,16 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
+import com.coding.wechat.component.constants.Consts;
 import com.coding.wechat.component.http.HttpException;
 import com.coding.wechat.component.http.HttpTools;
 import com.coding.wechat.component.regex.RegexDefine;
 import com.coding.wechat.config.WechatConfig;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.AbstractResponseHandler;
+import org.apache.http.util.CharArrayBuffer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,7 +85,7 @@ public class HttpController {
 
     @GetMapping(value = "/readByUrl")
     public void readByUrl(HttpServletResponse response, String urlStr) throws IOException {
-        String decodeUrl = decode(urlStr, com.google.common.base.Charsets.UTF_8.name());
+        String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
         /*response.setContentType("audio/mpeg");
         OutputStream out = response.getOutputStream();
         HttpTools.doGet(decodeUrl, out);
@@ -98,30 +99,64 @@ public class HttpController {
                 "https://mmbiz.qpic.cn",
                 "https://exp.mynatapp.cc/wechat/http/readByUrlImg?urlStr=");
 
-        Pattern wxUrlPattern = RegexDefine.WX_URL_REGEX_PATTERN;
         response.setContentType("text/html;charset=UTF-8");
-        Writer writer = response.getWriter();
+        Pattern wxUrlPattern = RegexDefine.PROXY_GOOD_URL_REGEX_PATTERN;
+        /*String re = HttpTools.doGet(decodeUrl, 10000);
+        Matcher wxUrlMatcher = wxUrlPattern.matcher(re);
+        while (wxUrlMatcher.find()) {
+            System.out.println("来了");
+        }*/
         HttpTools.doGet(
                 decodeUrl,
                 10000,
                 new AbstractResponseHandler<Long>() {
                     @Override
                     public Long handleEntity(HttpEntity entity) throws IOException {
-                        log.info("【{}={}】", entity.isStreaming(), entity.isChunked());
+                        log.info(
+                                "【Http】isStreaming={},isChunked={},isRepeatable={}",
+                                entity.isStreaming(),
+                                entity.isChunked(),
+                                entity.isRepeatable());
+
                         long contentLength = 0;
+                        final InputStream instream = entity.getContent();
+                        if (instream == null) {
+                            return null;
+                        }
+                        try {
+                            int capacity = Consts.C_COMMON.DEFAULT_BUFFER_SIZE;
+                            final Reader reader =
+                                    new InputStreamReader(instream, StandardCharsets.UTF_8);
+                            final CharArrayBuffer buffer = new CharArrayBuffer(capacity);
+                            final char[] tmp = new char[1024];
+                            int l;
+                            while ((l = reader.read(tmp)) != -1) {
+                                buffer.append(tmp, 0, l);
+//                                buffer.
+                            }
+                        } finally {
+                            instream.close();
+                        }
+
+                        OutputStream outputStream = response.getOutputStream();
+
+                        final Writer writer = response.getWriter();
                         BufferedReader bufferedReader =
-                                new BufferedReader(new InputStreamReader(entity.getContent()));
+                                new BufferedReader(
+                                        new InputStreamReader(
+                                                entity.getContent(), StandardCharsets.UTF_8));
 
                         String result;
+                        long len = 0;
                         while ((result = bufferedReader.readLine()) != null) {
+                            len++;
                             contentLength += result.getBytes(StandardCharsets.UTF_8).length;
-                            /*Matcher wxUrlMatcher = wxUrlPattern.matcher(result);
+                            Matcher wxUrlMatcher = wxUrlPattern.matcher(result);
                             while (wxUrlMatcher.find()) {
                                 String wxUrl = null;
                                 for (int i = 1; i <= wxUrlMatcher.groupCount(); i++) {
                                     if (wxUrlMatcher.group(i) != null) {
-                                        switch (wxUrl = wxUrlMatcher.group(i)) {
-                                        }
+                                        wxUrl = wxUrlMatcher.group(i);
                                         break;
                                     }
                                 }
@@ -145,20 +180,20 @@ public class HttpController {
                                         }
                                     }
                                 }
-                            }*/
+                            }
                             writer.write(result);
+                            writer.flush();
                         }
-                        bufferedReader.close();
+                        writer.close();
+                        log.info("【Http】len={}", len);
                         return contentLength;
                     }
                 });
-        writer.flush();
-        writer.close();
     }
 
     @GetMapping(value = "/readByUrlImg")
     public void readByUrlImg(HttpServletResponse response, String urlStr) throws IOException {
-        String decodeUrl = decode(urlStr, com.google.common.base.Charsets.UTF_8.name());
+        String decodeUrl = decode(urlStr, StandardCharsets.UTF_8.name());
         /*response.setContentType("audio/mpeg");
         OutputStream out = response.getOutputStream();
         HttpTools.doGet(decodeUrl, out);
@@ -214,6 +249,6 @@ public class HttpController {
 
     @GetMapping(value = "encodeUrl")
     public String encodeUrl(String urlStr) throws UnsupportedEncodingException {
-        return URLEncoder.encode(urlStr, Charsets.UTF_8.name());
+        return URLEncoder.encode(urlStr, StandardCharsets.UTF_8.name());
     }
 }
