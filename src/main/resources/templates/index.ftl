@@ -25,12 +25,22 @@
                        controls="controls">
                     Your browser does not support the audio element.
                 </audio>
-                <br>
+                <br/>
                 <audio src="http://m8.music.126.net/20180606141635/baf835b49d3c9c473af9aa8dfa6afc8e/ymusic/61e3/025b/7e4b/63edb1e6d8c87da19be89298a777172b.mp3"
                        controls="controls">
                     Your browser does not support the audio element.
                 </audio>
-                <br>
+                <br/>
+                <audio src="http://file.emon.vip/etgq-xiaocao.mp3"
+                       controls="controls">
+                    Your browser does not support the audio element.
+                </audio>
+                <br/>
+                <audio src="http://192.168.1.116/UMIMHP.mp3"
+                       controls="controls">
+                    Your browser does not support the audio element.
+                </audio>
+                <br/>
                 <video src="https://bpic.588ku.com/video_listen/588ku_preview/18/05/03/13/42/47/video5aeaa15756634.mp4"
                        controls="controls">
                     your browser does not support the video tag
