@@ -451,8 +451,10 @@ public interface Enums {
 
     /** 性别枚举 */
     enum SexType implements BaseEnum<String> {
+        UNKNOWN("0", "未知"),
         MEN("1", "男"),
-        WOMEN("2", "女");
+        WOMEN("2", "女"),
+        DEFAULT("99", "不存在");
 
         private String code;
         private String msg;
@@ -488,7 +490,7 @@ public interface Enums {
                     }
                 }
             }
-            return null;
+            return DEFAULT;
         }
 
         public static SexType getSexTypeByMsg(String msg) {
@@ -499,7 +501,7 @@ public interface Enums {
                     }
                 }
             }
-            return null;
+            return DEFAULT;
         }
     }
 
