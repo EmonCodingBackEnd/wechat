@@ -13,11 +13,11 @@ public class FTPUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(FTPUtils.class);
 
-    private static String ftpIp = AbstractPropertiesUtils.getProperty("ftp.server.ip");
-
-    private static String ftpUser = AbstractPropertiesUtils.getProperty("ftp.user");
-
-    private static String ftpPass = AbstractPropertiesUtils.getProperty("ftp.pass");
+//    private static String ftpIp = AbstractPropertiesUtils.getProperty("ftp.server.ip");
+//
+//    private static String ftpUser = AbstractPropertiesUtils.getProperty("ftp.user");
+//
+//    private static String ftpPass = AbstractPropertiesUtils.getProperty("ftp.pass");
 
     public FTPUtils(String ip, int port, String user, String pwd) {
         this.ip = ip;
@@ -27,7 +27,7 @@ public class FTPUtils {
     }
 
     public static boolean uploadFile(List<File> fileList) throws IOException {
-        FTPUtils ftpUtils = new FTPUtils(ftpIp, 21, ftpUser, ftpPass);
+        FTPUtils ftpUtils = new FTPUtils("ftpIp", 21, "ftpUser", "ftpPass");
         logger.info("开始连接FTP服务器");
         boolean result = ftpUtils.uploadFile("image", fileList);
         logger.info("开始连接FTP服务器，结束上传，上传结果:{}", result);
