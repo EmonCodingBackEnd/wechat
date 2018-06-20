@@ -42,24 +42,12 @@ public class FTPSupport {
         this.ftpServer = ftpServer;
     }
 
-    public static Result uploadFile(List<File> fileList) throws IOException {
-        FTPSupport ftpSupport = new FTPSupport(FtpConfig.getServer());
-        log.info("【Ftp】开始连接服务器");
-        Result result = ftpSupport.uploadFile(fileList, "audio", false, false);
-        log.info("【Ftp】开始连接FTP服务器，结束上传，上传结果:{}", result);
-        return result;
-    }
-
     public Result uploadFile(
             List<File> fileList, String remotePath, boolean autoMkdir, boolean uniqueFile)
             throws IOException {
         FileInputStream fis = null;
         // 连接FTP服务器
-        if (connectServer(
-                this.ftpServer.getHost(),
-                this.ftpServer.getPort(),
-                this.ftpServer.getUsername(),
-                this.ftpServer.getPassword())) {
+        if (connectServer()) {
             try {
                 ftpClient.changeWorkingDirectory(remotePath);
                 ftpClient.setBufferSize(1024);
@@ -70,10 +58,10 @@ public class FTPSupport {
                     fis = new FileInputStream(fileItem);
                     ftpClient.storeFile(fileItem.getName(), fis);
                 }
-
+                return ResultSupport.success(null);
             } catch (IOException e) {
                 log.error("【Ftp】上传文件异常", e);
-                ResultSupport.error(e.getMessage());
+                return ResultSupport.error(e.getMessage());
             } finally {
                 if (fis != null) {
                     fis.close();
@@ -82,16 +70,18 @@ public class FTPSupport {
                     ftpClient.disconnect();
                 }
             }
+        } else {
+            return ResultSupport.error(
+                    String.format("%s:%s", ResultSupport.FAILURE_MSG, "连接服务器失败"));
         }
-        return ResultSupport.error(String.format("%s:%s", ResultSupport.FAILURE_MSG, "连接服务器失败"));
     }
 
-    public boolean connectServer(String ip, int port, String user, String pwd) {
+    private boolean connectServer() {
         boolean isSuccess = false;
         ftpClient = new FTPClient();
         try {
-            ftpClient.connect(ip, port);
-            isSuccess = ftpClient.login(user, pwd);
+            ftpClient.connect(ftpServer.getHost(), ftpServer.getPort());
+            isSuccess = ftpClient.login(ftpServer.getUsername(), ftpServer.getPassword());
         } catch (IOException e) {
             log.error("【Ftp】连接服务器异常", e);
         }
