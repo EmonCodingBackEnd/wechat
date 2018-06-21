@@ -34,58 +34,61 @@ import java.util.List;
 @Data
 @Component
 @ConfigurationProperties(prefix = "ftp")
-public class FtpConfig {
-
-    private static final String DEFAULT_ALIAS = "default";
+public class FTPConfig {
 
     // 可以配置多个FTP服务器
-    private static List<FtpServer> servers;
+    private List<ServerConfig> servers;
 
     @Data
-    public static class FtpServer {
+    public static class ServerConfig {
+        /** FTP匿名用户. */
+        public static final String ANONYMOUS = "anonymous";
+
+        private static final int DEFAULT_POST = 21;
+        private static final String DEFAULT_ACCESS_URL_PREFIX = "";
+
+        // 如果不配置，默认采用host作为别名
         private String alias;
 
         private String host;
 
-        private int port = 21;
+        private int port = DEFAULT_POST;
 
         private String username;
 
         private String password;
 
         // 访问上传的文件时，url前缀，比如 http://file.emon.vip/ 或者 http://192.168.1.116:80/
-        private String accessUrlPrefixes;
+        private String accessUrlPrefixes = DEFAULT_ACCESS_URL_PREFIX;
     }
 
     @PostConstruct
     public void init() {
-        for (FtpServer server : servers) {
+        for (ServerConfig server : servers) {
             if (StringUtils.isEmpty(server.getAlias())) {
                 server.setAlias(server.getHost());
             }
-            if (StringUtils.isEmpty(server.getAccessUrlPrefixes())) {
-                server.setAccessUrlPrefixes("");
-            }
         }
     }
 
-    public static FtpServer getServer() {
-        return getServer(DEFAULT_ALIAS);
-    }
-
-    public static FtpServer getServer(String alias) {
-        Assert.notNull(alias, "alias不能为空");
-
-        FtpServer result = null;
-        for (FtpServer server : servers) {
-            if (alias.equals(server.getAlias())) {
-                result = server;
-                break;
+    /**
+     * 根据alias或者host查找对应FTP服务器连接配置，如果查不到，返回null.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20180621 11:28</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param aliasOrHost - 配置的alias或者host（如果没有配置alias）
+     * @return com.coding.wechat.component.ftp.FTPConfig.ServerConfig
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public ServerConfig getServer(String aliasOrHost) {
+        Assert.notNull(aliasOrHost, "aliasOrHost不能为空");
+        for (ServerConfig server : servers) {
+            if (aliasOrHost.equals(server.getAlias())) {
+                return server;
             }
         }
-        if (result == null) {
-            result = servers.get(0);
-        }
-        return result;
+        return null;
     }
 }

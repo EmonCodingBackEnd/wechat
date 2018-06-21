@@ -45,19 +45,3 @@ timerPool:
     maxPoolSize: 50
     queueCapacity: 100
     keeyAliveSecond: 60
-
-ftp:
-  servers[0]:
-    alias: key1
-    host: 192.168.1.116
-    port: 21
-    username: ftp
-    password: ftp123
-    accessUrlPrefixes: http://192.168.1.116:80
-  servers[1]:
-    alias: key2
-    host: 192.168.1.116
-    port: 21
-    username: ftpuser
-    password: ftpuser123
-    accessUrlPrefixes: http://192.168.1.116:80

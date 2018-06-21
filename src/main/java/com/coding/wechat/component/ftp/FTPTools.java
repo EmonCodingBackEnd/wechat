@@ -13,7 +13,6 @@
 package com.coding.wechat.component.ftp;
 
 import com.coding.wechat.component.ftp.bean.Result;
-import com.coding.wechat.component.ftp.support.FTPSupport;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -34,10 +33,12 @@ import java.util.List;
 public class FTPTools {
 
     public static Result uploadFile(List<File> fileList) throws IOException {
-        FTPSupport ftpSupport = new FTPSupport(FtpConfig.getServer());
-        log.info("【Ftp】开始连接服务器");
-        Result result = ftpSupport.uploadFile(fileList, "test", false, false);
-        log.info("【Ftp】开始连接FTP服务器，结束上传，上传结果:{}", result);
-        return result;
+        //        FTPClientSupport ftpSupport =
+        // FTPClientSupport.getInstance(FTPConfig.getServer("default"));
+        //        log.info("【Ftp】开始连接服务器");
+        //        Result result = ftpSupport.uploadFile(fileList, "test", false, false);
+        //        log.info("【Ftp】开始连接FTP服务器，结束上传，上传结果:{}", result);
+        //        return result;
+        return null;
     }
 }

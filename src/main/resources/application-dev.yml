@@ -22,3 +22,26 @@ common:
 #   sentinel:
 #     master: mymaster
 #     nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
+
+ftp:
+  servers[0]:
+    alias: default
+    host: 10.0.0.116
+    port: 21
+    username: ftp
+    password: ftp123
+    accessUrlPrefixes: http://10.0.0.116
+  servers[1]:
+    alias: localUser
+    host: 192.168.1.116
+    port: 21
+    username: ftpuser
+    password: ftpuser123
+    accessUrlPrefixes: http://192.168.1.116
+  servers[2]:
+    alias: virtualUser
+    host: 192.168.1.116
+    port: 21
+    username: ftp
+    password: ftp123
+    accessUrlPrefixes: http://192.168.1.116
