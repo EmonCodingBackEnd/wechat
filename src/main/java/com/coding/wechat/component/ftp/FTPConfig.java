@@ -13,12 +13,14 @@
 package com.coding.wechat.component.ftp;
 
 import lombok.Data;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -57,6 +59,21 @@ public class FTPConfig {
         private String username;
 
         private String password;
+
+        // FTP服务器被动模式
+        private String passiveMode;
+
+        private String encoding = StandardCharsets.UTF_8.name();
+
+        private int timeout = 5000;
+
+        private int threadNum;
+
+        private int transferFileType = FTPClient.BINARY_FILE_TYPE;
+
+        private boolean renameUploaded;
+
+        private int retryTimes;
 
         // 访问上传的文件时，url前缀，比如 http://file.emon.vip/ 或者 http://192.168.1.116:80/
         private String accessUrlPrefixes = DEFAULT_ACCESS_URL_PREFIX;
