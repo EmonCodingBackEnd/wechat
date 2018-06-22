@@ -13,7 +13,12 @@
 package com.coding.wechat.component.ftp;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -35,7 +40,10 @@ import java.util.List;
  */
 @Data
 @Component
+@ConditionalOnClass({GenericKeyedObjectPool.class, FTPClient.class})
+@ConditionalOnProperty(value = "ftp.enabled", havingValue = "true")
 @ConfigurationProperties(prefix = "ftp")
+@Slf4j
 public class FTPConfig {
 
     // 可以配置多个FTP服务器
@@ -43,8 +51,6 @@ public class FTPConfig {
 
     @Data
     public static class ServerConfig {
-        /** FTP匿名用户. */
-        public static final String ANONYMOUS = "anonymous";
 
         private static final int DEFAULT_POST = 21;
         private static final String DEFAULT_ACCESS_URL_PREFIX = "";
@@ -65,7 +71,9 @@ public class FTPConfig {
 
         private String encoding = StandardCharsets.UTF_8.name();
 
-        private int timeout = 5000;
+        private int connectTimeout = 5000;
+
+        private int dataTimeout = 3000;
 
         private int threadNum;
 
@@ -81,6 +89,7 @@ public class FTPConfig {
 
     @PostConstruct
     public void init() {
+        log.info("【FTP连接参数配置】{}", servers);
         for (ServerConfig server : servers) {
             if (StringUtils.isEmpty(server.getAlias())) {
                 server.setAlias(server.getHost());

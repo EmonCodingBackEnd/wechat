@@ -24,6 +24,14 @@ common:
 #     nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
 
 ftp:
+  enabled: true
+  pool:
+    timeBetweenEvictionRunsMillis: 60000
+    maxTotal: 1000
+    maxTotalPerKey: 10
+    minIdlePerKey: 5
+    maxIdlePerKey: 10
+    maxWaitMillis: 10000
   servers[0]:
     alias: default
     host: 10.0.0.116
