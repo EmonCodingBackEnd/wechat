@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.template;
 
+import com.coding.wechat.component.ftp.bean.FTPResult;
 import com.coding.wechat.component.ftp.exception.FTPException;
 
 import java.util.List;
@@ -29,9 +30,9 @@ import java.util.List;
 public interface FTPOperations<C> {
     List<String> listFiles(C c, int limit) throws FTPException;
 
-    String getFile(C c, String fileName) throws FTPException;
+    FTPResult getFile(C c, String fileName) throws FTPException;
 
-    void getFileCallback(C c, String fileName, FtpCallback<FtpFile, Boolean> callback)
+    void getFileCallback(C c, String fileName, FTPCallback<FTPResult> callback)
             throws FTPException;
 
     boolean putFile(C c, String content, String fileName) throws FTPException;

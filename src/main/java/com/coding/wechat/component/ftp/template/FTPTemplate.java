@@ -12,6 +12,13 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.template;
 
+import com.coding.wechat.component.ftp.FTPConfig;
+import com.coding.wechat.component.ftp.bean.FTPResult;
+import com.coding.wechat.component.ftp.exception.FTPException;
+import org.apache.commons.net.ftp.FTPClient;
+
+import java.util.List;
+
 /**
  * FTP模板.
  *
@@ -22,6 +29,29 @@ package com.coding.wechat.component.ftp.template;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class FTPTemplate {
+public class FTPTemplate implements FTPOperations<FTPConfig> {
+    @Override
+    public List<String> listFiles(FTPConfig ftpConfig, int limit) throws FTPException {
+        return null;
+    }
 
+    @Override
+    public FTPResult getFile(FTPConfig ftpConfig, String fileName) throws FTPException {
+        return null;
+    }
+
+    @Override
+    public void getFileCallback(FTPConfig ftpConfig, String fileName, FTPCallback<FTPResult> callback) throws FTPException {
+
+    }
+
+    @Override
+    public boolean putFile(FTPConfig ftpConfig, String content, String fileName) throws FTPException {
+        return false;
+    }
+
+    @Override
+    public boolean deleteFile(FTPConfig ftpConfig, String fileName) throws FTPException {
+        return false;
+    }
 }

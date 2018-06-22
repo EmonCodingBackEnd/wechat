@@ -27,7 +27,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Data
-public class Result {
+public class FTPResult {
 
     private boolean success;
 

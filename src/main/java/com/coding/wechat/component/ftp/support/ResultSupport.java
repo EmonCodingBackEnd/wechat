@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.support;
 
-import com.coding.wechat.component.ftp.bean.Result;
+import com.coding.wechat.component.ftp.bean.FTPResult;
 
 import java.util.Map;
 
@@ -31,16 +31,16 @@ public class ResultSupport {
     private static final String SUCCESS_MSG = "上传成功";
     public static final String FAILURE_MSG = "上传失败";
 
-    public static Result success(Map<String, String> urlMap) {
-        Result result = new Result();
+    public static FTPResult success(Map<String, String> urlMap) {
+        FTPResult result = new FTPResult();
         result.setSuccess(true);
         result.setMsg(SUCCESS_MSG);
         result.setUrlMap(urlMap);
         return result;
     }
 
-    public static Result error(String msg) {
-        Result result = new Result();
+    public static FTPResult error(String msg) {
+        FTPResult result = new FTPResult();
         result.setSuccess(false);
         result.setMsg(msg);
         return result;
