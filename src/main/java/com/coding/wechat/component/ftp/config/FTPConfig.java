@@ -10,17 +10,20 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20180620-01         Rushing0711     M201806202235 新建文件
  ********************************************************************************/
-package com.coding.wechat.component.ftp;
+package com.coding.wechat.component.ftp.config;
 
+import com.coding.wechat.component.ftp.pool.GenericKeyedFTPClientPool;
+import com.coding.wechat.component.ftp.pool.PooledFTPClientFactory;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -39,21 +42,27 @@ import java.util.List;
  * @since 1.0.0
  */
 @Data
-@Component
+@Configuration
 @ConditionalOnClass({GenericKeyedObjectPool.class, FTPClient.class})
 @ConditionalOnProperty(value = "ftp.enabled", havingValue = "true")
 @ConfigurationProperties(prefix = "ftp")
 @Slf4j
 public class FTPConfig {
 
+    private final FTPPoolConfig ftpPoolConfig;
+
     // 可以配置多个FTP服务器
     private List<ServerConfig> servers;
 
-    @Data
+    @Autowired
+    public FTPConfig(FTPPoolConfig ftpPoolConfig) {
+        this.ftpPoolConfig = ftpPoolConfig;
+    }
+
+    /*@Data
     public static class ServerConfig {
 
         private static final int DEFAULT_POST = 21;
-        private static final String DEFAULT_ACCESS_URL_PREFIX = "";
 
         // 如果不配置，默认采用host作为别名
         private String alias;
@@ -75,17 +84,8 @@ public class FTPConfig {
 
         private int dataTimeout = 3000;
 
-        private int threadNum;
-
         private int transferFileType = FTPClient.BINARY_FILE_TYPE;
-
-        private boolean renameUploaded;
-
-        private int retryTimes;
-
-        // 访问上传的文件时，url前缀，比如 http://file.emon.vip/ 或者 http://192.168.1.116:80/
-        private String accessUrlPrefixes = DEFAULT_ACCESS_URL_PREFIX;
-    }
+    }*/
 
     @PostConstruct
     public void init() {
@@ -104,7 +104,7 @@ public class FTPConfig {
      * [请在此输入功能详述]
      *
      * @param aliasOrHost - 配置的alias或者host（如果没有配置alias）
-     * @return com.coding.wechat.component.ftp.FTPConfig.ServerConfig
+     * @return com.coding.wechat.component.ftp.config.FTPConfig.ServerConfig
      * @author Rushing0711
      * @since 1.0.0
      */
@@ -116,5 +116,15 @@ public class FTPConfig {
             }
         }
         return null;
+    }
+
+    @Bean
+    public PooledFTPClientFactory ftpClientFactory() {
+        return new PooledFTPClientFactory();
+    }
+
+    @Bean
+    public GenericKeyedFTPClientPool ftpClientPool() {
+        return new GenericKeyedFTPClientPool(ftpClientFactory(), ftpPoolConfig);
     }
 }

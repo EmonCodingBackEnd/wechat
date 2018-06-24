@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.pool;
 
-import com.coding.wechat.component.ftp.FTPConfig;
+import com.coding.wechat.component.ftp.config.FTPConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
@@ -25,7 +25,6 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.TimeZone;
 
 /**
@@ -51,7 +50,7 @@ public class PooledFTPClientFactory
         ftpClient.setBufferSize(1024 * 2);
         FTPClientConfig ftpClientConfig = new FTPClientConfig();
         ftpClientConfig.setServerTimeZoneId(TimeZone.getDefault().getID());
-        ftpClient.setControlEncoding(StandardCharsets.UTF_8.name());
+        ftpClient.setControlEncoding(key.getEncoding());
         ftpClient.configure(ftpClientConfig);
         ftpClient.setConnectTimeout(key.getConnectTimeout());
         ftpClient.setDataTimeout(key.getDataTimeout());

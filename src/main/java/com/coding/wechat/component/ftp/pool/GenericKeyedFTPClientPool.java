@@ -12,7 +12,8 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.pool;
 
-import com.coding.wechat.component.ftp.FTPConfig;
+import com.coding.wechat.component.ftp.config.FTPConfig;
+import com.coding.wechat.component.ftp.config.ServerConfig;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
@@ -28,11 +29,10 @@ import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class GenericKeyedFTPClientPool
-        extends GenericKeyedObjectPool<FTPConfig.ServerConfig, FTPClient> {
+public class GenericKeyedFTPClientPool extends GenericKeyedObjectPool<ServerConfig, FTPClient> {
 
     public GenericKeyedFTPClientPool(
-            KeyedPooledObjectFactory<FTPConfig.ServerConfig, FTPClient> factory,
+            KeyedPooledObjectFactory<ServerConfig, FTPClient> factory,
             GenericKeyedObjectPoolConfig config) {
         super(factory, config);
     }

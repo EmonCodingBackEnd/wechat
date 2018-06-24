@@ -12,7 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp;
 
-import com.coding.wechat.component.ftp.bean.FTPResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

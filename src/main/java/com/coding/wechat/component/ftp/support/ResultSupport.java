@@ -12,8 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.support;
 
-import com.coding.wechat.component.ftp.bean.FTPResult;
-
 import java.util.Map;
 
 /**
