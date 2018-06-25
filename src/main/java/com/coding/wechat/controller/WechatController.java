@@ -24,10 +24,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -271,5 +268,11 @@ public class WechatController {
             log.info("【微信获取素材列表】result={}", jsonObject.toString());
         }
         return jsonObject;
+    }
+
+    // 微信公众号第三方授权地址，开放平台
+    @PostMapping("/wxappGo")
+    public void wxappGo(@RequestBody String string) {
+        log.info(string);
     }
 }

@@ -242,10 +242,10 @@ public abstract class HttpSyncClient {
             param = URLEncodedUtils.format(pairList, charset);
         } else {
             UriRegexResult uriRegexResult = RegexSupport.matchUri(url);
-            if (!uriRegexResult.isMatched()) {
-                log.error("【Http】{}请求不合法url={}", httpMethod.name(), url);
-                throw new HttpException("【Http】参数paramMap或者paramString存在时，url不能附带参数及定位信息");
-            }
+//            if (!uriRegexResult.isMatched()) {
+//                log.error("【Http】{}请求不合法url={}", httpMethod.name(), url);
+//                throw new HttpException("【Http】参数paramMap或者paramString存在时，url不能附带参数及定位信息");
+//            }
             UrlParamRegexResult urlParamRegexResult = RegexSupport.matchUrlParam(paramString);
             if (urlParamRegexResult.isMatched()) {
                 List<NameValuePair> paramList =

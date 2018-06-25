@@ -13,6 +13,7 @@
 package com.coding.wechat.component.ftp.pool;
 
 import com.coding.wechat.component.ftp.config.FTPConfig;
+import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
@@ -39,13 +40,13 @@ import java.util.TimeZone;
  */
 @Slf4j
 public class PooledFTPClientFactory
-        implements KeyedPooledObjectFactory<FTPConfig.ServerConfig, FTPClient> {
+        implements KeyedPooledObjectFactory<ServerConfig, FTPClient> {
 
     /** FTP匿名用户. */
     private static final String ANONYMOUS = "anonymous";
 
     @Override
-    public PooledObject<FTPClient> makeObject(FTPConfig.ServerConfig key) throws Exception {
+    public PooledObject<FTPClient> makeObject(ServerConfig key) throws Exception {
         FTPClient ftpClient = new FTPClient();
         ftpClient.setBufferSize(1024 * 2);
         FTPClientConfig ftpClientConfig = new FTPClientConfig();
@@ -88,7 +89,7 @@ public class PooledFTPClientFactory
     }
 
     @Override
-    public void destroyObject(FTPConfig.ServerConfig key, PooledObject<FTPClient> p)
+    public void destroyObject(ServerConfig key, PooledObject<FTPClient> p)
             throws Exception {
         FTPClient ftpClient = p.getObject();
         if (ftpClient != null) {
@@ -98,7 +99,7 @@ public class PooledFTPClientFactory
     }
 
     @Override
-    public boolean validateObject(FTPConfig.ServerConfig key, PooledObject<FTPClient> p) {
+    public boolean validateObject(ServerConfig key, PooledObject<FTPClient> p) {
         FTPClient ftpClient = p.getObject();
         if (ftpClient != null) {
             boolean isConnected = ftpClient.isConnected();
@@ -120,10 +121,10 @@ public class PooledFTPClientFactory
     }
 
     @Override
-    public void activateObject(FTPConfig.ServerConfig key, PooledObject<FTPClient> p)
+    public void activateObject(ServerConfig key, PooledObject<FTPClient> p)
             throws Exception {}
 
     @Override
-    public void passivateObject(FTPConfig.ServerConfig key, PooledObject<FTPClient> p)
+    public void passivateObject(ServerConfig key, PooledObject<FTPClient> p)
             throws Exception {}
 }

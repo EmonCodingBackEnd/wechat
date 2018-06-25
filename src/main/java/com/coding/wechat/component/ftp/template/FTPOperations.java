@@ -12,14 +12,15 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.template;
 
-import com.coding.wechat.component.ftp.config.FTPConfig;
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
-import com.coding.wechat.component.ftp.param.FTPParam;
+import com.coding.wechat.component.ftp.param.DeleteParam;
+import com.coding.wechat.component.ftp.param.DownloadParam;
+import com.coding.wechat.component.ftp.param.ListParam;
+import com.coding.wechat.component.ftp.param.UploadParam;
+import com.coding.wechat.component.ftp.result.UploadResult;
 
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 /**
  * FTP操作.
@@ -33,15 +34,13 @@ import java.util.Map;
  */
 public interface FTPOperations {
 
-    FTPResponse putFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException;
+    UploadResult uploadFile(ServerConfig serverConfig, UploadParam uploadParam) throws FTPException;
 
-    List<String> listFiles(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException;
+    List<String> listFiles(ServerConfig serverConfig, ListParam listParam) throws FTPException;
 
-    <T> T getFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException;
+    void downloadFile(ServerConfig serverConfig, DownloadParam downloadParam) throws FTPException;
 
-    <T> T getFile(ServerConfig serverConfig, FTPCallback<T> callback) throws FTPException;
+    <T> T downloadFile(ServerConfig serverConfig, FTPCallback<T> callback) throws FTPException;
 
-    void deleteFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException;
-
-    boolean mkdir(ServerConfig serverConfig, String remoteDirectory) throws FTPException;
+    void deleteFile(ServerConfig serverConfig, DeleteParam deleteParam) throws FTPException;
 }

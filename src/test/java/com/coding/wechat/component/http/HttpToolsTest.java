@@ -199,28 +199,47 @@ public class HttpToolsTest {
         Assert.notNull(result, "方法执行错误");
     }
 
-    // 公众号模板消息
+    private static final String ACCESS_TOKEN =
+            "11_IP2k3_o0_Nj4oTtGwMy13ttIJFQKp7kKYAUD7V3o1jfOLw0sMDFQTq74yA7A_59y02KUCzfRtpxd8vb9qFKdc_3Mdfk82z3AOY9R2E78ViBdYcAxshGYJotMvdLER7YKVtwtOk1Q7BncdzvkLZQbAEAPDU";
+    // 获取access_token
     @Test
     public void doPost8() throws Exception {
-        //        String url =
-        // "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxda9f1fa3d94b9c19&secret=44c3c418ee8460458e2617f83f528c5d";
-        //        String result = HttpTools.doGet(url);
-        //        log.info(result);
+        String url =
+                "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxda9f1fa3d94b9c19&secret=44c3c418ee8460458e2617f83f528c5d";
+        String result = HttpTools.doGet(url);
+        log.info(result);
+    }
 
-        String acces_token =
-                "11_v32JWw3X9oH64dTJzLak_U07QXHnvQ_NHvXFI-M0g7A8zjDqgwBgyVxn3NXg9OXlaWWI4rjv_GS8XPA0_P9TNZ0luRtHgdWnRHIWyq7UDSThbPsfyJX3GBdO4rXaWJ-D0SR7qzzJLu7irJSqTVWbAGAIKL";
+    // 公众号模板消息
+    @Test
+    public void doPost9() throws Exception {
         String url =
                 "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="
-                        + acces_token;
+                        + ACCESS_TOKEN;
         String json =
-                "{\"touser\":\"wxda9f1fa3d94b9c19\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
+                //
+                // "{\"touser\":\"ohJh21PuI4EC3TM96A5fuP8yG9dU\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
+                "{\"touser\":\"ohJh21CAdZ_0LKNXa-Acnd1r-Y7E\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
         String result = HttpTools.doPost(url, json);
+        log.info(result);
+    }
+
+    // 通过OpenID获取用户的
+    @Test
+    public void doPost10() throws Exception {
+        String url =
+                "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+        url =
+                url.replace("ACCESS_TOKEN", ACCESS_TOKEN)
+                        .replace("OPENID", "ohJh21PuI4EC3TM96A5fuP8yG9dU");
+        String result = HttpTools.doGet(url);
         log.info(result);
     }
 
     // 小程序服务通知
     @Test
-    public void doPost9() throws Exception {
+    public void doPost11() throws Exception {
+
         //        String url =
         // "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxda9f1fa3d94b9c19&secret=44c3c418ee8460458e2617f83f528c5d";
         //        String result = HttpTools.doGet(url);
@@ -239,7 +258,7 @@ public class HttpToolsTest {
 
     // 小程序服务通知
     @Test
-    public void doPost10() throws Exception {
+    public void doPost12() throws Exception {
         String acces_token =
                 "11_ceoaq0R5E9JXAP9MBVYrsqiIoMEHYWYgN5ZaoAgbQj13xYzEtZm1QpT0bYTgAjWKuexHJVcEezp_UTsngIGyZd-lJs7R40WkcUHqPnNC5LJDHiKjfljGmA2WPBd9ofopwq9KRWO1vgJqCArZZMGeAFAIVP";
         String url =

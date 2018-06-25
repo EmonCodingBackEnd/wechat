@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 @Data
 public class ServerConfig {
 
+    private static final String DEFAULT_ACCESS_URL_PREFIX = "";
     private static final int DEFAULT_POST = 21;
 
     // 如果不配置，默认采用host作为别名
@@ -32,4 +33,6 @@ public class ServerConfig {
 
     private int transferFileType = FTPClient.BINARY_FILE_TYPE;
 
+    // 访问上传的文件时，url前缀，比如 http://file.emon.vip/ 或者 http://192.168.1.116:80/
+    private String accessUrlPrefixes = DEFAULT_ACCESS_URL_PREFIX;
 }

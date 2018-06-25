@@ -14,20 +14,19 @@ package com.coding.wechat.component.ftp.template;
 
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
-import com.coding.wechat.component.ftp.param.FTPParam;
-import com.coding.wechat.component.ftp.param.ParamType;
+import com.coding.wechat.component.ftp.param.*;
 import com.coding.wechat.component.ftp.pool.GenericKeyedFTPClientPool;
+import com.coding.wechat.component.ftp.result.ResultItem;
+import com.coding.wechat.component.ftp.result.UploadResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.StringTokenizer;
+import javax.xml.transform.Result;
+import java.io.*;
+import java.util.*;
 
 /**
  * FTP模板.
@@ -61,13 +60,7 @@ public class FTPTemplate implements FTPOperations {
         return ftpClient;
     }
 
-    private String getInfo(ServerConfig serverConfig, FTPParam ftpParam) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(serverConfig.getAlias()).append(ftpParam.getRemoteDirectory());
-        return sb.toString();
-    }
-
-    private boolean changeWorkingDirectory(FTPClient ftpClient, FTPParam ftpParam) {
+    private boolean changeWorkingDirectory(FTPClient ftpClient, BaseParam ftpParam) {
         boolean success;
         try {
             if (StringUtils.isEmpty(ftpParam.getRemoteDirectory())) {
@@ -95,53 +88,99 @@ public class FTPTemplate implements FTPOperations {
         }
     }
 
-    private InputStream getInputStream(FTPParam ftpParam) {
-        if (ftpParam.getInputStream() != null) {
-            return ftpParam.getInputStream();
+    /*private void putFile(FTPClient ftpClient, ResultItem ftpResult, String key, File fileItem) {
+        FileInputStream fis = null;
+        String originalFileName;
+        String virtualFileName;
+        UploadResult uploadResult;
+        try {
+            fis = new FileInputStream(fileItem);
+            originalFileName = fileItem.getName();
+            virtualFileName =
+                    UUID.randomUUID().toString().replace("-", "")
+                            + originalFileName.substring(originalFileName.indexOf("."));
+            boolean storeSucess = ftpClient.storeFile(virtualFileName, fis);
+            if (storeSucess) {
+                uploadResult = UploadResult.newSuccess();
+                uploadResult.setOriginalFileName(originalFileName);
+                uploadResult.setVirtualFileName(virtualFileName);
+                ftpResult.getSuccessResultMap().put(key, uploadResult);
+                log.info("【FTP】文件[{}]上传成功", originalFileName);
+            } else {
+                uploadResult = UploadResult.newFailure();
+                ftpResult.getFailureResultMap().put(key, uploadResult);
+                log.error(String.format("【FTP】文件[%s]上传失败", originalFileName));
+            }
+        } catch (IOException e) {
+            uploadResult = UploadResult.newFailure();
+            uploadResult.setErrorMessage(e.getMessage());
+            ftpResult.getFailureResultMap().put(key, uploadResult);
+            log.error("【FTP】文件上传失败", e);
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    log.error("【FTP】文件流关闭失败", e);
+                }
+            }
         }
-        if (!StringUtils.isEmpty(ftpParam.getLocalFilePath())) {
-            InputStream inputStream = new FileInputStream(ftpParam.getLocalFilePath());
-        }
-    }
+    }*/
 
-    @Override
-    public FTPResponse putFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException {
-        if (ftpParam.getParamType().compareTo(ParamType.Upload) != 0) {
-            throw new FTPException(
-                    String.format("【FTP】方法 putFile 不支持请求类型 %s", ftpParam.getParamType()));
-        }
+    /*@Override
+    public FTPResult putFile(ServerConfig serverConfig, UploadParam uploadParam)
+            throws FTPException {
+        FTPResult ftpResult = new FTPResult();
+        ftpResult.setServerConfig(serverConfig);
+        ftpResult.setUploadParam(uploadParam);
+        String info = getInfo(serverConfig, uploadParam);
         if (log.isDebugEnabled()) {
-            log.debug("【FTP】开始上传文件到 {}", getInfo(serverConfig, ftpParam));
+            log.debug("【FTP】开始上传文件到 {}", info);
         }
         FTPClient ftpClient = getFTPClient(serverConfig);
-        boolean success = changeWorkingDirectory(ftpClient, ftpParam);
-        if (success) {
 
+        boolean success = changeWorkingDirectory(ftpClient, uploadParam);
+        if (success) {
+            for (Map.Entry<String, File> entry : uploadParam.getFileMap().entrySet()) {
+                putFile(ftpClient, ftpResult, entry.getKey(), entry.getValue());
+            }
+            for (Map.Entry<String, String> entry : uploadParam.getContentMap().entrySet()) {
+                putContent(ftpClient, ftpResult, entry.getKey(), entry.getValue());
+            }
+            for (Map.Entry<String, MultipartFile> entry :
+                    uploadParam.getMultipartFileMap().entrySet()) {
+                putMultipartFile(ftpClient, ftpResult, entry.getKey(), entry.getValue());
+            }
+        } else {
+            ftpResult.setHasFailure(true);
         }
-        return null;
-    }
+        ftpClientPool.returnObject(serverConfig, ftpClient);
+        return ftpResult;
+    }*/
 
     @Override
-    public List<String> listFiles(ServerConfig serverConfig, FTPParam ftpParam)
+    public UploadResult uploadFile(ServerConfig serverConfig, UploadParam uploadParam)
             throws FTPException {
         return null;
     }
 
     @Override
-    public <T> T getFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException {
+    public List<String> listFiles(ServerConfig serverConfig, ListParam listParam)
+            throws FTPException {
         return null;
     }
 
     @Override
-    public <T> T getFile(ServerConfig serverConfig, FTPCallback<T> callback) throws FTPException {
+    public void downloadFile(ServerConfig serverConfig, DownloadParam downloadParam)
+            throws FTPException {}
+
+    @Override
+    public <T> T downloadFile(ServerConfig serverConfig, FTPCallback<T> callback)
+            throws FTPException {
         return null;
     }
 
     @Override
-    public void deleteFile(ServerConfig serverConfig, FTPParam ftpParam) throws FTPException {}
-
-    @Override
-    public boolean mkdir(ServerConfig serverConfig, String remoteDirectory) throws FTPException {
-        return false;
-    }
+    public void deleteFile(ServerConfig serverConfig, DeleteParam deleteParam)
+            throws FTPException {}
 }
