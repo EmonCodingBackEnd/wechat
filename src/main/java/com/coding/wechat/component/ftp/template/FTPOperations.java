@@ -18,6 +18,7 @@ import com.coding.wechat.component.ftp.param.DeleteParam;
 import com.coding.wechat.component.ftp.param.DownloadParam;
 import com.coding.wechat.component.ftp.param.ListParam;
 import com.coding.wechat.component.ftp.param.UploadParam;
+import com.coding.wechat.component.ftp.result.ListResult;
 import com.coding.wechat.component.ftp.result.UploadResult;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public interface FTPOperations {
 
     UploadResult uploadFile(ServerConfig serverConfig, UploadParam uploadParam) throws FTPException;
 
-    List<String> listFiles(ServerConfig serverConfig, ListParam listParam) throws FTPException;
+    ListResult listFiles(ServerConfig serverConfig, ListParam listParam) throws FTPException;
 
     void downloadFile(ServerConfig serverConfig, DownloadParam downloadParam) throws FTPException;
 

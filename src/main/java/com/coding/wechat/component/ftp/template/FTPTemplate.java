@@ -20,12 +20,14 @@ import com.coding.wechat.component.ftp.param.ListParam;
 import com.coding.wechat.component.ftp.param.UploadParam;
 import com.coding.wechat.component.ftp.pool.GenericKeyedFTPClientPool;
 import com.coding.wechat.component.ftp.property.ReplayCode;
+import com.coding.wechat.component.ftp.result.ListResult;
 import com.coding.wechat.component.ftp.result.ResultItem;
 import com.coding.wechat.component.ftp.result.UploadResult;
 import com.coding.wechat.component.regex.RegexSupport;
 import com.coding.wechat.component.regex.result.FilenameResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -35,10 +37,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * FTP模板.
@@ -296,10 +299,83 @@ public class FTPTemplate implements FTPOperations {
         return uploadResult;
     }
 
+    // FTP操作失败时调用，正常情况下不应该调用
+    private ListResult getFailureListResultByReply(
+            FTPClient ftpClient, ServerConfig serverConfig, ListParam listParam) {
+        ListResult listResult;
+        int reply = ftpClient.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ReplayCode replayCode = ReplayCode.getByCode(reply);
+            listResult = ListResult.newFailure(replayCode);
+            listResult.setServerConfig(serverConfig);
+            listResult.setListParam(listParam);
+        } else {
+            // 理论上，这里不应该被执行
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureListResultByReply]方法");
+        }
+        return listResult;
+    }
+
     @Override
-    public List<String> listFiles(ServerConfig serverConfig, ListParam listParam)
+    public ListResult listFiles(ServerConfig serverConfig, ListParam listParam)
             throws FTPException {
-        return null;
+        ListResult listResult;
+        FTPClient ftpClient = null;
+        try {
+            ftpClient = borrowFTPClient(serverConfig);
+            String remoteDirectory = listParam.getRemoteDirectory();
+            //            if (changeWorkingDirectory(ftpClient, remoteDirectory)) {
+            FTPFile[] ftpFiles;
+            if (listParam.getFtpFileFilter() != null) {
+                ftpFiles = ftpClient.listFiles(remoteDirectory, listParam.getFtpFileFilter());
+
+            } else {
+                ftpFiles = ftpClient.listFiles(remoteDirectory);
+            }
+            if (ftpFiles != null) {
+                listResult = ListResult.newSuccess();
+                listResult.setServerConfig(serverConfig);
+                listResult.setListParam(listParam);
+                int capactiy = Math.min(listParam.getLimit(), ftpFiles.length);
+                FTPFile[] minFtpFiles = Arrays.copyOfRange(ftpFiles, 0, capactiy);
+                com.coding.wechat.component.ftp.param.FilenameFilter filter =
+                        listParam.getFilenameFilter();
+                Pattern pattern = listParam.getFilenamePattern();
+                if (pattern == null && filter == null) {
+                    listResult.addAll(minFtpFiles);
+                } else {
+                    for (String filename : filenamesCopys) {
+                        if ((pattern != null && !pattern.matcher(filename).find())
+                                || (filter != null && !filter.accept(filename))) {
+                            continue;
+                        }
+                        listResult.addFilename(filename);
+                    }
+                }
+            } else {
+                listResult = getFailureListResultByReply(ftpClient, serverConfig, listParam);
+            }
+            //            } else {
+            //                listResult = getFailureListResultByReply(ftpClient, serverConfig,
+            // listParam);
+            //            }
+        } catch (Exception e) {
+            log.error("【FTP】查看文件列表异常", e);
+            listResult = ListResult.newFailure();
+            listResult.setServerConfig(serverConfig);
+            listResult.setListParam(listParam);
+            listResult.setErrorMessage(e.getMessage());
+            if (ftpClient != null) {
+                invalidateFTPClient(serverConfig, ftpClient);
+                // 如果这里不设置为null,finally会执行，且在GenericKeyedObjectPool#returnObject方法中会抛出空指针异常
+                ftpClient = null;
+            }
+        } finally {
+            if (ftpClient != null) {
+                returnFTPClient(serverConfig, ftpClient);
+            }
+        }
+        return listResult;
     }
 
     @Override

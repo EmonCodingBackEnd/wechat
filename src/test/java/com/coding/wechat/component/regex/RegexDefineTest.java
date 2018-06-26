@@ -199,6 +199,7 @@ public class RegexDefineTest {
     @Test
     public void matchAudio() throws Exception {
         String audioValue = "parentDirectory/寒夜方舟.mp3";
+        audioValue = "00af57db7f1d4e759037d23f56831e4b.mp3";
         Pattern audioPattern = RegexDefine.AUDIO_REGEX_PATTERN;
         Matcher audioMatcher = audioPattern.matcher(audioValue);
         while (audioMatcher.find()) {
