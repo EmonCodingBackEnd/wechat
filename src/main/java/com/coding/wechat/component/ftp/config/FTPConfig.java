@@ -49,43 +49,15 @@ import java.util.List;
 @Slf4j
 public class FTPConfig {
 
-    private final FTPPoolConfig ftpPoolConfig;
-
     // 可以配置多个FTP服务器
     private List<ServerConfig> servers;
+
+    private final FTPPoolConfig ftpPoolConfig;
 
     @Autowired
     public FTPConfig(FTPPoolConfig ftpPoolConfig) {
         this.ftpPoolConfig = ftpPoolConfig;
     }
-
-    /*@Data
-    public static class ServerConfig {
-
-        private static final int DEFAULT_POST = 21;
-
-        // 如果不配置，默认采用host作为别名
-        private String alias;
-
-        private String host;
-
-        private int port = DEFAULT_POST;
-
-        private String username;
-
-        private String password;
-
-        // FTP服务器被动模式
-        private String passiveMode;
-
-        private String encoding = StandardCharsets.UTF_8.name();
-
-        private int connectTimeout = 5000;
-
-        private int dataTimeout = 3000;
-
-        private int transferFileType = FTPClient.BINARY_FILE_TYPE;
-    }*/
 
     @PostConstruct
     public void init() {

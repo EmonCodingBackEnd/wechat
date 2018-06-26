@@ -4,7 +4,6 @@ import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.param.UploadParam;
 import lombok.Data;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +12,6 @@ public class UploadResult {
 
     private ServerConfig serverConfig;
     private UploadParam uploadParam;
-    private ResultItem resultItem;
 
     private Map<String, ResultItem> successMap = new HashMap<>();
     private Map<String, ResultItem> failureMap = new HashMap<>();

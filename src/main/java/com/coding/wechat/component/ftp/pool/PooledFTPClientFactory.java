@@ -12,7 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.pool;
 
-import com.coding.wechat.component.ftp.config.FTPConfig;
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +85,7 @@ public class PooledFTPClientFactory implements KeyedPooledObjectFactory<ServerCo
         log.info("【FTP】登录成功,username={}", username);
 
         ftpClient.setFileType(key.getTransferFileType());
-        if (Boolean.getBoolean(key.getPassiveMode())) {
+        if (Boolean.valueOf(key.getPassiveMode())) {
             ftpClient.enterLocalPassiveMode();
         }
         return new DefaultPooledObject<>(ftpClient);

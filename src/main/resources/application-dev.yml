@@ -38,18 +38,21 @@ ftp:
     port: 21
     username: ftp
     password: ftp123
+    passiveMode: true
     accessUrlPrefixes: http://10.0.0.116
   servers[1]:
-    alias: localUser
-    host: 192.168.1.116
-    port: 21
-    username: ftpuser
-    password: ftpuser123
-    accessUrlPrefixes: http://192.168.1.116
-  servers[2]:
-    alias: virtualUser
-    host: 192.168.1.116
+    alias: saas
+    host: 192.168.1.56
     port: 21
     username: ftp
     password: ftp123
-    accessUrlPrefixes: http://192.168.1.116
+    passiveMode: true
+    accessUrlPrefixes: http://192.168.1.56
+  servers[2]:
+    alias: emon
+    host: 39.107.97.197
+    port: 21
+    username: ftp
+    password: ftp@163
+    passiveMode: true
+    accessUrlPrefixes: http://file.emon.vip

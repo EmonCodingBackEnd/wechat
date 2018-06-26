@@ -200,7 +200,7 @@ public class HttpToolsTest {
     }
 
     private static final String ACCESS_TOKEN =
-            "11_IP2k3_o0_Nj4oTtGwMy13ttIJFQKp7kKYAUD7V3o1jfOLw0sMDFQTq74yA7A_59y02KUCzfRtpxd8vb9qFKdc_3Mdfk82z3AOY9R2E78ViBdYcAxshGYJotMvdLER7YKVtwtOk1Q7BncdzvkLZQbAEAPDU";
+            "11_mOYHXB8kgAbvpZd3QjQsDcs2vQTQ6Skv8xJIFmYYHUboVg721PwNv-99IBfG_Pa2yqXinp2IGcaFL2dDqo_tvGRrCXcnRZCzvNpNxt7DoXvQ7QlOcEl5ezyDchw9VBJfZ0Owh3g5d432o7cZUZKeAAAHMX";
     // 获取access_token
     @Test
     public void doPost8() throws Exception {
@@ -218,8 +218,8 @@ public class HttpToolsTest {
                         + ACCESS_TOKEN;
         String json =
                 //
-                // "{\"touser\":\"ohJh21PuI4EC3TM96A5fuP8yG9dU\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
-                "{\"touser\":\"ohJh21CAdZ_0LKNXa-Acnd1r-Y7E\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
+                 "{\"touser\":\"ohJh21PuI4EC3TM96A5fuP8yG9dU\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
+//                "{\"touser\":\"ohJh21CAdZ_0LKNXa-Acnd1r-Y7E\",\"template_id\":\"q3ck6p5gBpYhTvyQSE60Z9PlSNbO7EhVfcxrT1k_YKY\",\"appid\":\"1111\",\"data\":{\"first\": {\"value\":\"恭喜你购买成功！\",\"color\":\"#173177\"},\"keyword1\":{\"value\":\"巧克力\",\"color\":\"#173177\"},\"keyword2\": {\"value\":\"39.8元\",\"color\":\"#173177\"},\"keyword3\": {\"value\":\"2014年9月22日\",\"color\":\"#173177\"},\"remark\":{\"value\":\"欢迎再次购买！\",\"color\":\"#173177\"}}}";
         String result = HttpTools.doPost(url, json);
         log.info(result);
     }
@@ -231,7 +231,7 @@ public class HttpToolsTest {
                 "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
         url =
                 url.replace("ACCESS_TOKEN", ACCESS_TOKEN)
-                        .replace("OPENID", "ohJh21PuI4EC3TM96A5fuP8yG9dU");
+                        .replace("OPENID", "ohJh21GHvdN7Ozf41n2A6y7trZa8");
         String result = HttpTools.doGet(url);
         log.info(result);
     }

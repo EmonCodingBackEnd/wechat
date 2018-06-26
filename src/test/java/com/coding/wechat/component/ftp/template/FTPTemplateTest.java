@@ -24,9 +24,16 @@ public class FTPTemplateTest {
     @Test
     public void uploadFile() throws Exception {
         UploadParam uploadParam =
-                UploadParamBuilder.custom().content("test.txt", "Just For Test").build();
+                UploadParamBuilder.custom()
+                        .autoDetect(true)
+                        .content("test.mp3", "Just For Test")
+                        .build();
         UploadResult uploadResult =
-                ftpTemplate.uploadFile(ftpConfig.getDefaultServer(), uploadParam);
+                ftpTemplate.uploadFile(ftpConfig.getServer("default"), uploadParam);
         log.info(uploadResult.toString());
+        uploadResult = ftpTemplate.uploadFile(ftpConfig.getServer("saas"), uploadParam);
+        log.info(uploadResult.hasFailure() + "");
+        uploadResult = ftpTemplate.uploadFile(ftpConfig.getServer("emon"), uploadParam);
+        log.info(uploadResult.hasFailure() + "");
     }
 }
