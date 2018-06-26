@@ -36,7 +36,8 @@ public enum ReplayCode {
     HELP_MESSAGE(FTPReply.HELP_MESSAGE, "帮助信息，信息仅对人类用户有用"),
     NAME_SYSTEM_TYPE(FTPReply.NAME_SYSTEM_TYPE, "名字系统类型"),
     SERVICE_READY(FTPReply.SERVICE_READY, "对新用户服务准备好"),
-    SERVICE_CLOSING_CONTROL_CONNECTION(FTPReply.SERVICE_CLOSING_CONTROL_CONNECTION, "服务关闭控制连接，可以退出登录"),
+    SERVICE_CLOSING_CONTROL_CONNECTION(
+            FTPReply.SERVICE_CLOSING_CONTROL_CONNECTION, "服务关闭控制连接，可以退出登录"),
     DATA_CONNECTION_OPEN(FTPReply.DATA_CONNECTION_OPEN, "数据连接打开，无传输正在进行"),
     CLOSING_DATA_CONNECTION(FTPReply.CLOSING_DATA_CONNECTION, "关闭数据连接，请求的文件操作成功"),
     ENTERING_PASSIVE_MODE(FTPReply.ENTERING_PASSIVE_MODE, "进入被动模式"),
@@ -82,11 +83,11 @@ public enum ReplayCode {
     }
 
     public Integer getCode() {
-        return null;
+        return code;
     }
 
     public String getMsg() {
-        return null;
+        return msg;
     }
 
     public static ReplayCode getByCode(Integer code) {

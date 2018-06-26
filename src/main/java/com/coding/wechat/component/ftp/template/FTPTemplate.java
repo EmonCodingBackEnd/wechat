@@ -95,6 +95,8 @@ public class FTPTemplate implements FTPOperations {
             if (!StringUtils.isEmpty(remoteDirectory)) {
                 success = ftpClient.changeWorkingDirectory(remoteDirectory);
                 if (!success) {
+                    // 默认设置true，如果有任何目录失败，则认为false并跳出
+                    success = true;
                     StringTokenizer token = new StringTokenizer(remoteDirectory, "\\//");
                     while (token.hasMoreElements()) {
                         String directory = token.nextToken();
@@ -130,7 +132,8 @@ public class FTPTemplate implements FTPOperations {
         return buffer.toString();
     }
 
-    private ResultItem getResultItemByReply(FTPClient ftpClient, String originalFilename) {
+    // FTP操作失败时调用，正常情况下不应该调用
+    private ResultItem getFailureResultItemByReply(FTPClient ftpClient, String originalFilename) {
         ResultItem resultItem;
         int reply = ftpClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
@@ -138,8 +141,8 @@ public class FTPTemplate implements FTPOperations {
             resultItem = ResultItem.newFailure(replayCode);
             resultItem.setOriginalFilename(originalFilename);
         } else {
-            resultItem = ResultItem.newFailure();
-            resultItem.setOriginalFilename(originalFilename);
+            // 理论上，这里不应该被执行
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureResultItemByReply]方法");
         }
         return resultItem;
     }
@@ -164,10 +167,10 @@ public class FTPTemplate implements FTPOperations {
                             serverConfig.getAccessUrlPrefixes() + File.separator + virtualFilename;
                     resultItem.setUrl(url);
                 } else {
-                    resultItem = getResultItemByReply(ftpClient, originalFilename);
+                    resultItem = getFailureResultItemByReply(ftpClient, originalFilename);
                 }
             } else {
-                resultItem = getResultItemByReply(ftpClient, originalFilename);
+                resultItem = getFailureResultItemByReply(ftpClient, originalFilename);
             }
         } catch (IOException e) {
             log.error("【FTP】上传文件失败", e);
@@ -193,10 +196,9 @@ public class FTPTemplate implements FTPOperations {
         if (uploadParam.isAutoDetect()) {
             if (RegexSupport.matchImage(originalFilename).isMatched()) {
                 remoteDirectory = IMAGE_DIRECTORY;
-            } else if (RegexSupport.matchImage(originalFilename).isMatched()) {
+            } else if (RegexSupport.matchAudio(originalFilename).isMatched()) {
                 remoteDirectory = AUDIO_DIRECTORY;
-
-            } else if (RegexSupport.matchImage(originalFilename).isMatched()) {
+            } else if (RegexSupport.matchVedio(originalFilename).isMatched()) {
                 remoteDirectory = VEDIO_DIRECTORY;
             } else {
                 remoteDirectory = null;
@@ -283,6 +285,8 @@ public class FTPTemplate implements FTPOperations {
             log.error("【FTP】上传文件异常", e);
             if (ftpClient != null) {
                 invalidateFTPClient(serverConfig, ftpClient);
+                // 如果这里不设置为null,finally会执行，且在GenericKeyedObjectPool#returnObject方法中会抛出空指针异常
+                ftpClient = null;
             }
         } finally {
             if (ftpClient != null) {

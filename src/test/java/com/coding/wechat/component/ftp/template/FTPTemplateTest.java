@@ -26,12 +26,12 @@ public class FTPTemplateTest {
         UploadParam uploadParam =
                 UploadParamBuilder.custom()
                         .autoDetect(true)
-                        .content("test.mp3", "Just For Test")
+                        .content("test.mp4", "Just For Test")
                         .build();
         UploadResult uploadResult =
                 ftpTemplate.uploadFile(ftpConfig.getServer("default"), uploadParam);
         log.info(uploadResult.toString());
         uploadResult = ftpTemplate.uploadFile(ftpConfig.getServer("house"), uploadParam);
-        log.info(uploadResult.hasFailure() + "");
+        log.info(uploadResult.toString());
     }
 }

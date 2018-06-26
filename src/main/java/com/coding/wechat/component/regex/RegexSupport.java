@@ -217,7 +217,9 @@ public abstract class RegexSupport {
             result.setPattern(RegexDefine.IMAGE_REGEX_PATTERN);
             result.setMatcher(matcher);
             result.setFilename(matcher.group(0));
-            fetchFilenameResult(result, matcher);
+            result.setHasSuffix(true);
+            result.setPrefix(matcher.group(1));
+            result.setSuffix(matcher.group(2));
         }
         return result;
     }
@@ -236,7 +238,9 @@ public abstract class RegexSupport {
             result.setPattern(RegexDefine.AUDIO_REGEX_PATTERN);
             result.setMatcher(matcher);
             result.setFilename(matcher.group(0));
-            fetchFilenameResult(result, matcher);
+            result.setHasSuffix(true);
+            result.setPrefix(matcher.group(1));
+            result.setSuffix(matcher.group(2));
         }
         return result;
     }
@@ -255,7 +259,9 @@ public abstract class RegexSupport {
             result.setPattern(RegexDefine.VEDIO_REGEX_PATTERN);
             result.setMatcher(matcher);
             result.setFilename(matcher.group(0));
-            fetchFilenameResult(result, matcher);
+            result.setHasSuffix(true);
+            result.setPrefix(matcher.group(1));
+            result.setSuffix(matcher.group(2));
         }
         return result;
     }

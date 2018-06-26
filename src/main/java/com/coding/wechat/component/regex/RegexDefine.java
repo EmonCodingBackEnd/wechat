@@ -112,10 +112,13 @@ public abstract class RegexDefine {
             "(?:([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(\\w+))|(?:([^<>/\\\\\\|:\"\"\\*\\?]+))$";
     public static final Pattern FILENAME_REGEX_PATTERN = Pattern.compile(FILENAME_REGEX);
 
-    public static final String IMAGE_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(jpg|jpeg|gif|png)$";
+    public static final String IMAGE_REGEX =
+            "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(jpg|JPG|jpeg|JPEG|gif|GIF|png|PNG)$";
     public static final Pattern IMAGE_REGEX_PATTERN = Pattern.compile(IMAGE_REGEX);
-    public static final String AUDIO_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp3)$";
+    public static final String AUDIO_REGEX =
+            "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp3|MP3|wav|WAV|ape|APE|flac)$";
     public static final Pattern AUDIO_REGEX_PATTERN = Pattern.compile(AUDIO_REGEX);
-    public static final String VEDIO_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp4)$";
+    public static final String VEDIO_REGEX =
+            "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp4|avi|rmvb|flv|wmv|vob|mkv|mov)$";
     public static final Pattern VEDIO_REGEX_PATTERN = Pattern.compile(VEDIO_REGEX);
 }
