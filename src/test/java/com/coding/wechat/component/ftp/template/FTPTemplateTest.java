@@ -23,15 +23,15 @@ public class FTPTemplateTest {
 
     @Test
     public void uploadFile() throws Exception {
-//        UploadParam uploadParam =
-//                UploadParamBuilder.custom()
-//                        .autoDetect(true)
-//                        .content("test.mp3", "Just For Test")
-//                        .build();
-//        UploadResult uploadResult =
-//                ftpTemplate.uploadFile(ftpConfig.getServer("default"), uploadParam);
-//        log.info(uploadResult.toString());
-//        uploadResult = ftpTemplate.uploadFile(ftpConfig.getServer("house"), uploadParam);
-//        log.info(uploadResult.hasFailure() + "");
+        UploadParam uploadParam =
+                UploadParamBuilder.custom()
+                        .autoDetect(true)
+                        .content("test.mp3", "Just For Test")
+                        .build();
+        UploadResult uploadResult =
+                ftpTemplate.uploadFile(ftpConfig.getServer("default"), uploadParam);
+        log.info(uploadResult.toString());
+        uploadResult = ftpTemplate.uploadFile(ftpConfig.getServer("house"), uploadParam);
+        log.info(uploadResult.hasFailure() + "");
     }
 }
