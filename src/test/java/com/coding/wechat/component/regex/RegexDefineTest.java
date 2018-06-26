@@ -154,4 +154,71 @@ public class RegexDefineTest {
                             badUrlMatcher.start(), badUrlMatcher.end(), badUrlMatcher.group()));
         }
     }
+
+    @Test
+    public void matchStrictFilename() throws Exception {
+        String filenameValue = "寒夜方舟.mp3";
+        Pattern filenamePattern = RegexDefine.STRICT_FILENAME_REGEX_PATTERN;
+        Matcher filenameMatcher = filenamePattern.matcher(filenameValue);
+        if (filenameMatcher.matches()) {
+            System.out.println(RegexDefine.STRICT_FILENAME_REGEX);
+            for (int i = 0; i <= filenameMatcher.groupCount(); i++) {
+                System.out.println(String.format("group(%d)=%s", i, filenameMatcher.group(i)));
+            }
+        }
+    }
+
+    @Test
+    public void matchFilename() throws Exception {
+        String filepathValue = "parentDirectory/寒夜方舟.mp3";
+        Pattern filepathPattern = RegexDefine.FILENAME_REGEX_PATTERN;
+        Matcher filepathMatcher = filepathPattern.matcher(filepathValue);
+        while (filepathMatcher.find()) {
+            System.out.println(
+                    String.format(
+                            "在索引区间[%d, %s]找到匹配组【%s】",
+                            filepathMatcher.start(),
+                            filepathMatcher.end(),
+                            filepathMatcher.group()));
+        }
+    }
+
+    @Test
+    public void matchImage() throws Exception {
+        String imageValue = "parentDirectory/寒夜方舟.png";
+        Pattern imagePattern = RegexDefine.IMAGE_REGEX_PATTERN;
+        Matcher imageMatcher = imagePattern.matcher(imageValue);
+        while (imageMatcher.find()) {
+            System.out.println(
+                    String.format(
+                            "在索引区间[%d, %s]找到匹配组【%s】",
+                            imageMatcher.start(), imageMatcher.end(), imageMatcher.group()));
+        }
+    }
+
+    @Test
+    public void matchAudio() throws Exception {
+        String audioValue = "parentDirectory/寒夜方舟.mp3";
+        Pattern audioPattern = RegexDefine.AUDIO_REGEX_PATTERN;
+        Matcher audioMatcher = audioPattern.matcher(audioValue);
+        while (audioMatcher.find()) {
+            System.out.println(
+                    String.format(
+                            "在索引区间[%d, %s]找到匹配组【%s】",
+                            audioMatcher.start(), audioMatcher.end(), audioMatcher.group()));
+        }
+    }
+
+    @Test
+    public void matchVedio() throws Exception {
+        String audioValue = "parentDirectory/寒夜方舟.mp3";
+        Pattern audioPattern = RegexDefine.VEDIO_REGEX_PATTERN;
+        Matcher audioMatcher = audioPattern.matcher(audioValue);
+        while (audioMatcher.find()) {
+            System.out.println(
+                    String.format(
+                            "在索引区间[%d, %s]找到匹配组【%s】",
+                            audioMatcher.start(), audioMatcher.end(), audioMatcher.group()));
+        }
+    }
 }

@@ -39,8 +39,7 @@ import java.util.TimeZone;
  * @since 1.0.0
  */
 @Slf4j
-public class PooledFTPClientFactory
-        implements KeyedPooledObjectFactory<ServerConfig, FTPClient> {
+public class PooledFTPClientFactory implements KeyedPooledObjectFactory<ServerConfig, FTPClient> {
 
     /** FTP匿名用户. */
     private static final String ANONYMOUS = "anonymous";
@@ -55,7 +54,12 @@ public class PooledFTPClientFactory
         ftpClient.configure(ftpClientConfig);
         ftpClient.setConnectTimeout(key.getConnectTimeout());
         ftpClient.setDataTimeout(key.getDataTimeout());
-        ftpClient.connect(key.getHost(), key.getPort());
+        try {
+            ftpClient.connect(key.getHost(), key.getPort());
+        } catch (IOException e) {
+            log.error(String.format("【FTP】连接异常, %s:%s", key.getHost(), key.getPort()), e);
+            throw e;
+        }
         int reply = ftpClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             ftpClient.disconnect();
@@ -89,8 +93,7 @@ public class PooledFTPClientFactory
     }
 
     @Override
-    public void destroyObject(ServerConfig key, PooledObject<FTPClient> p)
-            throws Exception {
+    public void destroyObject(ServerConfig key, PooledObject<FTPClient> p) throws Exception {
         FTPClient ftpClient = p.getObject();
         if (ftpClient != null) {
             ftpClient.logout();
@@ -121,10 +124,8 @@ public class PooledFTPClientFactory
     }
 
     @Override
-    public void activateObject(ServerConfig key, PooledObject<FTPClient> p)
-            throws Exception {}
+    public void activateObject(ServerConfig key, PooledObject<FTPClient> p) throws Exception {}
 
     @Override
-    public void passivateObject(ServerConfig key, PooledObject<FTPClient> p)
-            throws Exception {}
+    public void passivateObject(ServerConfig key, PooledObject<FTPClient> p) throws Exception {}
 }

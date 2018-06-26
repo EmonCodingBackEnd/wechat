@@ -102,4 +102,20 @@ public abstract class RegexDefine {
     public static final String PROXY_BAD_URL_REGEX =
             "(?:href|url|src)=(?:\"([^\\n\\r\"']+)|'([^\\n\\r\"']+))$|url\\((?:\"([^\\n\\r\"']+)|'([^\\n\\r\"']+)|&quot;([^\\n\\r\"']+))$";
     public static final Pattern PROXY_BAD_URL_REGEX_PATTERN = Pattern.compile(PROXY_BAD_URL_REGEX);
+
+    public static final String STRICT_FILENAME_REGEX =
+            "^(?:([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(\\w+))|(?:([^<>/\\\\\\|:\"\"\\*\\?]+))$";
+    public static final Pattern STRICT_FILENAME_REGEX_PATTERN =
+            Pattern.compile(STRICT_FILENAME_REGEX);
+
+    public static final String FILENAME_REGEX =
+            "(?:([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(\\w+))|(?:([^<>/\\\\\\|:\"\"\\*\\?]+))$";
+    public static final Pattern FILENAME_REGEX_PATTERN = Pattern.compile(FILENAME_REGEX);
+
+    public static final String IMAGE_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(jpg|jpeg|gif|png)$";
+    public static final Pattern IMAGE_REGEX_PATTERN = Pattern.compile(IMAGE_REGEX);
+    public static final String AUDIO_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp3)$";
+    public static final Pattern AUDIO_REGEX_PATTERN = Pattern.compile(AUDIO_REGEX);
+    public static final String VEDIO_REGEX = "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp4)$";
+    public static final Pattern VEDIO_REGEX_PATTERN = Pattern.compile(VEDIO_REGEX);
 }

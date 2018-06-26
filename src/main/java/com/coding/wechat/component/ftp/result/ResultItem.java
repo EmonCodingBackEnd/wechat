@@ -9,8 +9,8 @@ public class ResultItem {
 
     private boolean success;
     private String errorMessage;
-    private String originalFileName;
-    private String virtualFileName;
+    private String originalFilename;
+    private String virtualFilename;
     private String url;
 
     private ResultItem() {}

@@ -12,10 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.regex;
 
-import com.coding.wechat.component.regex.result.MobileRegexResult;
-import com.coding.wechat.component.regex.result.UriRegexResult;
-import com.coding.wechat.component.regex.result.UrlParamRegexResult;
-import com.coding.wechat.component.regex.result.UrlRegexResult;
+import com.coding.wechat.component.regex.result.*;
 
 import java.util.regex.Matcher;
 
@@ -158,6 +155,107 @@ public abstract class RegexSupport {
             result.setPattern(RegexDefine.URL_PARAM_REGEX_PATTERN);
             result.setMatcher(matcher);
             result.setParam(matcher.group(1));
+        }
+        return result;
+    }
+
+    private static void fetchFilenameResult(FilenameResult result, Matcher matcher) {
+        if (matcher.group(3) != null) {
+            result.setHasSuffix(false);
+            result.setPrefix(matcher.group(3));
+        } else {
+            result.setHasSuffix(true);
+            result.setPrefix(matcher.group(1));
+            result.setSuffix(matcher.group(2));
+        }
+    }
+
+    public static FilenameResult matchStrictFilename(String value) {
+        FilenameResult result = FilenameResult.instance();
+        Matcher matcher = RegexDefine.STRICT_FILENAME_REGEX_PATTERN.matcher(value);
+        if (matcher.matches()) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.STRICT_FILENAME_REGEX);
+            result.setPattern(RegexDefine.STRICT_FILENAME_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setFilename(matcher.group(0));
+            fetchFilenameResult(result, matcher);
+        }
+        return result;
+    }
+
+    public static FilenameResult matchFilename(String value) {
+        FilenameResult result = FilenameResult.instance();
+        Matcher matcher = RegexDefine.FILENAME_REGEX_PATTERN.matcher(value);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            break;
+        }
+        if (found) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.FILENAME_REGEX);
+            result.setPattern(RegexDefine.FILENAME_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setFilename(matcher.group(0));
+            fetchFilenameResult(result, matcher);
+        }
+        return result;
+    }
+
+    public static FilenameResult matchImage(String value) {
+        FilenameResult result = FilenameResult.instance();
+        Matcher matcher = RegexDefine.IMAGE_REGEX_PATTERN.matcher(value);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            break;
+        }
+        if (found) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.IMAGE_REGEX);
+            result.setPattern(RegexDefine.IMAGE_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setFilename(matcher.group(0));
+            fetchFilenameResult(result, matcher);
+        }
+        return result;
+    }
+
+    public static FilenameResult matchAudio(String value) {
+        FilenameResult result = FilenameResult.instance();
+        Matcher matcher = RegexDefine.AUDIO_REGEX_PATTERN.matcher(value);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            break;
+        }
+        if (found) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.AUDIO_REGEX);
+            result.setPattern(RegexDefine.AUDIO_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setFilename(matcher.group(0));
+            fetchFilenameResult(result, matcher);
+        }
+        return result;
+    }
+
+    public static FilenameResult matchVedio(String value) {
+        FilenameResult result = FilenameResult.instance();
+        Matcher matcher = RegexDefine.VEDIO_REGEX_PATTERN.matcher(value);
+        boolean found = false;
+        while (matcher.find()) {
+            found = true;
+            break;
+        }
+        if (found) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.VEDIO_REGEX);
+            result.setPattern(RegexDefine.VEDIO_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setFilename(matcher.group(0));
+            fetchFilenameResult(result, matcher);
         }
         return result;
     }

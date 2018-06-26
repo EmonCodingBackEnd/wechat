@@ -14,19 +14,28 @@ package com.coding.wechat.component.ftp.template;
 
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
-import com.coding.wechat.component.ftp.param.*;
+import com.coding.wechat.component.ftp.param.DeleteParam;
+import com.coding.wechat.component.ftp.param.DownloadParam;
+import com.coding.wechat.component.ftp.param.ListParam;
+import com.coding.wechat.component.ftp.param.UploadParam;
 import com.coding.wechat.component.ftp.pool.GenericKeyedFTPClientPool;
 import com.coding.wechat.component.ftp.result.ResultItem;
 import com.coding.wechat.component.ftp.result.UploadResult;
+import com.coding.wechat.component.regex.RegexSupport;
+import com.coding.wechat.component.regex.result.FilenameResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Result;
 import java.io.*;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.UUID;
 
 /**
  * FTP模板.
@@ -60,14 +69,13 @@ public class FTPTemplate implements FTPOperations {
         return ftpClient;
     }
 
-    private boolean changeWorkingDirectory(FTPClient ftpClient, BaseParam ftpParam) {
+    private boolean changeWorkingDirectory(FTPClient ftpClient, String remoteDirectory) {
         boolean success;
         try {
-            if (StringUtils.isEmpty(ftpParam.getRemoteDirectory())) {
-                success = ftpClient.changeWorkingDirectory(ftpParam.getRemoteDirectory());
+            if (StringUtils.isEmpty(remoteDirectory)) {
+                success = ftpClient.changeWorkingDirectory(remoteDirectory);
                 if (!success) {
-                    StringTokenizer token =
-                            new StringTokenizer(ftpParam.getRemoteDirectory(), "\\//");
+                    StringTokenizer token = new StringTokenizer(remoteDirectory, "\\//");
                     while (token.hasMoreElements()) {
                         String directory = token.nextToken();
                         boolean mkdirSuccess = ftpClient.makeDirectory(directory);
@@ -88,80 +96,152 @@ public class FTPTemplate implements FTPOperations {
         }
     }
 
-    /*private void putFile(FTPClient ftpClient, ResultItem ftpResult, String key, File fileItem) {
-        FileInputStream fis = null;
-        String originalFileName;
-        String virtualFileName;
-        UploadResult uploadResult;
+    private String getVirtualFilename(String originalFilename) {
+        FilenameResult regexResult = RegexSupport.matchStrictFilename(originalFilename);
+        if (!regexResult.isMatched()) {
+            log.error("【FTP】源文件名 {} 不合法", originalFilename);
+            throw new FTPException("【FTP】源文件名不合法");
+        }
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(UUID.randomUUID().toString().replace("-", ""));
+        if (regexResult.isHasSuffix()) {
+            buffer.append(".").append(regexResult.getSuffix());
+        }
+        return buffer.toString();
+    }
+
+    private ResultItem uploadFile(
+            FTPClient ftpClient,
+            ServerConfig serverConfig,
+            String remoteDirectory,
+            String originalFilename,
+            InputStream inputStream) {
+        Assert.notNull(inputStream, "inputStream must be not null");
+        ResultItem resultItem;
         try {
-            fis = new FileInputStream(fileItem);
-            originalFileName = fileItem.getName();
-            virtualFileName =
-                    UUID.randomUUID().toString().replace("-", "")
-                            + originalFileName.substring(originalFileName.indexOf("."));
-            boolean storeSucess = ftpClient.storeFile(virtualFileName, fis);
-            if (storeSucess) {
-                uploadResult = UploadResult.newSuccess();
-                uploadResult.setOriginalFileName(originalFileName);
-                uploadResult.setVirtualFileName(virtualFileName);
-                ftpResult.getSuccessResultMap().put(key, uploadResult);
-                log.info("【FTP】文件[{}]上传成功", originalFileName);
+            if (changeWorkingDirectory(ftpClient, remoteDirectory)) {
+                String virtualFilename = getVirtualFilename(originalFilename);
+                boolean success = ftpClient.storeFile(virtualFilename, inputStream);
+                if (success) {
+                    resultItem = ResultItem.newSuccess();
+                    resultItem.setOriginalFilename(originalFilename);
+                    resultItem.setVirtualFilename(virtualFilename);
+                    String url =
+                            serverConfig.getAccessUrlPrefixes() + File.separator + virtualFilename;
+                    resultItem.setUrl(url);
+                } else {
+                    resultItem = ResultItem.newFailure();
+                }
             } else {
-                uploadResult = UploadResult.newFailure();
-                ftpResult.getFailureResultMap().put(key, uploadResult);
-                log.error(String.format("【FTP】文件[%s]上传失败", originalFileName));
+                resultItem = ResultItem.newFailure();
             }
         } catch (IOException e) {
-            uploadResult = UploadResult.newFailure();
-            uploadResult.setErrorMessage(e.getMessage());
-            ftpResult.getFailureResultMap().put(key, uploadResult);
-            log.error("【FTP】文件上传失败", e);
+            log.error("【FTP】上传文件失败", e);
+            resultItem = ResultItem.newFailure();
+            resultItem.setErrorMessage(e.getMessage());
         } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    log.error("【FTP】文件流关闭失败", e);
-                }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                log.error("【FTP】文件流关闭失败", e);
             }
         }
-    }*/
+        return resultItem;
+    }
 
-    /*@Override
-    public FTPResult putFile(ServerConfig serverConfig, UploadParam uploadParam)
-            throws FTPException {
-        FTPResult ftpResult = new FTPResult();
-        ftpResult.setServerConfig(serverConfig);
-        ftpResult.setUploadParam(uploadParam);
-        String info = getInfo(serverConfig, uploadParam);
-        if (log.isDebugEnabled()) {
-            log.debug("【FTP】开始上传文件到 {}", info);
-        }
-        FTPClient ftpClient = getFTPClient(serverConfig);
+    public static final String IMAGE_DIRECTORY = "images";
+    public static final String AUDIO_DIRECTORY = "audios";
+    public static final String VEDIO_DIRECTORY = "vedios";
 
-        boolean success = changeWorkingDirectory(ftpClient, uploadParam);
-        if (success) {
-            for (Map.Entry<String, File> entry : uploadParam.getFileMap().entrySet()) {
-                putFile(ftpClient, ftpResult, entry.getKey(), entry.getValue());
-            }
-            for (Map.Entry<String, String> entry : uploadParam.getContentMap().entrySet()) {
-                putContent(ftpClient, ftpResult, entry.getKey(), entry.getValue());
-            }
-            for (Map.Entry<String, MultipartFile> entry :
-                    uploadParam.getMultipartFileMap().entrySet()) {
-                putMultipartFile(ftpClient, ftpResult, entry.getKey(), entry.getValue());
+    private String getRemoteDirectory(String originalFilename, UploadParam uploadParam) {
+        String remoteDirectory;
+        if (uploadParam.isAutoDetect()) {
+            if (RegexSupport.matchImage(originalFilename).isMatched()) {
+                remoteDirectory = IMAGE_DIRECTORY;
+            } else if (RegexSupport.matchImage(originalFilename).isMatched()) {
+                remoteDirectory = AUDIO_DIRECTORY;
+
+            } else if (RegexSupport.matchImage(originalFilename).isMatched()) {
+                remoteDirectory = VEDIO_DIRECTORY;
+            } else {
+                remoteDirectory = null;
             }
         } else {
-            ftpResult.setHasFailure(true);
+            remoteDirectory = uploadParam.getRemoteDirectory();
         }
-        ftpClientPool.returnObject(serverConfig, ftpClient);
-        return ftpResult;
-    }*/
+        return remoteDirectory;
+    }
 
     @Override
     public UploadResult uploadFile(ServerConfig serverConfig, UploadParam uploadParam)
             throws FTPException {
-        return null;
+        UploadResult uploadResult = new UploadResult();
+        uploadResult.setServerConfig(serverConfig);
+        uploadResult.setUploadParam(uploadParam);
+        if (log.isDebugEnabled()) {
+            log.debug("【FTP】开始上传文件到 {}", serverConfig.getHost());
+        }
+        FTPClient ftpClient = getFTPClient(serverConfig);
+
+        for (Map.Entry<String, InputStream> entry : uploadParam.getInputStreamMap().entrySet()) {
+            String remoteDirectory = getRemoteDirectory(entry.getKey(), uploadParam);
+            ResultItem resultItem =
+                    uploadFile(
+                            ftpClient,
+                            serverConfig,
+                            remoteDirectory,
+                            entry.getKey(),
+                            entry.getValue());
+            uploadResult.addResultItem(resultItem);
+        }
+        for (Map.Entry<String, String> entry : uploadParam.getContentMap().entrySet()) {
+            String remoteDirectory = getRemoteDirectory(entry.getKey(), uploadParam);
+            InputStream inputStream =
+                    new BufferedInputStream(
+                            new ByteArrayInputStream(
+                                    entry.getValue().getBytes(ftpClient.getCharset())));
+            ResultItem resultItem =
+                    uploadFile(
+                            ftpClient, serverConfig, remoteDirectory, entry.getKey(), inputStream);
+            uploadResult.addResultItem(resultItem);
+        }
+        for (MultipartFile multipartFile : uploadParam.getMultipartFileList()) {
+            String remoteDirectory =
+                    getRemoteDirectory(multipartFile.getOriginalFilename(), uploadParam);
+            ResultItem resultItem;
+            try {
+                resultItem =
+                        uploadFile(
+                                ftpClient,
+                                serverConfig,
+                                remoteDirectory,
+                                multipartFile.getOriginalFilename(),
+                                multipartFile.getInputStream());
+            } catch (IOException e) {
+                resultItem = ResultItem.newFailure();
+                log.error("【FTP】multipartFile文件上传获取输入流失败", e);
+            }
+            uploadResult.addResultItem(resultItem);
+        }
+        for (File fileItem : uploadParam.getFileList()) {
+            String remoteDirectory = getRemoteDirectory(fileItem.getName(), uploadParam);
+            ResultItem resultItem;
+            try {
+                FileInputStream inputStream = new FileInputStream(fileItem);
+                resultItem =
+                        uploadFile(
+                                ftpClient,
+                                serverConfig,
+                                remoteDirectory,
+                                fileItem.getName(),
+                                inputStream);
+            } catch (FileNotFoundException e) {
+                resultItem = ResultItem.newFailure();
+                log.error("【FTP】fileItem文件上传获取输入流失败", e);
+            }
+            uploadResult.addResultItem(resultItem);
+        }
+        return uploadResult;
     }
 
     @Override

@@ -97,6 +97,12 @@ public class FTPConfig {
         }
     }
 
+    public ServerConfig getDefaultServer() {
+        ServerConfig serverConfig = getServer("default");
+        Assert.notNull(serverConfig, "默认ServerConfig配置不存在，请确认ftp.server[x].default存在");
+        return serverConfig;
+    }
+
     /**
      * 根据alias或者host查找对应FTP服务器连接配置，如果查不到，返回null.
      *

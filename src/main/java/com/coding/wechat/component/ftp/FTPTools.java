@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp;
 
+import com.coding.wechat.component.ftp.result.UploadResult;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -31,7 +32,7 @@ import java.util.List;
 @Slf4j
 public class FTPTools {
 
-    public static FTPResult uploadFile(List<File> fileList) throws IOException {
+    public static UploadResult uploadFile(List<File> fileList) throws IOException {
         //        FTPClientSupport ftpSupport =
         // FTPClientSupport.getInstance(FTPConfig.getServer("default"));
         //        log.info("【Ftp】开始连接服务器");

@@ -4,19 +4,29 @@ import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.param.UploadParam;
 import lombok.Data;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
 public class UploadResult {
 
-    private boolean hasFailure;
     private ServerConfig serverConfig;
     private UploadParam uploadParam;
+    private ResultItem resultItem;
 
-    private Map<String, UploadResult> successResultMap;
-    private Map<String, UploadResult> failureResultMap;
+    private Map<String, ResultItem> successMap = new HashMap<>();
+    private Map<String, ResultItem> failureMap = new HashMap<>();
 
     public boolean hasFailure() {
-        return hasFailure || !failureResultMap.isEmpty();
+        return !failureMap.isEmpty();
+    }
+
+    public void addResultItem(ResultItem resultItem) {
+        if (resultItem.isSuccess()) {
+            successMap.put(resultItem.getOriginalFilename(), resultItem);
+        } else {
+            failureMap.put(resultItem.getOriginalFilename(), resultItem);
+        }
     }
 }
