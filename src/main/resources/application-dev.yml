@@ -3,12 +3,6 @@ wechat:
   appSecret: 26c765de9bbe93f5b131856bd107da25
   token: emonnote
 
-# 项目通用配置
-common:
-  uploadUrl: https://img.tamizoo.cn/upload
-  orderTimeOut: 15
-  wxOderTimeDiff: 5
-
 #spring:
 # cache:
 #   type: redis
@@ -22,37 +16,3 @@ common:
 #   sentinel:
 #     master: mymaster
 #     nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
-
-ftp:
-  enabled: true
-  pool:
-    timeBetweenEvictionRunsMillis: 60000
-    maxTotal: 1000
-    maxTotalPerKey: 10
-    minIdlePerKey: 5
-    maxIdlePerKey: 10
-    maxWaitMillis: 10000
-  servers[0]:
-    alias: default
-    host: 10.0.0.116
-    port: 21
-    username: ftp
-    password: ftp123
-    passiveMode: true
-    accessUrlPrefixes: http://10.0.0.116
-  servers[1]:
-    alias: saas
-    host: 192.168.1.56
-    port: 21
-    username: ftp
-    password: ftp123
-    passiveMode: true
-    accessUrlPrefixes: http://192.168.1.56
-  servers[2]:
-    alias: emon
-    host: 39.107.97.197
-    port: 21
-    username: ftp
-    password: ftp@163
-    passiveMode: true
-    accessUrlPrefixes: http://file.emon.vip

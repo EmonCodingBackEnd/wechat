@@ -26,6 +26,12 @@ wechat:
 logging:
   config: classpath:logback-spring-${spring.profiles.active}.xml
 
+# 项目通用配置
+common:
+  uploadUrl: https://img.tamizoo.cn/upload
+  orderTimeOut: 15
+  wxOderTimeDiff: 5
+
 # 特殊任务线程池配置
 timerPool:
   delay:
@@ -45,3 +51,45 @@ timerPool:
     maxPoolSize: 50
     queueCapacity: 100
     keeyAliveSecond: 60
+
+ftp:
+  enabled: true
+  pool:
+    timeBetweenEvictionRunsMillis: 60000
+    maxTotal: 1000
+    maxTotalPerKey: 10
+    minIdlePerKey: 5
+    maxIdlePerKey: 10
+    maxWaitMillis: 10000
+  servers[0]:
+    alias: default
+    host: 39.107.97.197
+    port: 21
+    username: ftp
+    password: ftp@163
+    passiveMode: true
+    accessUrlPrefixes: http://file.emon.vip
+  servers[1]:
+    alias: house
+    host: 192.168.1.116
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://192.168.1.116
+  servers[2]:
+    alias: company
+    host: 10.0.0.116
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://10.0.0.116
+  servers[3]:
+    alias: saas
+    host: 192.168.1.56
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://192.168.1.56

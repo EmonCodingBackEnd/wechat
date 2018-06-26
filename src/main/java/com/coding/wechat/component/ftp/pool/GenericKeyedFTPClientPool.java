@@ -12,7 +12,6 @@
  ********************************************************************************/
 package com.coding.wechat.component.ftp.pool;
 
-import com.coding.wechat.component.ftp.config.FTPConfig;
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.pool2.KeyedPooledObjectFactory;

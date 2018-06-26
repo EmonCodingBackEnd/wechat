@@ -3,12 +3,6 @@ wechat:
   appSecret: 5cb8a75bd031b350957fa7e7d5e357eb
   token: emonnote
 
-# 项目通用配置
-common:
-  uploadUrl: https://img.tamizoo.cn/upload
-  orderTimeOut: 15
-  wxOderTimeDiff: 5
-
 #spring:
 #  cache:
 #    type: redis
@@ -22,26 +16,3 @@ common:
 #    sentinel:
 #      master: mymaster
 #      nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
-
-ftp:
-  servers[0]:
-    alias: default
-    host: 192.168.1.116
-    port: 21
-    username: ftp
-    password: ftp123
-    accessUrlPrefixes: http://192.168.1.116
-  servers[1]:
-    alias: localUser
-    host: 192.168.1.116
-    port: 21
-    username: ftpuser
-    password: ftpuser123
-    accessUrlPrefixes: http://192.168.1.116
-  servers[2]:
-    alias: virtualUser
-    host: 192.168.1.116
-    port: 21
-    username: ftp
-    password: ftp123
-    accessUrlPrefixes: http://192.168.1.116
