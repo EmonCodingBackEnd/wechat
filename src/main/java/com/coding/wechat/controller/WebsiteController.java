@@ -13,7 +13,11 @@
 package com.coding.wechat.controller;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.joda.time.Days;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.DateTimeFormatterBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,5 +54,12 @@ public class WebsiteController {
         map.put("websiteParseDay", websiteParseDay);
 
         return new ModelAndView("index", map);
+    }
+
+    public static void main(String[] args) {
+        String str = "2018-06-27 18:16:29.0";
+        DateTimeFormatter format = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        DateTime dateTime = DateTime.parse(str, format);
+        System.out.println(dateTime.toString("yyyy-MM-dd HH:mm:ss"));
     }
 }

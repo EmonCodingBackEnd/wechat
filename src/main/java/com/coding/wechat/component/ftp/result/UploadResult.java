@@ -13,18 +13,18 @@ public class UploadResult {
     private ServerConfig serverConfig;
     private UploadParam uploadParam;
 
-    private Map<String, ResultItem> successMap = new HashMap<>();
-    private Map<String, ResultItem> failureMap = new HashMap<>();
+    private Map<String, UploadResultItem> successMap = new HashMap<>();
+    private Map<String, UploadResultItem> failureMap = new HashMap<>();
 
     public boolean hasFailure() {
         return !failureMap.isEmpty();
     }
 
-    public void addResultItem(ResultItem resultItem) {
-        if (resultItem.isSuccess()) {
-            successMap.put(resultItem.getOriginalFilename(), resultItem);
+    public void addResultItem(UploadResultItem item) {
+        if (item.isSuccess()) {
+            successMap.put(item.getOriginalFilename(), item);
         } else {
-            failureMap.put(resultItem.getOriginalFilename(), resultItem);
+            failureMap.put(item.getOriginalFilename(), item);
         }
     }
 }

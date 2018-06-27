@@ -18,8 +18,11 @@ import com.coding.wechat.component.ftp.param.DeleteParam;
 import com.coding.wechat.component.ftp.param.DownloadParam;
 import com.coding.wechat.component.ftp.param.ListParam;
 import com.coding.wechat.component.ftp.param.UploadParam;
+import com.coding.wechat.component.ftp.result.DeleteResult;
+import com.coding.wechat.component.ftp.result.DownloadResult;
 import com.coding.wechat.component.ftp.result.ListResult;
 import com.coding.wechat.component.ftp.result.UploadResult;
+import com.sun.org.apache.bcel.internal.generic.DREM;
 
 import java.util.List;
 
@@ -39,9 +42,9 @@ public interface FTPOperations {
 
     ListResult listFiles(ServerConfig serverConfig, ListParam listParam) throws FTPException;
 
-    void downloadFile(ServerConfig serverConfig, DownloadParam downloadParam) throws FTPException;
+    DownloadResult downloadFile(ServerConfig serverConfig, DownloadParam downloadParam) throws FTPException;
 
     <T> T downloadFile(ServerConfig serverConfig, FTPCallback<T> callback) throws FTPException;
 
-    void deleteFile(ServerConfig serverConfig, DeleteParam deleteParam) throws FTPException;
+    DeleteResult deleteFile(ServerConfig serverConfig, DeleteParam deleteParam) throws FTPException;
 }

@@ -1,5 +1,7 @@
 package com.coding.wechat.component.ftp.param;
 
+import com.coding.wechat.component.ftp.filter.FilenameFilter;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.springframework.util.Assert;
 
 import java.util.regex.Pattern;
@@ -22,6 +24,12 @@ public class ListParamBuilder {
         return this;
     }
 
+    public ListParamBuilder pattern(String pattern) {
+        Assert.notNull(pattern, "pattern must be not null");
+        this.listParam.setPattern(pattern);
+        return this;
+    }
+
     public ListParamBuilder pattern(Pattern filenamePattern) {
         Assert.notNull(filenamePattern, "filenamePattern must be not null");
         this.listParam.setFilenamePattern(filenamePattern);
@@ -31,6 +39,12 @@ public class ListParamBuilder {
     public ListParamBuilder filter(FilenameFilter filenameFilter) {
         Assert.notNull(filenameFilter, "filenameFilter must be not null");
         this.listParam.setFilenameFilter(filenameFilter);
+        return this;
+    }
+
+    public ListParamBuilder filter(FTPFileFilter ftpFileFilter) {
+        Assert.notNull(ftpFileFilter, "ftpFileFilter must be not null");
+        this.listParam.setFtpFileFilter(ftpFileFilter);
         return this;
     }
 

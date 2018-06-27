@@ -14,15 +14,10 @@ package com.coding.wechat.component.ftp.template;
 
 import com.coding.wechat.component.ftp.config.ServerConfig;
 import com.coding.wechat.component.ftp.exception.FTPException;
-import com.coding.wechat.component.ftp.param.DeleteParam;
-import com.coding.wechat.component.ftp.param.DownloadParam;
-import com.coding.wechat.component.ftp.param.ListParam;
-import com.coding.wechat.component.ftp.param.UploadParam;
+import com.coding.wechat.component.ftp.param.*;
 import com.coding.wechat.component.ftp.pool.GenericKeyedFTPClientPool;
 import com.coding.wechat.component.ftp.property.ReplayCode;
-import com.coding.wechat.component.ftp.result.ListResult;
-import com.coding.wechat.component.ftp.result.ResultItem;
-import com.coding.wechat.component.ftp.result.UploadResult;
+import com.coding.wechat.component.ftp.result.*;
 import com.coding.wechat.component.regex.RegexSupport;
 import com.coding.wechat.component.regex.result.FilenameResult;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +28,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
@@ -103,11 +99,16 @@ public class FTPTemplate implements FTPOperations {
                     StringTokenizer token = new StringTokenizer(remoteDirectory, "\\//");
                     while (token.hasMoreElements()) {
                         String directory = token.nextToken();
-                        boolean mkdirSuccess = ftpClient.makeDirectory(directory);
-                        boolean changeSuccess = ftpClient.changeWorkingDirectory(directory);
-                        if (!mkdirSuccess || !changeSuccess) {
-                            success = false;
-                            break;
+                        if (ftpClient.changeWorkingDirectory(directory)) {
+                            continue;
+                        } else {
+                            boolean mkdirSuccess = ftpClient.makeDirectory(directory);
+                            boolean changeSuccess = ftpClient.changeWorkingDirectory(directory);
+                            if (!mkdirSuccess || !changeSuccess) {
+                                // 如果没有创建目录的权限、没有切换目录的权限，则会失败到这里
+                                success = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -136,48 +137,49 @@ public class FTPTemplate implements FTPOperations {
     }
 
     // FTP操作失败时调用，正常情况下不应该调用
-    private ResultItem getFailureResultItemByReply(FTPClient ftpClient, String originalFilename) {
-        ResultItem resultItem;
+    private UploadResultItem getFailureUploadResultItemByReply(
+            FTPClient ftpClient, String originalFilename) {
+        UploadResultItem resultItem;
         int reply = ftpClient.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             ReplayCode replayCode = ReplayCode.getByCode(reply);
-            resultItem = ResultItem.newFailure(replayCode);
+            resultItem = UploadResultItem.newFailure(replayCode);
             resultItem.setOriginalFilename(originalFilename);
         } else {
             // 理论上，这里不应该被执行
-            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureResultItemByReply]方法");
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureUploadResultItemByReply]方法");
         }
         return resultItem;
     }
 
-    private ResultItem uploadFile(
+    private UploadResultItem uploadFile(
             FTPClient ftpClient,
             ServerConfig serverConfig,
             String remoteDirectory,
             String originalFilename,
             InputStream inputStream) {
         Assert.notNull(inputStream, "inputStream must be not null");
-        ResultItem resultItem;
+        UploadResultItem resultItem;
         try {
             if (changeWorkingDirectory(ftpClient, remoteDirectory)) {
                 String virtualFilename = getVirtualFilename(originalFilename);
                 boolean success = ftpClient.storeFile(virtualFilename, inputStream);
                 if (success) {
-                    resultItem = ResultItem.newSuccess();
+                    resultItem = UploadResultItem.newSuccess();
                     resultItem.setOriginalFilename(originalFilename);
                     resultItem.setVirtualFilename(virtualFilename);
                     String url =
                             serverConfig.getAccessUrlPrefixes() + File.separator + virtualFilename;
                     resultItem.setUrl(url);
                 } else {
-                    resultItem = getFailureResultItemByReply(ftpClient, originalFilename);
+                    resultItem = getFailureUploadResultItemByReply(ftpClient, originalFilename);
                 }
             } else {
-                resultItem = getFailureResultItemByReply(ftpClient, originalFilename);
+                resultItem = getFailureUploadResultItemByReply(ftpClient, originalFilename);
             }
         } catch (IOException e) {
             log.error("【FTP】上传文件失败", e);
-            resultItem = ResultItem.newFailure();
+            resultItem = UploadResultItem.newFailure();
             resultItem.setOriginalFilename(originalFilename);
             resultItem.setErrorMessage(e.getMessage());
         } finally {
@@ -224,7 +226,7 @@ public class FTPTemplate implements FTPOperations {
             for (Map.Entry<String, InputStream> entry :
                     uploadParam.getInputStreamMap().entrySet()) {
                 String remoteDirectory = getRemoteDirectory(entry.getKey(), uploadParam);
-                ResultItem resultItem =
+                UploadResultItem resultItem =
                         uploadFile(
                                 ftpClient,
                                 serverConfig,
@@ -239,7 +241,7 @@ public class FTPTemplate implements FTPOperations {
                         new BufferedInputStream(
                                 new ByteArrayInputStream(
                                         entry.getValue().getBytes(ftpClient.getCharset())));
-                ResultItem resultItem =
+                UploadResultItem resultItem =
                         uploadFile(
                                 ftpClient,
                                 serverConfig,
@@ -251,7 +253,7 @@ public class FTPTemplate implements FTPOperations {
             for (MultipartFile multipartFile : uploadParam.getMultipartFileList()) {
                 String remoteDirectory =
                         getRemoteDirectory(multipartFile.getOriginalFilename(), uploadParam);
-                ResultItem resultItem;
+                UploadResultItem resultItem;
                 try {
                     resultItem =
                             uploadFile(
@@ -261,14 +263,14 @@ public class FTPTemplate implements FTPOperations {
                                     multipartFile.getOriginalFilename(),
                                     multipartFile.getInputStream());
                 } catch (IOException e) {
-                    resultItem = ResultItem.newFailure();
+                    resultItem = UploadResultItem.newFailure();
                     log.error("【FTP】multipartFile文件上传获取输入流失败", e);
                 }
                 uploadResult.addResultItem(resultItem);
             }
             for (File fileItem : uploadParam.getFileList()) {
                 String remoteDirectory = getRemoteDirectory(fileItem.getName(), uploadParam);
-                ResultItem resultItem;
+                UploadResultItem resultItem;
                 try {
                     FileInputStream inputStream = new FileInputStream(fileItem);
                     resultItem =
@@ -279,7 +281,7 @@ public class FTPTemplate implements FTPOperations {
                                     fileItem.getName(),
                                     inputStream);
                 } catch (FileNotFoundException e) {
-                    resultItem = ResultItem.newFailure();
+                    resultItem = UploadResultItem.newFailure();
                     log.error("【FTP】fileItem文件上传获取输入流失败", e);
                 }
                 uploadResult.addResultItem(resultItem);
@@ -316,6 +318,25 @@ public class FTPTemplate implements FTPOperations {
         return listResult;
     }
 
+    private boolean filterFTPFile(FTPFile ftpFile, ListableParam param) {
+        if (!StringUtils.isEmpty(param.getPattern())) {
+            if (!Pattern.matches(param.getPattern(), ftpFile.getName())) {
+                return false;
+            }
+        }
+        if (param.getFilenamePattern() != null) {
+            if (!param.getFilenamePattern().matcher(ftpFile.getName()).find()) {
+                return false;
+            }
+        }
+        if (param.getFilenameFilter() != null) {
+            if (!param.getFilenameFilter().accept(ftpFile.getName())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public ListResult listFiles(ServerConfig serverConfig, ListParam listParam)
             throws FTPException {
@@ -324,7 +345,6 @@ public class FTPTemplate implements FTPOperations {
         try {
             ftpClient = borrowFTPClient(serverConfig);
             String remoteDirectory = listParam.getRemoteDirectory();
-            //            if (changeWorkingDirectory(ftpClient, remoteDirectory)) {
             FTPFile[] ftpFiles;
             if (listParam.getFtpFileFilter() != null) {
                 ftpFiles = ftpClient.listFiles(remoteDirectory, listParam.getFtpFileFilter());
@@ -336,29 +356,18 @@ public class FTPTemplate implements FTPOperations {
                 listResult = ListResult.newSuccess();
                 listResult.setServerConfig(serverConfig);
                 listResult.setListParam(listParam);
-                int capactiy = Math.min(listParam.getLimit(), ftpFiles.length);
-                FTPFile[] minFtpFiles = Arrays.copyOfRange(ftpFiles, 0, capactiy);
-                com.coding.wechat.component.ftp.param.FilenameFilter filter =
-                        listParam.getFilenameFilter();
-                Pattern pattern = listParam.getFilenamePattern();
-                if (pattern == null && filter == null) {
-                    listResult.addAll(minFtpFiles);
-                } else {
-                    for (String filename : filenamesCopys) {
-                        if ((pattern != null && !pattern.matcher(filename).find())
-                                || (filter != null && !filter.accept(filename))) {
-                            continue;
-                        }
-                        listResult.addFilename(filename);
+                for (FTPFile ftpFile : ftpFiles) {
+                    if (listParam.getLimit() <= listResult.getFilenameList().size()) {
+                        break;
+                    }
+                    if (filterFTPFile(ftpFile, listParam)) {
+                        listResult.addFilename(ftpFile.getName());
+                        listResult.addFTPFile(ftpFile);
                     }
                 }
             } else {
                 listResult = getFailureListResultByReply(ftpClient, serverConfig, listParam);
             }
-            //            } else {
-            //                listResult = getFailureListResultByReply(ftpClient, serverConfig,
-            // listParam);
-            //            }
         } catch (Exception e) {
             log.error("【FTP】查看文件列表异常", e);
             listResult = ListResult.newFailure();
@@ -378,17 +387,171 @@ public class FTPTemplate implements FTPOperations {
         return listResult;
     }
 
+    // FTP操作失败时调用，正常情况下不应该调用
+    private DownloadResultItem getFailureDownloadResultItemByReply(FTPClient ftpClient) {
+        DownloadResultItem resultItem;
+        int reply = ftpClient.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ReplayCode replayCode = ReplayCode.getByCode(reply);
+            resultItem = DownloadResultItem.newFailure(replayCode);
+        } else {
+            // 理论上，这里不应该被执行
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureUploadResultItemByReply]方法");
+        }
+        return resultItem;
+    }
+
+    // FTP操作失败时调用，正常情况下不应该调用
+    private FTPException getFailureFTPExceptionByReply(FTPClient ftpClient) {
+        FTPException ftpException;
+        int reply = ftpClient.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ReplayCode replayCode = ReplayCode.getByCode(reply);
+            ftpException =
+                    new FTPException(
+                            String.format("%s:%s", replayCode.getCode(), replayCode.getMsg()));
+        } else {
+            // 理论上，这里不应该被执行
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureFTPExceptionByReply]方法");
+        }
+        return ftpException;
+    }
+
     @Override
-    public void downloadFile(ServerConfig serverConfig, DownloadParam downloadParam)
-            throws FTPException {}
+    public DownloadResult downloadFile(ServerConfig serverConfig, DownloadParam downloadParam)
+            throws FTPException {
+        DownloadResult downloadResult = new DownloadResult();
+        downloadResult.setServerConfig(serverConfig);
+        downloadResult.setDownloadParam(downloadParam);
+        FTPClient ftpClient = null;
+        try {
+            ftpClient = borrowFTPClient(serverConfig);
+            String remoteDirectory = downloadParam.getRemoteDirectory();
+            if (StringUtils.isEmpty(downloadParam.getLocalDirectory())) {
+                throw new FTPException("【FTP】localDirectory不能为空，请指定下载目录");
+            }
+            File localDirectory = new File(downloadParam.getLocalDirectory());
+            if (!localDirectory.exists()) {
+                localDirectory.mkdirs();
+            }
+            FTPFile[] ftpFiles;
+            if (downloadParam.getFtpFileFilter() != null) {
+                ftpFiles = ftpClient.listFiles(remoteDirectory, downloadParam.getFtpFileFilter());
+            } else {
+                ftpFiles = ftpClient.listFiles(remoteDirectory);
+            }
+            if (changeWorkingDirectory(ftpClient, remoteDirectory)) {
+                if (ftpFiles != null) {
+                    for (FTPFile ftpFile : ftpFiles) {
+                        if (filterFTPFile(ftpFile, downloadParam)) {
+                            OutputStream outputStream = null;
+                            try {
+                                DownloadResultItem resultItem;
+                                outputStream =
+                                        new FileOutputStream(
+                                                new File(localDirectory, ftpFile.getName()));
+                                if (ftpClient.retrieveFile(ftpFile.getName(), outputStream)) {
+                                    resultItem = DownloadResultItem.newSuccess();
+                                    resultItem.setFilename(ftpFile.getName());
+                                } else {
+                                    resultItem = getFailureDownloadResultItemByReply(ftpClient);
+                                    resultItem.setFilename(ftpFile.getName());
+                                }
+                                downloadResult.addResultItem(resultItem);
+                            } finally {
+                                if (outputStream != null) {
+                                    outputStream.close();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // 实际上，是不会存在ftpFiles=null的，会返回空数组，此处实际不可达
+                    log.info("【FTP】目录 {} 不存在满足条件的文件", remoteDirectory);
+                }
+            } else {
+                throw getFailureFTPExceptionByReply(ftpClient);
+            }
+        } catch (Exception e) {
+            log.error("【FTP】删除文件异常", e);
+            if (ftpClient != null) {
+                invalidateFTPClient(serverConfig, ftpClient);
+                // 如果这里不设置为null,finally会执行，且在GenericKeyedObjectPool#returnObject方法中会抛出空指针异常
+                ftpClient = null;
+            }
+        } finally {
+            if (ftpClient != null) {
+                returnFTPClient(serverConfig, ftpClient);
+            }
+        }
+        return downloadResult;
+    }
 
     @Override
     public <T> T downloadFile(ServerConfig serverConfig, FTPCallback<T> callback)
             throws FTPException {
         return null;
     }
+    // FTP操作失败时调用，正常情况下不应该调用
+    private DeleteResultItem getFailureDeleteResultItemByReply(FTPClient ftpClient) {
+        DeleteResultItem resultItem;
+        int reply = ftpClient.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ReplayCode replayCode = ReplayCode.getByCode(reply);
+            resultItem = DeleteResultItem.newFailure(replayCode);
+        } else {
+            // 理论上，这里不应该被执行
+            throw new FTPException("【FTP】警告，不应该在FTP操作成功情况下执行[getFailureUploadResultItemByReply]方法");
+        }
+        return resultItem;
+    }
 
     @Override
-    public void deleteFile(ServerConfig serverConfig, DeleteParam deleteParam)
-            throws FTPException {}
+    public DeleteResult deleteFile(ServerConfig serverConfig, DeleteParam deleteParam)
+            throws FTPException {
+        DeleteResult deleteResult = new DeleteResult();
+        deleteResult.setServerConfig(serverConfig);
+        deleteResult.setDeleteParam(deleteParam);
+        FTPClient ftpClient = null;
+        try {
+            ftpClient = borrowFTPClient(serverConfig);
+            String remoteDirectory = deleteParam.getRemoteDirectory();
+            FTPFile[] ftpFiles;
+            if (deleteParam.getFtpFileFilter() != null) {
+                ftpFiles = ftpClient.listFiles(remoteDirectory, deleteParam.getFtpFileFilter());
+
+            } else {
+                ftpFiles = ftpClient.listFiles(remoteDirectory);
+            }
+            if (ftpFiles != null) {
+                for (FTPFile ftpFile : ftpFiles) {
+                    if (filterFTPFile(ftpFile, deleteParam)) {
+                        DeleteResultItem resultItem;
+                        if (ftpClient.deleteFile(ftpFile.getName())) {
+                            resultItem = DeleteResultItem.newSuccess();
+                            resultItem.setFilename(ftpFile.getName());
+                        } else {
+                            resultItem = getFailureDeleteResultItemByReply(ftpClient);
+                            resultItem.setFilename(ftpFile.getName());
+                        }
+                        deleteResult.addResultItem(resultItem);
+                    }
+                }
+            } else {
+                DeleteResultItem resultItem = getFailureDeleteResultItemByReply(ftpClient);
+            }
+        } catch (Exception e) {
+            log.error("【FTP】删除文件异常", e);
+            if (ftpClient != null) {
+                invalidateFTPClient(serverConfig, ftpClient);
+                // 如果这里不设置为null,finally会执行，且在GenericKeyedObjectPool#returnObject方法中会抛出空指针异常
+                ftpClient = null;
+            }
+        } finally {
+            if (ftpClient != null) {
+                returnFTPClient(serverConfig, ftpClient);
+            }
+        }
+        return deleteResult;
+    }
 }

@@ -1,23 +1,27 @@
 package com.coding.wechat.component.ftp.template;
 
 import com.coding.wechat.component.ftp.config.FTPConfig;
+import com.coding.wechat.component.ftp.filter.FilenameFilter;
 import com.coding.wechat.component.ftp.param.*;
+import com.coding.wechat.component.ftp.result.DownloadResult;
 import com.coding.wechat.component.ftp.result.ListResult;
 import com.coding.wechat.component.ftp.result.UploadResult;
 import com.coding.wechat.component.regex.RegexDefine;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.ftp.FTPFile;
+import org.apache.commons.net.ftp.FTPFileFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
 public class FTPTemplateTest {
+    @Test
+    public void getFtpClientPool() throws Exception {}
 
     @Autowired FTPConfig ftpConfig;
     @Autowired FTPTemplate ftpTemplate;
@@ -38,14 +42,12 @@ public class FTPTemplateTest {
 
     @Test
     public void listFiles() throws Exception {
-        ListParam listParam = ListParamBuilder.custom().limit(2).build();
-        ListResult listResult = ftpTemplate.listFiles(ftpConfig.getServer("default"), listParam);
-        log.info(listResult.toString());
-        listParam = ListParamBuilder.custom().pattern(RegexDefine.AUDIO_REGEX_PATTERN).build();
-        listResult = ftpTemplate.listFiles(ftpConfig.getServer("default"), listParam);
-        log.info(listResult.toString());
-        listParam =
+        ListParam listParam =
                 ListParamBuilder.custom()
+                        .limit(2)
+                        .remoteDirectory("audios")
+                        .pattern("[\\w]+\\.ape")
+                        .pattern(RegexDefine.AUDIO_REGEX_PATTERN)
                         .filter(
                                 new FilenameFilter() {
                                     @Override
@@ -54,8 +56,30 @@ public class FTPTemplateTest {
                                         return true;
                                     }
                                 })
+                        .filter(
+                                new FTPFileFilter() {
+                                    @Override
+                                    public boolean accept(FTPFile file) {
+                                        if (file.isDirectory()) {
+                                            return false;
+                                        }
+                                        return true;
+                                    }
+                                })
                         .build();
-        listResult = ftpTemplate.listFiles(ftpConfig.getServer("default"), listParam);
+        ListResult listResult = ftpTemplate.listFiles(ftpConfig.getServer("default"), listParam);
         log.info(listResult.toString());
     }
+
+    @Test
+    public void downloadFile() throws Exception {
+        DownloadParam downloadParam =
+                DownloadParamBuilder.custom().remoteDirectory("audios/s").localDirectory("/home/saas/download").build();
+        DownloadResult downloadResult =
+                ftpTemplate.downloadFile(ftpConfig.getServer("default"), downloadParam);
+        log.info(downloadResult.toString());
+    }
+
+    @Test
+    public void deleteFile() throws Exception {}
 }
