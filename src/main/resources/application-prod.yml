@@ -16,3 +16,13 @@ wechat:
 #    sentinel:
 #      master: mymaster
 #      nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
+
+ftp:
+  servers[0]:
+    alias: default
+    host: 192.168.1.56
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://zygfile.zhaoshengbao.org
