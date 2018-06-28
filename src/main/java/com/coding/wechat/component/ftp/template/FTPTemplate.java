@@ -173,7 +173,7 @@ public class FTPTemplate implements FTPOperations {
                     String url =
                             serverConfig.getAccessUrlPrefixes()
                                     + ftpClient.printWorkingDirectory()
-                                    + File.separator
+                                    + "/"
                                     + virtualFilename;
 
                     resultItem.setUrl(url);
