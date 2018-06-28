@@ -61,10 +61,10 @@ public class UploadParamBuilder {
         return this;
     }
 
-    public UploadParamBuilder content(String key, String content) {
-        Assert.notNull(key, "key must be not null");
-        Assert.notNull(content, "content must be not null");
-        this.uploadParam.getContentMap().put(key, content);
+    public UploadParamBuilder content(String filename, String filecontent) {
+        Assert.notNull(filename, "filename must be not null");
+        Assert.notNull(filecontent, "filecontent must be not null");
+        this.uploadParam.getContentMap().put(filename, filecontent);
         return this;
     }
 

@@ -4,6 +4,10 @@ server:
 spring:
   profiles:
     active: dev
+  http:
+    multipart:
+      max-file-size: 20Mb
+      max-request-size: 100Mb
   h2:
     console:
       enabled: true

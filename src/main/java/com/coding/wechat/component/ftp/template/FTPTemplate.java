@@ -91,29 +91,31 @@ public class FTPTemplate implements FTPOperations {
     private boolean changeWorkingDirectory(FTPClient ftpClient, String remoteDirectory) {
         boolean success;
         try {
-            if (!StringUtils.isEmpty(remoteDirectory)) {
-                success = ftpClient.changeWorkingDirectory(remoteDirectory);
-                if (!success) {
-                    // 默认设置true，如果有任何目录失败，则认为false并跳出
-                    success = true;
-                    StringTokenizer token = new StringTokenizer(remoteDirectory, "\\//");
-                    while (token.hasMoreElements()) {
-                        String directory = token.nextToken();
-                        if (ftpClient.changeWorkingDirectory(directory)) {
-                            continue;
-                        } else {
-                            boolean mkdirSuccess = ftpClient.makeDirectory(directory);
-                            boolean changeSuccess = ftpClient.changeWorkingDirectory(directory);
-                            if (!mkdirSuccess || !changeSuccess) {
-                                // 如果没有创建目录的权限、没有切换目录的权限，则会失败到这里
-                                success = false;
-                                break;
+            // 每次进来，都先恢复当前目录为根目录
+            success = ftpClient.changeToParentDirectory();
+            if (success) {
+                if (!StringUtils.isEmpty(remoteDirectory)) {
+                    success = ftpClient.changeWorkingDirectory(remoteDirectory);
+                    if (!success) {
+                        // 默认设置true，如果有任何目录失败，则认为false并跳出
+                        success = true;
+                        StringTokenizer token = new StringTokenizer(remoteDirectory, "\\//");
+                        while (token.hasMoreElements()) {
+                            String directory = token.nextToken();
+                            if (ftpClient.changeWorkingDirectory(directory)) {
+                                continue;
+                            } else {
+                                boolean mkdirSuccess = ftpClient.makeDirectory(directory);
+                                boolean changeSuccess = ftpClient.changeWorkingDirectory(directory);
+                                if (!mkdirSuccess || !changeSuccess) {
+                                    // 如果没有创建目录的权限、没有切换目录的权限，则会失败到这里
+                                    success = false;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            } else {
-                success = ftpClient.changeToParentDirectory();
             }
             return success;
         } catch (IOException e) {
@@ -169,7 +171,11 @@ public class FTPTemplate implements FTPOperations {
                     resultItem.setOriginalFilename(originalFilename);
                     resultItem.setVirtualFilename(virtualFilename);
                     String url =
-                            serverConfig.getAccessUrlPrefixes() + File.separator + virtualFilename;
+                            serverConfig.getAccessUrlPrefixes()
+                                    + ftpClient.printWorkingDirectory()
+                                    + File.separator
+                                    + virtualFilename;
+
                     resultItem.setUrl(url);
                 } else {
                     resultItem = getFailureUploadResultItemByReply(ftpClient, originalFilename);
