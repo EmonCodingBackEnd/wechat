@@ -35,4 +35,36 @@ public class ServerConfig {
 
     // 访问上传的文件时，url前缀，比如 http://file.emon.vip/ 或者 http://192.168.1.116:80/
     private String accessUrlPrefixes = DEFAULT_ACCESS_URL_PREFIX;
+
+    @Override
+    public String toString() {
+        return "ServerConfig{"
+                + "alias='"
+                + alias
+                + '\''
+                + ", host='"
+                + host
+                + '\''
+                + ", port="
+                + port
+                + ", username='"
+                + username
+                + '\''
+                + ", passiveMode='"
+                + passiveMode
+                + '\''
+                + ", encoding='"
+                + encoding
+                + '\''
+                + ", connectTimeout="
+                + connectTimeout
+                + ", dataTimeout="
+                + dataTimeout
+                + ", transferFileType="
+                + transferFileType
+                + ", accessUrlPrefixes='"
+                + accessUrlPrefixes
+                + '\''
+                + '}';
+    }
 }
