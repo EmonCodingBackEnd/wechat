@@ -1,6 +1,9 @@
 server:
   context-path: /wechat
   port: 8080
+  # 解决： Caused by: java.io.IOException: The temporary upload location [/tmp/tomcat.6515295841566425416.8080/work/Tomcat/localhost/saas-ssp] is not valid
+  tomcat:
+    basedir: /home/emon/saas/wechat/tmp
 spring:
   profiles:
     active: dev
