@@ -13,6 +13,7 @@
 package com.coding.wechat.DO.menu;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * [请在此输入功能简述].
@@ -24,6 +25,7 @@ import lombok.Data;
  * @version 1.0.0
  * @since 1.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ClickButton extends BaseButton {
 

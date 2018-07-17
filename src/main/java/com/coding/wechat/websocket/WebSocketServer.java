@@ -2,6 +2,7 @@ package com.coding.wechat.websocket;
 
 import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WebSocketServer {
     // 静态变量，用来记录当前在线连接数。应该把它设计成线程安全的。
-    private static int onlineCount = 0;
+    private static AtomicInteger onlineCount = new AtomicInteger(0);
     // concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
     private static CopyOnWriteArraySet<WebSocketServer> webSocketSet =
             new CopyOnWriteArraySet<WebSocketServer>();
@@ -102,14 +103,14 @@ public class WebSocketServer {
     }
 
     public static synchronized int getOnlineCount() {
-        return onlineCount;
+        return onlineCount.get();
     }
 
     public static synchronized void addOnlineCount() {
-        WebSocketServer.onlineCount++;
+        onlineCount.incrementAndGet();
     }
 
     public static synchronized void subOnlineCount() {
-        WebSocketServer.onlineCount--;
+        onlineCount.decrementAndGet();
     }
 }
