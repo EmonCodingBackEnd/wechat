@@ -12,10 +12,13 @@
  ********************************************************************************/
 package com.coding.wechat.component.timer.schedule.task;
 
+import com.coding.wechat.component.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -92,5 +95,19 @@ public class ScheduledTask {
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         TimeUnit.SECONDS.sleep(5);
         log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getName());
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void websocket() throws InterruptedException {
+        log.info(
+                "=====>>>>>开始websocket  {}",
+                TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        try {
+            WebSocketServer.sendWebSocketMessage(
+                    String.format("当前时间：%s", new DateTime().toString("yyyy年MM月dd日 HH:mm:ss")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.info("=====>>>>>结束websocket  {}", Thread.currentThread().getName());
     }
 }
