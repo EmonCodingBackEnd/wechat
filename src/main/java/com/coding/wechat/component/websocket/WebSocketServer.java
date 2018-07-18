@@ -130,7 +130,7 @@ public class WebSocketServer {
      * @since 1.0.0
      */
     public static void sendWebSocketMessage(String userId, String message) throws IOException {
-        log.info("单发送自定义消息， userId={}, message={}", userId, message);
+        log.info("【WebSocket】单发送自定义消息， userId={}, message={}", userId, message);
         userSession.get(userId).sendMessage(message);
     }
 
@@ -145,7 +145,7 @@ public class WebSocketServer {
      * @since 1.0.0
      */
     public static void sendWebSocketMessage(String message) throws IOException {
-        log.info("群发送自定义消息 message={}", message);
+        log.info("【WebSocket】群发送自定义消息 message={}", message);
         // 群发消息
         for (Map.Entry<String, WebSocketServer> entry : userSession.entrySet()) {
             try {
