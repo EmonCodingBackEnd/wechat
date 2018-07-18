@@ -97,14 +97,15 @@ public class ScheduledTask {
         log.info("=====>>>>>结束cron1  {}", Thread.currentThread().getName());
     }
 
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0/2 * * * *")
     public void websocket() throws InterruptedException {
         log.info(
                 "=====>>>>>开始websocket  {}",
                 TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
         try {
-            WebSocketServer.sendWebSocketMessage(
-                    String.format("当前时间：%s", new DateTime().toString("yyyy年MM月dd日 HH:mm:ss")));
+//            WebSocketServer.sendWebSocketMessage(
+//                    String.format("当前时间：%s", new DateTime().toString("yyyy年MM月dd日 HH:mm:ss")));
+            WebSocketServer.sendWebSocketMessage("success");
         } catch (IOException e) {
             e.printStackTrace();
         }

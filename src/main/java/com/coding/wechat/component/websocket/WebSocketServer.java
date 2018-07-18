@@ -149,7 +149,7 @@ public class WebSocketServer {
         // 群发消息
         for (Map.Entry<String, WebSocketServer> entry : userSession.entrySet()) {
             try {
-                entry.getValue().sendMessage(String.format("本消息来自系统定时任务:%s", message));
+                entry.getValue().sendMessage(message);
             } catch (IOException e) {
                 log.error(
                         String.format(
