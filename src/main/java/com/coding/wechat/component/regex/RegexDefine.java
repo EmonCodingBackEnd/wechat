@@ -121,4 +121,7 @@ public abstract class RegexDefine {
     public static final String VEDIO_REGEX =
             "([^<>/\\\\\\|:\"\"\\*\\?]+)\\.(mp4|avi|rmvb|flv|wmv|vob|mkv|mov)$";
     public static final Pattern VEDIO_REGEX_PATTERN = Pattern.compile(VEDIO_REGEX);
+
+    // https://servicewechat.com/{appid}/{version}/page-frame.html
+    // ^https://servicewechat.com/"+appappId+"/(\\d+(\\.\\d+)?|devtools)/page-frame.html$
 }
