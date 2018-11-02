@@ -3,19 +3,22 @@ wechat:
   appSecret: 5cb8a75bd031b350957fa7e7d5e357eb
   token: emonnote
 
-#spring:
-#  cache:
-#    type: redis
-#    cache-names: redisCache
-#  redis:
-#    database: 0
-#    host: 172.19.219.184
-#    port: 6379
-#    timeout: 0
-#    password: ss541018
-#    sentinel:
-#      master: mymaster
-#      nodes: 172.19.219.184:26379,172.19.219.184:26389,172.19.219.184:26399
+spring:
+  cache:
+    type: redis
+    cache-names: redisCache
+  redis:
+    database: 0
+    host: 192.168.1.56
+    port: 7001
+    timeout: 0
+    password: ss541018
+    sentinel:
+      master: mymaster
+      nodes: 192.168.1.56:26379,192.168.1.56:26378,192.168.1.56:26377
+  # spring session使用存储类型
+  session:
+    store-type: redis
 
 ftp:
   servers[0]:
