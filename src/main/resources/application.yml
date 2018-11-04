@@ -103,3 +103,6 @@ ftp:
     password: ftp123
     passiveMode: true
     accessUrlPrefixes: http://192.168.1.56
+
+jwt:
+  expiration: 600

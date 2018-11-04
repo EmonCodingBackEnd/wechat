@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.component.security;
 
+import com.coding.wechat.component.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +20,17 @@ import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableWebSecurity
+// @EnableGlobalMethodSecurity(prePostEnabled = true) // 启用权限认证的注解方式
 public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     @Autowired private CustomUserDetailsService customUserDetailsService;
@@ -38,6 +44,8 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
             customFilterInvocationSecurityMetadataSource;
 
     @Autowired CustomAccessDecisionManager customAccessDecisionManager;
+
+    @Autowired private CustomUnauthorizedEntryPoint customUnauthorizedEntryPoint;
 
     @Autowired private CustomAccessDeniedHandler customAccessDeniedHandler;
 
@@ -62,7 +70,15 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.authorizeRequests()
+        http.exceptionHandling()
+                .accessDeniedHandler(customAccessDeniedHandler) // 权限不足
+                .authenticationEntryPoint(customUnauthorizedEntryPoint) // 未认证
+                .and()
+                .cors() // CORS - Cross Origin Resourse-Sharing - 跨站资源共享
+                .and()
+                .csrf() // CSRF - Cross-Site Request Forgery - 跨站请求伪造
+                .disable() // 取消跨站请求伪造防护：由于使用的是JWT，我们这里不需要csrf
+                .authorizeRequests()
                 .withObjectPostProcessor(
                         new ObjectPostProcessor<FilterSecurityInterceptor>() {
                             @Override
@@ -73,28 +89,34 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                                 return object;
                             }
                         })
+                .antMatchers("/auth/**") // 三界五行之外的API访问
+                .permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login_prepare")
-                .loginProcessingUrl("/login") // 登录请求路径
+                .loginProcessingUrl("/auth/login") // 登录请求路径
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .successHandler(customAuthenticationSuccessHandler) // 验证成功处理器
                 .failureHandler(customAuthenticationFailureHandler) // 验证失败处理器
                 .and()
-                .authorizeRequests()
-                .antMatchers("/login") // 登录请求路径不进行过滤
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
                 .logout()
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
                 .and()
-                .csrf()
-                .disable() // 取消跨站请求伪造防护
-                .exceptionHandling()
-                .accessDeniedHandler(customAccessDeniedHandler); // 权限不足
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 基于token，所以不需要session
+                .and()
+                .addFilterBefore(
+                        authenticationTokenFilterBean(),
+                        UsernamePasswordAuthenticationFilter.class) // 添加JWT filter
+                .headers()
+                .cacheControl(); // 禁用缓存
+    }
+
+    @Bean
+    public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
+        return new JwtAuthenticationTokenFilter();
     }
 }

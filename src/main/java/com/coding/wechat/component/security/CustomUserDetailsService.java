@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,14 +35,25 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 打印前端传过来的用户数据
         log.info("前端请求的用户名：{}", username);
 
+        // 模拟用户不存在的情况
+        if ("notfound".equals(username)) {
+            throw new UsernameNotFoundException("username:" + username + " not found");
+        }
+
         // 模拟数据库中的数据
         String password = passwordEncoder.encode("123456");
 
         // 查询用户所有的角色
         List<CustomRole> roleList = new ArrayList<>();
-        roleList.add(new CustomRole(1007439783886909440L, "角色A", 1));
-        roleList.add(new CustomRole(1007439907706957824L, "角色B", 2));
-        roleList.add(new CustomRole(1011921894543003648L, "角色C", 3));
+
+        // 如果是超级用户
+        if (username.endsWith("admin")) {
+            roleList.add(new CustomRole(10000L, "角色A", 1));
+        } else {
+            roleList.add(new CustomRole(1007439783886909440L, "角色A", 1));
+            roleList.add(new CustomRole(1007439907706957824L, "角色B", 2));
+            roleList.add(new CustomRole(1011921894543003648L, "角色C", 3));
+        }
 
         // 封装成权限列表
         List<GrantedAuthority> authorityList = new ArrayList<>();
@@ -53,6 +63,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // 返回一个User对象（技巧01：这个User对象的密码是从数据库中取出来的密码）
         //      // 技巧02：数据库中的密码是在创建用户时将用户的密码利用SpreingSecurity配置中相同的密码加密解密工具加密过的
-        return new User(username, password, authorityList);
+        return new CustomUser(username, password, authorityList);
     }
 }

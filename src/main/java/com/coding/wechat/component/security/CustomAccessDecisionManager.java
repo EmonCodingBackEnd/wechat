@@ -49,7 +49,12 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
 
             // 遍历当前用户所具有的权限
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
             for (GrantedAuthority authority : authorities) {
+                // 如果是超级用户
+                if (authority.getAuthority().equals(String.valueOf("10000"))) {
+                    return;
+                }
                 if (authority.getAuthority().equals(needPermission)) {
                     matchCounter++;
                     //                    return;

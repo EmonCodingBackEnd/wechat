@@ -47,7 +47,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } else if (exception instanceof DisabledException) {
             msg = "账户被禁用，登录失败，请联系管理员!";
         } else {
-            msg = "登录失败!";
+            msg = "登录失败，请联系管理员!";
         }
         AppResponse appResponse = new AppResponse();
         appResponse.setErrorCode(5100);

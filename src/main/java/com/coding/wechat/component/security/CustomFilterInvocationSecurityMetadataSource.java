@@ -45,6 +45,7 @@ public class CustomFilterInvocationSecurityMetadataSource
         menuList.add(menu);
         menu = new CustomMenu(1057480031791562752L, "/hq/goods/list/**");
         menu.getRoleList().add(new CustomRole(1007439907706957824L, "角色B", 2));
+        menu.getRoleList().add(new CustomRole(1007439907706957820L, "角色D", 4));
         menuList.add(menu);
         menu = new CustomMenu(1057480080684564480L, "/hq/goods/category/**");
         menu.getRoleList().add(new CustomRole(1011921894543003648L, "角色C", 3));
@@ -55,7 +56,9 @@ public class CustomFilterInvocationSecurityMetadataSource
     public Collection<ConfigAttribute> getAttributes(Object object)
             throws IllegalArgumentException {
         String url = ((FilterInvocation) object).getRequestUrl();
-        if (antPathMatcher.match("/login_prepare", url)) {
+
+        // 完全开放，不需要登录，也不需要有对应角色
+        if (antPathMatcher.match("/pub/**", url)) {
             return null;
         }
 

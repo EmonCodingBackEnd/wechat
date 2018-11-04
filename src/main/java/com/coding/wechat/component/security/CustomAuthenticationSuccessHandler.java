@@ -12,13 +12,11 @@
  ********************************************************************************/
 package com.coding.wechat.component.security;
 
+import com.coding.wechat.component.jwt.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -32,14 +30,18 @@ import java.io.IOException;
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired private ObjectMapper objectMapper; // Json转化工具
+    @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
         log.info("登录验证成功");
+        CustomUser userDetails = (CustomUser) authentication.getPrincipal();
+        String token = jwtTokenUtil.generateToken(userDetails);
         response.setContentType("application/json;charset=UTF-8"); // 响应类型
         AppResponse appResponse = new AppResponse();
+        appResponse.setToken(token);
         response.getWriter().write(objectMapper.writeValueAsString(appResponse));
     }
 }

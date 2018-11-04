@@ -1,21 +1,21 @@
 /*
- * 文件名称：CustomAccessDeniedHandler.java
+ * 文件名称：UnauthorizedEntryPoint.java
  * 系统名称：[系统名称]
  * 模块名称：[模块名称]
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.
  * 功能说明：[请在此处输入功能说明]
  * 开发人员：Rushing0711
- * 创建日期：20181103 10:54
+ * 创建日期：20181104 16:45
  * 修改记录：
  * <Version>        <DateSerial>        <Author>        <Description>
- * 1.0.0            20181103-01         Rushing0711     M201811031054 新建文件
+ * 1.0.0            20181104-01         Rushing0711     M201811041645 新建文件
  ********************************************************************************/
 package com.coding.wechat.component.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -24,20 +24,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-    @Autowired private ObjectMapper objectMapper;
+public class CustomUnauthorizedEntryPoint implements AuthenticationEntryPoint {
+    @Autowired private ObjectMapper objectMapper; // Json转化工具
 
     @Override
-    public void handle(
+    public void commence(
             HttpServletRequest httpServletRequest,
             HttpServletResponse httpServletResponse,
-            AccessDeniedException deniedException)
+            AuthenticationException authException)
             throws IOException, ServletException {
-        httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.setContentType("application/json;charset=UTF-8"); // 响应类型
         AppResponse appResponse = new AppResponse();
         appResponse.setErrorCode(5100);
-        appResponse.setErrorMessage(deniedException.getMessage());
+        appResponse.setErrorMessage("尚未认证！");
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(appResponse));
     }
 }
