@@ -13,14 +13,11 @@
 package com.coding.wechat.controller;
 
 import com.coding.wechat.component.jwt.AuthService;
-import com.coding.wechat.component.jwt.JwtAuthenticationResponse;
 import com.coding.wechat.component.jwt.JwtTokenUtil;
 import com.coding.wechat.component.security.AppResponse;
 import com.coding.wechat.component.security.CustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
