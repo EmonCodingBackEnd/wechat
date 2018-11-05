@@ -64,7 +64,7 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/templates/**", "/static/**");
+        web.ignoring().antMatchers("/templates/**", "/static/**", "/pub/**");
     }
 
     @Override
@@ -89,10 +89,10 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                                 return object;
                             }
                         })
-                .antMatchers("/auth/**") // 三界五行之外的API访问
-                .permitAll()
                 .anyRequest()
-                .authenticated()
+                .authenticated() // access和authenticated二选一
+                /*.access(
+                "@rbacauthorityservice.hasPermission(request,authentication)") // 使用rbac角色绑定资源的方式：access和authenticated二选一*/
                 .and()
                 .formLogin()
                 .loginProcessingUrl("/auth/login") // 登录请求路径
