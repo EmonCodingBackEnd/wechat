@@ -15,6 +15,7 @@ package com.coding.wechat.component.timer.schedule.task;
 import com.coding.wechat.component.websocket.WebSocketServer;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 1.0.0
  */
+@EnableScheduling
 @Component
 @Slf4j
 public class ScheduledTask {

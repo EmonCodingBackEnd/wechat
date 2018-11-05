@@ -15,6 +15,7 @@ package com.coding.wechat.component.timer.schedule.task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Future;
@@ -30,8 +31,9 @@ import java.util.concurrent.TimeUnit;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Component
 @Async
+@EnableAsync
+@Component
 @Slf4j
 public class AsyncTask {
 
