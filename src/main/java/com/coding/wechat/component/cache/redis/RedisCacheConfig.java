@@ -14,9 +14,12 @@ package com.coding.wechat.component.cache.redis;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;
@@ -39,7 +42,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableCaching
 @EnableRedisHttpSession
 @Configuration
-public class RedisCacheConfig {
+public class RedisCacheConfig extends CachingConfigurerSupport {
 
     /**
      * 配置RedisTemplate.
@@ -89,5 +92,24 @@ public class RedisCacheConfig {
         //设置缓存默认过期时间(秒)
         rcm.setDefaultExpiration(600);
         return rcm;*/
+    }
+
+    @Bean
+    public KeyGenerator cacheKeyGenerator() {
+        return (target, method, params) -> {
+            StringBuilder sb = new StringBuilder();
+            sb.append(target.getClass().getName());
+            sb.append(method.getName());
+            ObjectMapper objectMapper = new ObjectMapper();
+            for (Object obj : params) {
+                // 由于参数可能不同, hashCode肯定不一样, 缓存的key也需要不一样
+                try {
+                    sb.append(objectMapper.writeValueAsString(obj).hashCode());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+            return sb.toString();
+        };
     }
 }
