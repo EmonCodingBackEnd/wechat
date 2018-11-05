@@ -66,8 +66,12 @@ public class JwtTokenUtil implements Serializable {
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
 
+    public static Long expiration;
+
     @Value("${jwt.expiration}")
-    private Long expiration;
+    public void setExpiration(Long expiration) {
+        JwtTokenUtil.expiration = expiration;
+    }
 
     public String getUsernameFromToken(String token) {
         String username;
@@ -180,7 +184,7 @@ jwt.jks 文件名
 输入密钥库口令：				    ss541018
 再次输入新口令：				    ss541018
 您的名字与姓氏是什么？				[忽略]
-您的组织单位名称是什么？			[忽略]
+您的组织单位名称是什么？			    [忽略]
 您的组织名称是什么？				[忽略]
 您所在的城市或区域名称是什么？		[忽略]
 您所在的省/市自治区名称是什么？		[忽略]

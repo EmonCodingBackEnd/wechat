@@ -12,42 +12,55 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
-import com.coding.wechat.component.jwt.AuthService;
 import com.coding.wechat.component.jwt.JwtTokenUtil;
 import com.coding.wechat.component.security.AppResponse;
 import com.coding.wechat.component.security.CustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
 public class JWTController {
 
-    @Autowired private AuthService authService;
-
-    @RequestMapping(value = "/auth/register", method = RequestMethod.POST)
-    public CustomUser register(@RequestBody CustomUser addedUser) throws AuthenticationException {
-        return authService.register(addedUser);
-    }
+    @Autowired private StringRedisTemplate stringRedisTemplate;
+    @Autowired private UserDetailsService userDetailsService;
+    @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @RequestMapping(value = "/auth/refresh", method = RequestMethod.GET)
     public AppResponse refreshAndGetAuthenticationToken(HttpServletRequest request)
             throws AuthenticationException {
-        String token = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
-        String refreshedToken = authService.refresh(token);
+        String refreshedToken = null;
+
+        String authHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
+        final String authToken = authHeader.substring(JwtTokenUtil.TOKEN_PREFIX.length());
+        String username = jwtTokenUtil.getUsernameFromToken(authToken);
+        CustomUser userDetails = (CustomUser) userDetailsService.loadUserByUsername(username);
+        if (jwtTokenUtil.canTokenBeRefreshed(authToken, userDetails.getLastPasswordResetDate())) {
+            refreshedToken = jwtTokenUtil.refreshToken(authToken);
+        }
+
         AppResponse appResponse = new AppResponse();
         if (refreshedToken == null) {
             log.info("Token刷新失败");
             appResponse.setErrorCode(5100);
             appResponse.setErrorMessage("Token刷新失败");
         } else {
+            stringRedisTemplate
+                    .opsForValue()
+                    .set(
+                            userDetails.getUsername(),
+                            refreshedToken,
+                            JwtTokenUtil.expiration,
+                            TimeUnit.SECONDS);
             appResponse.setToken(refreshedToken);
             log.info("Token刷新成功");
         }

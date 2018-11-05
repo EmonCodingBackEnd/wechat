@@ -89,6 +89,8 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                                 return object;
                             }
                         })
+                .and()
+                .authorizeRequests()
                 .anyRequest()
                 .authenticated() // access和authenticated二选一
                 /*.access(
@@ -102,6 +104,7 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                 .failureHandler(customAuthenticationFailureHandler) // 验证失败处理器
                 .and()
                 .logout()
+                .logoutUrl("/auth/logout")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll()
                 .and()
