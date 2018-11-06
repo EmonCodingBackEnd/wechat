@@ -42,7 +42,7 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableCaching
 @EnableRedisHttpSession
 @Configuration
-public class RedisCacheConfig extends CachingConfigurerSupport {
+public class RedisCacheConfig {
 
     /**
      * 配置RedisTemplate.
@@ -84,32 +84,12 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
     @Bean
     public CacheManager cacheManager(RedisTemplate redisTemplate) {
-        CacheManager cacheManager = new RedisCacheManager(redisTemplate);
-        return cacheManager;
+        return new RedisCacheManager(redisTemplate);
         /*RedisCacheManager rcm = new RedisCacheManager(redisTemplate);
         // 多个缓存的名称,目前只定义了一个
         rcm.setCacheNames(Arrays.asList("thisredis"));
         //设置缓存默认过期时间(秒)
         rcm.setDefaultExpiration(600);
         return rcm;*/
-    }
-
-    @Bean
-    public KeyGenerator cacheKeyGenerator() {
-        return (target, method, params) -> {
-            StringBuilder sb = new StringBuilder();
-            sb.append(target.getClass().getName());
-            sb.append(method.getName());
-            ObjectMapper objectMapper = new ObjectMapper();
-            for (Object obj : params) {
-                // 由于参数可能不同, hashCode肯定不一样, 缓存的key也需要不一样
-                try {
-                    sb.append(objectMapper.writeValueAsString(obj).hashCode());
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
-            }
-            return sb.toString();
-        };
     }
 }

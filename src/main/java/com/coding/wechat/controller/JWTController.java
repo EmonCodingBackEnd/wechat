@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
+import com.coding.wechat.component.jwt.JwtRedisKeyUtil;
 import com.coding.wechat.component.jwt.JwtTokenUtil;
 import com.coding.wechat.component.security.AppResponse;
 import com.coding.wechat.component.security.CustomUser;
@@ -54,10 +55,11 @@ public class JWTController {
             appResponse.setErrorCode(5100);
             appResponse.setErrorMessage("Token刷新失败");
         } else {
+            String redisKey = JwtRedisKeyUtil.getRedisKeyByUsername(userDetails.getUsername());
             stringRedisTemplate
                     .opsForValue()
                     .set(
-                            userDetails.getUsername(),
+                        redisKey,
                             refreshedToken,
                             JwtTokenUtil.expiration,
                             TimeUnit.SECONDS);

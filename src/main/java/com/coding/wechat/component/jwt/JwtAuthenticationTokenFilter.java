@@ -39,8 +39,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
             if (username != null) {
                 // Redis中是否还存在（比如登出删除/过期丢弃等）
+                String redisKey = JwtRedisKeyUtil.getRedisKeyByUsername(username);
                 boolean existAuthToken =
-                        stringRedisTemplate.opsForValue().getOperations().hasKey(username);
+                        stringRedisTemplate.opsForValue().getOperations().hasKey(redisKey);
                 if (existAuthToken
                         && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);

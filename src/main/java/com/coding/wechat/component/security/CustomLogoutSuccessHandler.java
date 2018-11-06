@@ -1,5 +1,6 @@
 package com.coding.wechat.component.security;
 
+import com.coding.wechat.component.jwt.JwtRedisKeyUtil;
 import com.coding.wechat.component.jwt.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +42,9 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
                             JwtTokenUtil.TOKEN_PREFIX.length()); // The part after "Bearer "
             String username = jwtTokenUtil.getUsernameFromToken(authToken);
             if (username != null) {
-                if (stringRedisTemplate.opsForValue().getOperations().hasKey(username)) {
-                    stringRedisTemplate.opsForValue().getOperations().delete(username);
+                String redisKey = JwtRedisKeyUtil.getRedisKeyByUsername(username);
+                if (stringRedisTemplate.opsForValue().getOperations().hasKey(redisKey)) {
+                    stringRedisTemplate.opsForValue().getOperations().delete(redisKey);
                 }
                 appResponse.setErrorCode(9000);
                 appResponse.setErrorMessage("登出成功！");

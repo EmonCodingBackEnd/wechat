@@ -66,9 +66,10 @@ public class JwtTokenUtil implements Serializable {
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
 
+    /** 默认2小时过期. */
     public static Long expiration;
 
-    @Value("${jwt.expiration}")
+    @Value("${jwt.expiration:7200}")
     public void setExpiration(Long expiration) {
         JwtTokenUtil.expiration = expiration;
     }
