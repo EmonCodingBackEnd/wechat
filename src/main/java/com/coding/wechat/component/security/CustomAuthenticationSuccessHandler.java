@@ -40,8 +40,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     public void onAuthenticationSuccess(
             HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-
         log.info("登录验证成功");
+        response.setContentType("application/json;charset=UTF-8"); // 响应类型
+
         CustomUser userDetails = (CustomUser) authentication.getPrincipal();
         String token = jwtTokenUtil.generateToken(userDetails);
         String redisKey = JwtRedisKeyUtil.getRedisKeyByUsername(userDetails.getUsername());
@@ -49,9 +50,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .opsForValue()
                 .set(redisKey, token, JwtTokenUtil.expiration, TimeUnit.SECONDS);
 
-        response.setContentType("application/json;charset=UTF-8"); // 响应类型
-        CustomResponse appResponse = new CustomResponse();
-        appResponse.setToken(token);
-        response.getWriter().write(objectMapper.writeValueAsString(appResponse));
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setToken(token);
+        response.getWriter().write(objectMapper.writeValueAsString(customResponse));
     }
 }

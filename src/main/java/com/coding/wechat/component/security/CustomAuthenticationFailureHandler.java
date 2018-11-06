@@ -40,6 +40,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             throws IOException, ServletException {
         log.info("登录验证失败");
         response.setContentType("application/json;charset=UTF-8");
+
         String msg;
         if (exception instanceof UsernameNotFoundException
                 || exception instanceof BadCredentialsException) {
@@ -49,9 +50,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } else {
             msg = "登录失败，请联系管理员!";
         }
-        CustomResponse appResponse = new CustomResponse();
-        appResponse.setErrorCode(5100);
-        appResponse.setErrorMessage(msg);
-        response.getWriter().write(objectMapper.writeValueAsString(appResponse));
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setErrorCode(5100);
+        customResponse.setErrorMessage(msg);
+        response.getWriter().write(objectMapper.writeValueAsString(customResponse));
     }
 }

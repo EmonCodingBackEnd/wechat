@@ -31,9 +31,9 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8"); // 响应类型
 
-        CustomResponse appResponse = new CustomResponse();
-        appResponse.setErrorCode(5100);
-        appResponse.setErrorMessage("尚未认证！");
+        CustomResponse customResponse = new CustomResponse();
+        customResponse.setErrorCode(5100);
+        customResponse.setErrorMessage("尚未认证！");
 
         String authHeader = request.getHeader(JwtTokenUtil.TOKEN_HEADER);
         if (authHeader != null && authHeader.startsWith(JwtTokenUtil.TOKEN_PREFIX)) {
@@ -46,10 +46,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
                 if (stringRedisTemplate.opsForValue().getOperations().hasKey(redisKey)) {
                     stringRedisTemplate.opsForValue().getOperations().delete(redisKey);
                 }
-                appResponse.setErrorCode(9000);
-                appResponse.setErrorMessage("登出成功！");
+                customResponse.setErrorCode(9000);
+                customResponse.setErrorMessage("登出成功！");
             }
         }
-        response.getWriter().write(objectMapper.writeValueAsString(appResponse));
+        response.getWriter().write(objectMapper.writeValueAsString(customResponse));
     }
 }
