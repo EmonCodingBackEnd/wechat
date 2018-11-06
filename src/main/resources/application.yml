@@ -104,6 +104,7 @@ ftp:
     passiveMode: true
     accessUrlPrefixes: http://192.168.1.56
 
+# JWT Token有效时间，单位：秒
 jwt:
   expiration: 600
 
