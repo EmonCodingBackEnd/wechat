@@ -35,7 +35,7 @@ public class CustomUnauthorizedEntryPoint implements AuthenticationEntryPoint {
             throws IOException, ServletException {
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.setContentType("application/json;charset=UTF-8"); // 响应类型
-        AppResponse appResponse = new AppResponse();
+        CustomResponse appResponse = new CustomResponse();
         appResponse.setErrorCode(5100);
         appResponse.setErrorMessage("尚未认证！");
         httpServletResponse.getWriter().write(objectMapper.writeValueAsString(appResponse));

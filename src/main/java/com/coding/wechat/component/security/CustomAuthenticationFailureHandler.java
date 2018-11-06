@@ -49,7 +49,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         } else {
             msg = "登录失败，请联系管理员!";
         }
-        AppResponse appResponse = new AppResponse();
+        CustomResponse appResponse = new CustomResponse();
         appResponse.setErrorCode(5100);
         appResponse.setErrorMessage(msg);
         response.getWriter().write(objectMapper.writeValueAsString(appResponse));

@@ -3,7 +3,7 @@ package com.coding.wechat.component.security;
 import java.io.Serializable;
 
 /** Created by xiaogang on 2016/12/25. */
-public class AppResponse<T extends Serializable> implements Serializable {
+public class CustomResponse<T extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = -4605251603996640240L;
 

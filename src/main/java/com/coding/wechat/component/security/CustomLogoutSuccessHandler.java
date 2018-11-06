@@ -31,7 +31,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8"); // 响应类型
 
-        AppResponse appResponse = new AppResponse();
+        CustomResponse appResponse = new CustomResponse();
         appResponse.setErrorCode(5100);
         appResponse.setErrorMessage("尚未认证！");
 

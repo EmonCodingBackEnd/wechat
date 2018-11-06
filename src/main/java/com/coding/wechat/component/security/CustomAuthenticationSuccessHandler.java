@@ -50,7 +50,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .set(redisKey, token, JwtTokenUtil.expiration, TimeUnit.SECONDS);
 
         response.setContentType("application/json;charset=UTF-8"); // 响应类型
-        AppResponse appResponse = new AppResponse();
+        CustomResponse appResponse = new CustomResponse();
         appResponse.setToken(token);
         response.getWriter().write(objectMapper.writeValueAsString(appResponse));
     }

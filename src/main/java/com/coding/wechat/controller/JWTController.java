@@ -14,7 +14,7 @@ package com.coding.wechat.controller;
 
 import com.coding.wechat.component.jwt.JwtRedisKeyUtil;
 import com.coding.wechat.component.jwt.JwtTokenUtil;
-import com.coding.wechat.component.security.AppResponse;
+import com.coding.wechat.component.security.CustomResponse;
 import com.coding.wechat.component.security.CustomUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class JWTController {
     @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @RequestMapping(value = "/auth/refresh", method = RequestMethod.GET)
-    public AppResponse refreshAndGetAuthenticationToken(HttpServletRequest request)
+    public CustomResponse refreshAndGetAuthenticationToken(HttpServletRequest request)
             throws AuthenticationException {
         String refreshedToken = null;
 
@@ -49,7 +49,7 @@ public class JWTController {
             refreshedToken = jwtTokenUtil.refreshToken(authToken);
         }
 
-        AppResponse appResponse = new AppResponse();
+        CustomResponse appResponse = new CustomResponse();
         if (refreshedToken == null) {
             log.info("Token刷新失败");
             appResponse.setErrorCode(5100);
