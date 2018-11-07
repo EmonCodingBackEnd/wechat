@@ -13,7 +13,6 @@
 package com.coding.wechat.component.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,14 +21,9 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class RedisConfig {
 
-    public static String prefixHead;
+    public static final String prefixHead = "wechat";
 
     public static final String delimiter = ":";
 
     public static final String EMPTY = "";
-
-    @Value("${redis.key.prefix:eden}")
-    public void setPrefixHead(String prefixHead) {
-        RedisConfig.prefixHead = prefixHead;
-    }
 }
