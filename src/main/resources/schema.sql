@@ -22,12 +22,14 @@ create table record_no_mgr
 (
    table_no             varchar(3) not null comment '表编号',
    record_type          tinyint not null comment '编号类型
-            1-20位编号（6位table_no+8位workdate+6位max_record_no)
-            2-如果是12位编号（6位table_no+6位max_record_no[从100001开始]）',
+            1-19位编号（3位table_no+8位workdate+8位max_record_no[从00000001开始])
+            2-11位编号（3位table_no+8位max_record_no[从10000001开始]）
+            3-8位编号（8位max_record_no[从10000001开始]）
+            ',
    table_name           varchar(32) not null comment '表名称',
    table_name_ch        varchar(32) not null comment '表中文名称',
-   max_record_no        int not null comment '最大序号',
-   workdate             date not null comment '工作日期',
+   max_record_no        int not null default 0 comment '当前最大序号',
+   workdate             date not null default '2018-11-07' comment '工作日期',
    create_time          timestamp not null default current_timestamp comment '创建时间',
    modify_time          timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
    version              int not null default 0 comment '版本控制',

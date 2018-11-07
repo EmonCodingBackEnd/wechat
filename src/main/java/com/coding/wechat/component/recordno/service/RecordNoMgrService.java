@@ -12,11 +12,19 @@
  ********************************************************************************/
 package com.coding.wechat.component.recordno.service;
 
+import java.util.List;
+
 public interface RecordNoMgrService {
 
-    public String getTenantRecordNo();
+    String getTenantRecordNo();
 
-    public String getShopRecordNo();
+    List<String> getBatchTenantRecordNo(Integer recordNoNum);
 
-    public String getUserinfoRecordNo();
+    String getShopRecordNo();
+
+    List<String> getBatchShopRecordNo(Integer recordNoNum);
+
+    String getUserinfoRecordNo();
+
+    List<String> getBatchUserinfoRecordNo(Integer recordNoNum);
 }

@@ -14,9 +14,21 @@ package com.coding.wechat.component.recordno.repository;
 
 import com.coding.wechat.component.recordno.DO.RecordNoMgr;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface RecordNoMgrRepository extends JpaRepository<RecordNoMgr, String> {
+
+    @Transactional
+    @Modifying
+    @Query(
+        value = "update record_no_mgr set version = version where table_name=?1",
+        nativeQuery = true
+    )
+    void lockRecord(String tableName);
+
     RecordNoMgr findByTableName(String tableName);
 }

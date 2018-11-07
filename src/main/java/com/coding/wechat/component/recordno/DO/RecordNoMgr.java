@@ -47,7 +47,7 @@ public class RecordNoMgr {
     @Column(name = "table_name_ch")
     private String tableNameCh;
 
-    /** 最大序号. */
+    /** 当前最大序号. */
     @Column(name = "max_record_no")
     private Integer maxRecordNo;
 
