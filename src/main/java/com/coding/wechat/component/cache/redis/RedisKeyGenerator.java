@@ -14,7 +14,6 @@ package com.coding.wechat.component.cache.redis;
 
 import com.google.common.hash.Hashing;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
@@ -26,11 +25,6 @@ import java.nio.charset.Charset;
 @Component
 @Slf4j
 public class RedisKeyGenerator implements KeyGenerator {
-
-    @Value("${redis.key.prefix:eden}")
-    private String prefix;
-
-    private static final String delimiter = ":";
 
     private static final int NO_PARAM_KEY = 0;
 
@@ -74,12 +68,12 @@ public class RedisKeyGenerator implements KeyGenerator {
     @Override
     public Object generate(Object target, Method method, Object... params) {
         StringBuilder key = new StringBuilder();
-        key.append(prefix).append(delimiter);
+        key.append(RedisConfig.prefixHead).append(RedisConfig.delimiter);
         if (target != null && method != null) {
             key.append(target.getClass().getSimpleName())
                     .append(".")
                     .append(method.getName())
-                    .append(delimiter);
+                    .append(RedisConfig.delimiter);
         }
         if (params.length == 0) {
             return key.append(NO_PARAM_KEY).toString();
@@ -108,9 +102,9 @@ public class RedisKeyGenerator implements KeyGenerator {
                 log.warn(warnMsg.toString());
                 key.append(param.hashCode());
             }
-            key.append(delimiter);
+            key.append(RedisConfig.delimiter);
         }
-        String finalKey = key.deleteCharAt(key.lastIndexOf(delimiter)).toString();
+        String finalKey = key.deleteCharAt(key.lastIndexOf(RedisConfig.delimiter)).toString();
         long cacheKeyHash =
                 Hashing.murmur3_128().hashString(finalKey, Charset.defaultCharset()).asLong();
         log.debug("using cache key={} hashCode={}", finalKey, cacheKeyHash);

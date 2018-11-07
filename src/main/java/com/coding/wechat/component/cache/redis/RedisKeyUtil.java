@@ -13,24 +13,10 @@
 package com.coding.wechat.component.cache.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class RedisKeyUtil {
-
-    private static String prefixHead;
-
-    @Value("${redis.key.prefix:eden}")
-    public void setPrefixHead(String prefixHead) {
-        RedisKeyUtil.prefixHead = prefixHead;
-    }
-
-    private static final String delimiter = ":";
 
     private static RedisKeyGenerator redisKeyGenerator;
 
@@ -42,35 +28,5 @@ public class RedisKeyUtil {
     /** 订单锁的Redis Key. */
     public static String getRedisKeyByGoodsId(String goodsId) {
         return redisKeyGenerator.generate("order", "lock", "string", goodsId);
-    }
-
-    public enum RedisKeyType {
-        USERINFO("user", "cache", "string", "用户登录后的相关信息"),
-        ORDER("order", "lock", "string", "下单时锁定商品库存"),
-        ;
-
-        RedisKeyType(String serverName, String purpose, String dataType, String description) {
-            keys.add(prefixHead);
-            keys.add(StringUtils.trimWhitespace(serverName));
-            keys.add(StringUtils.trimWhitespace(purpose));
-            keys.add(StringUtils.trimWhitespace(dataType));
-            this.description = description;
-        }
-
-        private List<String> keys = new ArrayList<>();
-        private String description;
-
-        public String getKey() {
-            return StringUtils.collectionToDelimitedString(keys, delimiter);
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String toString() {
-            return getKey();
-        }
     }
 }
