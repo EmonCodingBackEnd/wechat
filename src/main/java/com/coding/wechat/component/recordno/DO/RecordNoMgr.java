@@ -13,6 +13,7 @@
 package com.coding.wechat.component.recordno.DO;
 
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -32,24 +33,30 @@ import java.util.Date;
 @Data
 public class RecordNoMgr {
 
-    /** 表编号. */
-    @Id private String tableNo;
+    /** 记录编号的数字标识. */
+    @Id
+    @Column(name = "record_no")
+    private String recordNo;
 
-    /** 编号类型. */
+    /** 记录编号的类型. */
     @Column(name = "record_type")
     private Integer recordType;
 
-    /** 表名称. */
-    @Column(name = "table_name")
-    private String tableName;
+    /** 记录编号的英文标识. */
+    @Column(name = "record_name_en")
+    private String recordNameEn;
 
-    /** 表中文名称. */
-    @Column(name = "table_name_ch")
-    private String tableNameCh;
+    /** 记录编号的中文含义. */
+    @Column(name = "record_name_ch")
+    private String recordNameCh;
 
-    /** 当前最大序号. */
+    /** 当前最大记录序号. */
     @Column(name = "max_record_no")
     private Integer maxRecordNo;
+
+    /** 记录编号变化部分的长度设置. */
+    @Column(name = "record_len")
+    private Integer recordLen;
 
     /** 工作日期. */
     @Temporal(TemporalType.DATE)

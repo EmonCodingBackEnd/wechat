@@ -25,10 +25,10 @@ public interface RecordNoMgrRepository extends JpaRepository<RecordNoMgr, String
     @Transactional
     @Modifying
     @Query(
-        value = "update record_no_mgr set version = version where table_name=?1",
+        value = "update record_no_mgr set version = version where record_name_en=?1",
         nativeQuery = true
     )
-    void lockRecord(String tableName);
+    void lockRecord(String recordNameEn);
 
-    RecordNoMgr findByTableName(String tableName);
+    RecordNoMgr findByRecordNameEn(String recordNameEn);
 }

@@ -15,6 +15,7 @@ package com.coding.wechat.component.recordno.service.impl;
 import com.coding.wechat.component.recordno.DO.RecordNoMgr;
 import com.coding.wechat.component.recordno.repository.RecordNoMgrRepository;
 import com.coding.wechat.component.recordno.service.RecordNoMgrService;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,7 +77,7 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
         // 悲观锁锁定数据库数据
         recordNoMgrRepository.lockRecord(tableName);
 
-        RecordNoMgr recordNoMgr = recordNoMgrRepository.findByTableName(tableName);
+        RecordNoMgr recordNoMgr = recordNoMgrRepository.findByRecordNameEn(tableName);
         if (recordNoMgr == null) {
             log.error("【记录号获取】记录号生成管理表不存在名称为 {} 的表", tableName);
             throw new RuntimeException(String.format("表 %s 记录号获取失败！", tableName));
@@ -88,6 +89,10 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
         if (recordNoNum + recordNoMgr.getMaxRecordNo() > Integer.MAX_VALUE) {
             log.error("【记录号获取】一次获取的记录号数量不合法，记录值超限");
             throw new RuntimeException(String.format("表 %s 记录号获取失败！", tableName));
+        }
+        RecordLen recordLen = RecordLen.getByRecordLen(recordNoMgr.getRecordLen());
+        if (!recordLen.getRecordLen().equals(recordNoMgr.getRecordLen())) {
+            recordNoMgr.setRecordLen(recordLen.getRecordLen());
         }
 
         RecordType recordType = RecordType.getByRecordType(recordNoMgr.getRecordType());
@@ -107,9 +112,10 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
                 break;
             case RECORD_NO_MAX_RECORD_NO:
             case MAX_RECORD_NO:
-                if (recordNoMgr.getMaxRecordNo() < 10000000) {
+                if (String.valueOf(recordNoMgr.getMaxRecordNo()).length()
+                        != recordLen.getRecordLen()) {
                     recordNoMgr.setWorkdate(new Date());
-                    recordNoMgr.setMaxRecordNo(10000000);
+                    recordNoMgr.setMaxRecordNo(recordLen.getRecordValue());
                     recordNoMgrRepository.save(recordNoMgr);
                 }
                 break;
@@ -129,14 +135,16 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
             recordNo.delete(0, recordNo.length());
             switch (recordType) {
                 case RECORD_NO_WORKDATE_MAX_RECORD_NO:
-                    recordNo.append(recordNoMgr.getTableNo());
+                    recordNo.append(recordNoMgr.getRecordNo());
                     recordNo.append(LocalDate.now().format(formatter));
-                    recordNo.append(integerToString(currentMaxRecordNo++));
+                    recordNo.append(
+                            integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
                     break;
                 case RECORD_NO_MAX_RECORD_NO:
-                    recordNo.append(recordNoMgr.getTableNo());
+                    recordNo.append(recordNoMgr.getRecordNo());
                 case MAX_RECORD_NO:
-                    recordNo.append(integerToString(currentMaxRecordNo++));
+                    recordNo.append(
+                            integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
                     break;
                 default:
             }
@@ -151,8 +159,7 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
         return recordNoList;
     }
 
-    private String integerToString(Integer number) {
-        int len = 8;
+    private String integerToString(Integer number, int len) {
         StringBuilder sb = new StringBuilder();
         String temp = Long.toString(number);
         int templen = temp.length();
@@ -169,9 +176,9 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
     enum RecordType {
         RECORD_NO_WORKDATE_MAX_RECORD_NO(
-                1, "19位编号（3位table_no+8位workdate+8位max_record_no[从00000001开始])"),
-        RECORD_NO_MAX_RECORD_NO(2, "11位编号（3位table_no+8位max_record_no[从10000001开始]）"),
-        MAX_RECORD_NO(3, "8位编号（8位max_record_no[从10000001开始]）"),
+                1, "[16-19]位编号（3位table_no+8位workdate+[5-8]位max_record_no[从00000001开始]）"),
+        RECORD_NO_MAX_RECORD_NO(2, "-[8-11]位编号（3位table_no+[5-8]位max_record_no[从10000001开始]）"),
+        MAX_RECORD_NO(3, "[5-8]位编号（[5-8]位max_record_no[从10000001开始]）"),
         ;
 
         RecordType(Integer recordType, String description) {
@@ -201,6 +208,37 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
                     + description
                     + '\''
                     + '}';
+        }
+    }
+
+    @Getter
+    enum RecordLen {
+        LEN_FIVE(5, 10000),
+        LEN_SIX(6, 100000),
+        LEN_SEVEN(7, 1000000),
+        LEN_EIGHT(8, 10000000),
+        ;
+
+        RecordLen(Integer recordLen, Integer recordValue) {
+            this.recordLen = recordLen;
+            this.recordValue = recordValue;
+        }
+
+        private Integer recordLen;
+        private Integer recordValue;
+
+        public static RecordLen getByRecordLen(Integer len) {
+            for (RecordLen recordLen : RecordLen.class.getEnumConstants()) {
+                if (recordLen.recordLen.equals(len)) {
+                    return recordLen;
+                }
+            }
+            return LEN_EIGHT;
+        }
+
+        @Override
+        public String toString() {
+            return "RecordLen{" + "recordLen=" + recordLen + ", recordValue=" + recordValue + '}';
         }
     }
 }
