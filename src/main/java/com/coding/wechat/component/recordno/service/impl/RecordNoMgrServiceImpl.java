@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -35,45 +36,155 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
     @Autowired private RecordNoMgrRepository recordNoMgrRepository;
 
+    private static final String EMPTY = "";
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     @Transactional
     @Override
     public String getTenantRecordNo() {
-        return getRecordNoByTableName("tenant", 1).get(0);
+        return getRecordNoByTableName(EMPTY, "tenant", 1).get(0);
     }
 
     @Transactional
     @Override
     public List<String> getBatchTenantRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName("tenant", recordNoNum);
+        return getRecordNoByTableName(EMPTY, "tenant", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getTenantRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "tenant", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchTenantRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "tenant", recordNoNum);
     }
 
     @Transactional
     @Override
     public String getShopRecordNo() {
-        return getRecordNoByTableName("shop", 1).get(0);
+        return getRecordNoByTableName(EMPTY, "shop", 1).get(0);
     }
 
     @Transactional
     @Override
     public List<String> getBatchShopRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName("shop", recordNoNum);
+        return getRecordNoByTableName(EMPTY, "shop", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getShopRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "shop", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchShopRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "shop", recordNoNum);
     }
 
     @Transactional
     @Override
     public String getUserinfoRecordNo() {
-        return getRecordNoByTableName("userinfo", 1).get(0);
+        return getRecordNoByTableName(EMPTY, "userinfo", 1).get(0);
     }
 
     @Transactional
     @Override
     public List<String> getBatchUserinfoRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName("userinfo", recordNoNum);
+        return getRecordNoByTableName(EMPTY, "userinfo", recordNoNum);
     }
 
-    private List<String> getRecordNoByTableName(String tableName, int recordNoNum) {
+    @Transactional
+    @Override
+    public String getUserinfoRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "userinfo", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchUserinfoRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "userinfo", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getCustomerRecordNo() {
+        return getRecordNoByTableName(EMPTY, "customer", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchCustomerRecordNo(Integer recordNoNum) {
+        return getRecordNoByTableName(EMPTY, "customer", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getCustomerRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "customer", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchCustomerRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "customer", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getOrderRecordNo() {
+        return getRecordNoByTableName(EMPTY, "order", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchOrderRecordNo(Integer recordNoNum) {
+        return getRecordNoByTableName(EMPTY, "order", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getOrderRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "order", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchOrderRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "order", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getGoodsRecordNo() {
+        return getRecordNoByTableName(EMPTY, "goods", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchGoodsRecordNo(Integer recordNoNum) {
+        return getRecordNoByTableName(EMPTY, "goods", recordNoNum);
+    }
+
+    @Transactional
+    @Override
+    public String getGoodsRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "goods", 1).get(0);
+    }
+
+    @Transactional
+    @Override
+    public List<String> getBatchGoodsRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "goods", recordNoNum);
+    }
+
+    private List<String> getRecordNoByTableName(String prefix, String tableName, int recordNoNum) {
         // 悲观锁锁定数据库数据
         recordNoMgrRepository.lockRecord(tableName);
 
@@ -90,14 +201,27 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
             log.error("【记录号获取】一次获取的记录号数量不合法，记录值超限");
             throw new RuntimeException(String.format("表 %s 记录号获取失败！", tableName));
         }
+
         RecordLen recordLen = RecordLen.getByRecordLen(recordNoMgr.getRecordLen());
         if (!recordLen.getRecordLen().equals(recordNoMgr.getRecordLen())) {
             recordNoMgr.setRecordLen(recordLen.getRecordLen());
         }
 
         RecordType recordType = RecordType.getByRecordType(recordNoMgr.getRecordType());
+        if (!recordType.getRecordType().equals(recordNoMgr.getRecordType())) {
+            recordNoMgr.setRecordType(recordType.getRecordType());
+        }
 
         switch (recordType) {
+            case MAX_RECORD_NO:
+            case RECORD_NO_MAX_RECORD_NO:
+                if (String.valueOf(recordNoMgr.getMaxRecordNo()).length()
+                        != recordLen.getRecordLen()) {
+                    recordNoMgr.setWorkdate(new Date());
+                    recordNoMgr.setMaxRecordNo(recordLen.getRecordValue());
+                }
+                break;
+            case WORKDATE_MAX_RECORD_NO:
             case RECORD_NO_WORKDATE_MAX_RECORD_NO:
                 // 如果日期不是当前日期，则更新
                 if (!new Date(recordNoMgr.getWorkdate().getTime())
@@ -107,16 +231,6 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
                         .equals(LocalDate.now())) {
                     recordNoMgr.setWorkdate(new Date());
                     recordNoMgr.setMaxRecordNo(0);
-                    recordNoMgrRepository.save(recordNoMgr);
-                }
-                break;
-            case RECORD_NO_MAX_RECORD_NO:
-            case MAX_RECORD_NO:
-                if (String.valueOf(recordNoMgr.getMaxRecordNo()).length()
-                        != recordLen.getRecordLen()) {
-                    recordNoMgr.setWorkdate(new Date());
-                    recordNoMgr.setMaxRecordNo(recordLen.getRecordValue());
-                    recordNoMgrRepository.save(recordNoMgr);
                 }
                 break;
             default:
@@ -129,25 +243,29 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
         recordNoMgr.setMaxRecordNo(recordNoMgr.getMaxRecordNo() + recordNoNum);
         recordNoMgrRepository.save(recordNoMgr);
 
+        prefix = StringUtils.isEmpty(prefix) ? EMPTY : StringUtils.trimWhitespace(prefix);
+
         List<String> recordNoList = new ArrayList<>();
         StringBuilder recordNo = new StringBuilder();
         for (int i = 1; i <= recordNoNum; i++) {
             recordNo.delete(0, recordNo.length());
+            recordNo.append(prefix);
             switch (recordType) {
-                case RECORD_NO_WORKDATE_MAX_RECORD_NO:
-                    recordNo.append(recordNoMgr.getRecordNo());
-                    recordNo.append(LocalDate.now().format(formatter));
-                    recordNo.append(
-                            integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
+                case MAX_RECORD_NO:
                     break;
                 case RECORD_NO_MAX_RECORD_NO:
                     recordNo.append(recordNoMgr.getRecordNo());
-                case MAX_RECORD_NO:
-                    recordNo.append(
-                            integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
+                    break;
+                case WORKDATE_MAX_RECORD_NO:
+                    recordNo.append(LocalDate.now().format(formatter));
+                    break;
+                case RECORD_NO_WORKDATE_MAX_RECORD_NO:
+                    recordNo.append(recordNoMgr.getRecordNo());
+                    recordNo.append(LocalDate.now().format(formatter));
                     break;
                 default:
             }
+            recordNo.append(integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
             recordNoList.add(recordNo.toString());
         }
 
@@ -174,11 +292,12 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
         return sb.toString();
     }
 
+    @Getter
     enum RecordType {
-        RECORD_NO_WORKDATE_MAX_RECORD_NO(
-                1, "[16-19]位编号（3位table_no+8位workdate+[5-8]位max_record_no[从00000001开始]）"),
-        RECORD_NO_MAX_RECORD_NO(2, "-[8-11]位编号（3位table_no+[5-8]位max_record_no[从10000001开始]）"),
-        MAX_RECORD_NO(3, "[5-8]位编号（[5-8]位max_record_no[从10000001开始]）"),
+        MAX_RECORD_NO(1, "[5-8]位max_record_no"),
+        RECORD_NO_MAX_RECORD_NO(2, "3位table_no+[5-8]位max_record_no"),
+        WORKDATE_MAX_RECORD_NO(3, "8位workdate+[5-8]位max_record_no"),
+        RECORD_NO_WORKDATE_MAX_RECORD_NO(4, "3位table_no+8位workdate+[5-8]位max_record_no"),
         ;
 
         RecordType(Integer recordType, String description) {

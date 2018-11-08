@@ -20,16 +20,18 @@ drop table if exists record_no_mgr;
 /*==============================================================*/
 create table record_no_mgr
 (
-   record_no            varchar(3) not null comment '记录编号的数字标识',
-   record_type          tinyint not null comment '记录编号的类型
-            1-[16-19]位编号（3位table_no+8位workdate+[5-8]位max_record_no[从00000001开始])
-            2-[8-11]位编号（3位table_no+[5-8]位max_record_no[从10000001开始]）
-            3-[5-8]位编号（[5-8]位max_record_no[从10000001开始]）
+   record_no            varchar(3) not null comment '记录号的数字标识',
+   record_type          tinyint not null comment '记录号的类型
+            1-[5-8]位max_record_no
+            2-3位table_no+[5-8]位max_record_no
+            3-8位workdate+[5-8]位max_record_no
+            4-3位table_no+8位workdate+[5-8]位max_record_no
+
             ',
-   record_name_en       varchar(32) not null comment '记录编号的英文标识',
-   record_name_ch       varchar(32) not null comment '记录编号的中文含义',
+   record_name_en       varchar(32) not null comment '记录号的英文标识',
+   record_name_ch       varchar(32) not null comment '记录号的中文含义',
    max_record_no        int not null default 0 comment '当前最大记录序号',
-   record_len           tinyint not null default 8 comment '记录编号变化部分的长度设置',
+   record_len           tinyint not null default 8 comment '记录号变化部分的长度设置',
    workdate             date not null default '2018-11-07' comment '工作日期',
    create_time          timestamp not null default current_timestamp comment '创建时间',
    modify_time          timestamp not null default current_timestamp on update current_timestamp comment '更新时间',
