@@ -33,20 +33,20 @@ import java.util.Date;
 @Data
 public class RecordNoMgr {
 
-    /** 记录编号的数字标识. */
+    /** 记录号的数字标识. */
     @Id
     @Column(name = "record_no")
     private String recordNo;
 
-    /** 记录编号的类型. */
+    /** 记录号的类型. */
     @Column(name = "record_type")
     private Integer recordType;
 
-    /** 记录编号的英文标识. */
+    /** 记录号的英文标识. */
     @Column(name = "record_name_en")
     private String recordNameEn;
 
-    /** 记录编号的中文含义. */
+    /** 记录号的中文含义. */
     @Column(name = "record_name_ch")
     private String recordNameCh;
 
@@ -54,7 +54,7 @@ public class RecordNoMgr {
     @Column(name = "max_record_no")
     private Integer maxRecordNo;
 
-    /** 记录编号变化部分的长度设置. */
+    /** 记录号变化部分的长度设置. */
     @Column(name = "record_len")
     private Integer recordLen;
 
