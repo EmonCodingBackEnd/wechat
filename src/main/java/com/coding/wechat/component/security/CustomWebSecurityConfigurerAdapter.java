@@ -33,7 +33,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 // @EnableGlobalMethodSecurity(prePostEnabled = true) // 启用权限认证的注解方式
 public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
+    @Autowired CustomWebAuthenticationDetailsSource customWebAuthenticationDetailsSource;
+
     @Autowired private CustomUserDetailsService customUserDetailsService;
+
+    @Bean
+    public CustomDaoAuthenticationProvider customDaoAuthenticationProvider() {
+        CustomDaoAuthenticationProvider provider = new CustomDaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setUserDetailsService(customUserDetailsService);
+        return provider;
+    }
 
     @Autowired private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
@@ -58,8 +68,12 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserDetailsService)
-                .passwordEncoder(new BCryptPasswordEncoder());
+        // [lm's ps]: 20181108 18:52 非自定义Provider的使用方式
+        /*auth.userDetailsService(customUserDetailsService)
+        .passwordEncoder(new BCryptPasswordEncoder());*/
+
+        // [lm's ps]: 20181108 18:52 自定义Provider的使用方式
+        auth.authenticationProvider(customDaoAuthenticationProvider()); // 自定义Dao认证提供者
     }
 
     @Override
@@ -102,6 +116,7 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                 .passwordParameter("password")
                 .successHandler(customAuthenticationSuccessHandler) // 验证成功处理器
                 .failureHandler(customAuthenticationFailureHandler) // 验证失败处理器
+                .authenticationDetailsSource(customWebAuthenticationDetailsSource)
                 .and()
                 .logout()
                 .logoutUrl("/auth/logout")

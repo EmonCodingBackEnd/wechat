@@ -1,11 +1,14 @@
 package com.coding.wechat.component.jwt;
 
+import com.coding.wechat.component.security.CustomWebAuthenticationDetailsSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,6 +27,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Autowired private JwtTokenUtil jwtTokenUtil;
 
     @Autowired private StringRedisTemplate stringRedisTemplate;
+
+    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails>
+            authenticationDetailsSource;
+
+    {
+        // [lm's ps]: 20181108 18:52 非自定义Provider的使用方式
+        //        authenticationDetailsSource = new WebAuthenticationDetailsSource();
+        // [lm's ps]: 20181108 18:52 自定义Provider的使用方式
+        authenticationDetailsSource = new CustomWebAuthenticationDetailsSource();
+    }
 
     @Override
     protected void doFilterInternal(
@@ -52,7 +65,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                                         userDetails.getPassword(),
                                         userDetails.getAuthorities());
                         authentication.setDetails(
-                                new WebAuthenticationDetailsSource().buildDetails(request));
+                                authenticationDetailsSource.buildDetails(request));
                         logger.info(
                                 "authenticated user " + username + ", setting security context");
                         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -42,7 +42,9 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         response.setContentType("application/json;charset=UTF-8");
 
         String msg;
-        if (exception instanceof UsernameNotFoundException
+        if (exception instanceof CustomAuthTypeAuthenticationException) {
+            msg = exception.getMessage();
+        } else if (exception instanceof UsernameNotFoundException
                 || exception instanceof BadCredentialsException) {
             msg = "用户名或密码输入错误，登录失败!";
         } else if (exception instanceof DisabledException) {
