@@ -20,6 +20,8 @@ import java.util.Date;
 
 public class CustomUser extends User {
 
+    private static final long serialVersionUID = -7171237093710325721L;
+
     private Date lastPasswordResetDate;
 
     public CustomUser(
