@@ -16,6 +16,7 @@ import com.coding.wechat.component.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,6 +28,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -110,14 +112,17 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
                 /*.access(
                 "@rbacauthorityservice.hasPermission(request,authentication)") // 使用rbac角色绑定资源的方式：access和authenticated二选一*/
                 .and()
-                .formLogin()
+                .addFilterAt(
+                        customUsernamePasswordAuthenticationFilter(this.authenticationManager()),
+                        UsernamePasswordAuthenticationFilter.class)
+                /*.formLogin() // 自定义登录过滤器与默认登录过滤器二选一
                 .loginProcessingUrl("/auth/login") // 登录请求路径
                 .usernameParameter("username")
                 .passwordParameter("password")
                 .successHandler(customAuthenticationSuccessHandler) // 验证成功处理器
                 .failureHandler(customAuthenticationFailureHandler) // 验证失败处理器
-                .authenticationDetailsSource(customWebAuthenticationDetailsSource)
-                .and()
+                .authenticationDetailsSource(customWebAuthenticationDetailsSource)  // 登录请求的额外信息构建源
+                .and()*/
                 .logout()
                 .logoutUrl("/auth/logout")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
@@ -136,5 +141,19 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
     @Bean
     public JwtAuthenticationTokenFilter authenticationTokenFilterBean() throws Exception {
         return new JwtAuthenticationTokenFilter();
+    }
+
+    @Bean
+    public CustomUsernamePasswordAuthenticationFilter customUsernamePasswordAuthenticationFilter(
+            AuthenticationManager authenticationManager) {
+        CustomUsernamePasswordAuthenticationFilter filter =
+                new CustomUsernamePasswordAuthenticationFilter();
+        filter.setAuthenticationManager(authenticationManager);
+        filter.setRequiresAuthenticationRequestMatcher(
+                new AntPathRequestMatcher("/auth/login", "POST")); // 登录请求路径
+        filter.setAuthenticationSuccessHandler(customAuthenticationSuccessHandler); // 验证成功处理器
+        filter.setAuthenticationFailureHandler(customAuthenticationFailureHandler); // 验证失败处理器
+        filter.setAuthenticationDetailsSource(customWebAuthenticationDetailsSource); // 登录请求的额外信息构建源
+        return filter;
     }
 }

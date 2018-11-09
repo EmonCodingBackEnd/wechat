@@ -51,33 +51,19 @@ public class RecordNoMgrController {
             executorService.execute(
                     () -> {
                         try {
-                            recordNoMgrService.getTenantRecordNo();
-                            recordNoMgrService.getBatchTenantRecordNo(9);
-                            recordNoMgrService.getShopRecordNo();
-                            recordNoMgrService.getBatchShopRecordNo(9);
-                            recordNoMgrService.getUserinfoRecordNo();
-                            recordNoMgrService.getBatchUserinfoRecordNo(9);
-
-                            recordNoMgrService.getCustomerRecordNo();
-                            recordNoMgrService.getBatchCustomerRecordNo(9);
-                            recordNoMgrService.getOrderRecordNo();
-                            recordNoMgrService.getBatchOrderRecordNo(9);
-                            recordNoMgrService.getGoodsRecordNo();
-                            recordNoMgrService.getBatchGoodsRecordNo(9);
-
                             recordNoMgrService.getTenantRecordNo("tenant");
                             recordNoMgrService.getBatchTenantRecordNo("tenant", 9);
                             recordNoMgrService.getShopRecordNo("shop");
                             recordNoMgrService.getBatchShopRecordNo("shop", 9);
-                            recordNoMgrService.getUserinfoRecordNo("userinfo");
-                            recordNoMgrService.getBatchUserinfoRecordNo("userinfo", 9);
-
-                            recordNoMgrService.getCustomerRecordNo("customer");
-                            recordNoMgrService.getBatchCustomerRecordNo("customer", 9);
-                            recordNoMgrService.getOrderRecordNo("order");
-                            recordNoMgrService.getBatchOrderRecordNo("order", 9);
                             recordNoMgrService.getGoodsRecordNo("goods");
                             recordNoMgrService.getBatchGoodsRecordNo("goods", 9);
+                            recordNoMgrService.getUserinfoRecordNo("userinfo");
+                            recordNoMgrService.getBatchUserinfoRecordNo("userinfo", 9);
+                            recordNoMgrService.getCustomerRecordNo();
+                            recordNoMgrService.getBatchCustomerRecordNo(9);
+                            recordNoMgrService.getOrderRecordNo();
+                            recordNoMgrService.getBatchOrderRecordNo(9);
+
                             statistic[0].incrementAndGet();
                         } catch (Exception e) {
                             log.error("【getRecordNoBatchTest】exception", e);
