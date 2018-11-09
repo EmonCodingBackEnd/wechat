@@ -23,9 +23,9 @@ create table record_no_mgr
    record_no            varchar(3) not null comment '记录号的数字标识',
    record_type          tinyint not null comment '记录号的类型
             1-[5-8]位max_record_no
-            2-3位table_no+[5-8]位max_record_no
+            2-3位record_no+[5-8]位max_record_no
             3-8位workdate+[5-8]位max_record_no
-            4-3位table_no+8位workdate+[5-8]位max_record_no
+            4-3位record_no+8位workdate+[5-8]位max_record_no
 
             ',
    record_name_en       varchar(32) not null comment '记录号的英文标识',

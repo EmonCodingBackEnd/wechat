@@ -42,18 +42,6 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
     @Transactional
     @Override
-    public String getTenantRecordNo() {
-        return getRecordNoByTableName(EMPTY, "tenant", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchTenantRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName(EMPTY, "tenant", recordNoNum);
-    }
-
-    @Transactional
-    @Override
     public String getTenantRecordNo(String prefix) {
         return getRecordNoByTableName(prefix, "tenant", 1).get(0);
     }
@@ -62,18 +50,6 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
     @Override
     public List<String> getBatchTenantRecordNo(String prefix, Integer recordNoNum) {
         return getRecordNoByTableName(prefix, "tenant", recordNoNum);
-    }
-
-    @Transactional
-    @Override
-    public String getShopRecordNo() {
-        return getRecordNoByTableName(EMPTY, "shop", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchShopRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName(EMPTY, "shop", recordNoNum);
     }
 
     @Transactional
@@ -90,14 +66,14 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
     @Transactional
     @Override
-    public String getUserinfoRecordNo() {
-        return getRecordNoByTableName(EMPTY, "userinfo", 1).get(0);
+    public String getGoodsRecordNo(String prefix) {
+        return getRecordNoByTableName(prefix, "goods", 1).get(0);
     }
 
     @Transactional
     @Override
-    public List<String> getBatchUserinfoRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName(EMPTY, "userinfo", recordNoNum);
+    public List<String> getBatchGoodsRecordNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "goods", recordNoNum);
     }
 
     @Transactional
@@ -126,18 +102,6 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
     @Transactional
     @Override
-    public String getCustomerRecordNo(String prefix) {
-        return getRecordNoByTableName(prefix, "customer", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchCustomerRecordNo(String prefix, Integer recordNoNum) {
-        return getRecordNoByTableName(prefix, "customer", recordNoNum);
-    }
-
-    @Transactional
-    @Override
     public String getOrderRecordNo() {
         return getRecordNoByTableName(EMPTY, "order", 1).get(0);
     }
@@ -146,42 +110,6 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
     @Override
     public List<String> getBatchOrderRecordNo(Integer recordNoNum) {
         return getRecordNoByTableName(EMPTY, "order", recordNoNum);
-    }
-
-    @Transactional
-    @Override
-    public String getOrderRecordNo(String prefix) {
-        return getRecordNoByTableName(prefix, "order", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchOrderRecordNo(String prefix, Integer recordNoNum) {
-        return getRecordNoByTableName(prefix, "order", recordNoNum);
-    }
-
-    @Transactional
-    @Override
-    public String getGoodsRecordNo() {
-        return getRecordNoByTableName(EMPTY, "goods", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchGoodsRecordNo(Integer recordNoNum) {
-        return getRecordNoByTableName(EMPTY, "goods", recordNoNum);
-    }
-
-    @Transactional
-    @Override
-    public String getGoodsRecordNo(String prefix) {
-        return getRecordNoByTableName(prefix, "goods", 1).get(0);
-    }
-
-    @Transactional
-    @Override
-    public List<String> getBatchGoodsRecordNo(String prefix, Integer recordNoNum) {
-        return getRecordNoByTableName(prefix, "goods", recordNoNum);
     }
 
     private List<String> getRecordNoByTableName(String prefix, String tableName, int recordNoNum) {
