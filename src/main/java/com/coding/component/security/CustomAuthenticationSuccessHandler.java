@@ -12,9 +12,9 @@
  ********************************************************************************/
 package com.coding.component.security;
 
-import com.coding.component.cache.redis.cache.RedisCache;
-import com.coding.component.jwt.JwtRedisKeyUtil;
-import com.coding.component.jwt.JwtTokenUtil;
+import com.coding.component.cache.redis.RedisCache;
+import com.coding.component.security.jwt.JwtRedisKeyUtil;
+import com.coding.component.security.jwt.JwtTokenUtil;
 import com.coding.component.security.auth.LoginResponse;
 import com.coding.component.security.auth.LoginSession;
 import com.fasterxml.jackson.databind.ObjectMapper;

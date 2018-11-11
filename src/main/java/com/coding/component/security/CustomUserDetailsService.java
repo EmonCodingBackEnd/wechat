@@ -12,8 +12,8 @@
  ********************************************************************************/
 package com.coding.component.security;
 
-import com.coding.component.cache.redis.cache.RedisCache;
-import com.coding.component.jwt.JwtRedisKeyUtil;
+import com.coding.component.cache.redis.RedisCache;
+import com.coding.component.security.jwt.JwtRedisKeyUtil;
 import com.coding.component.security.auth.AuthService;
 import com.coding.component.security.auth.LoginAuthority;
 import com.coding.component.security.auth.LoginSession;
@@ -28,7 +28,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;

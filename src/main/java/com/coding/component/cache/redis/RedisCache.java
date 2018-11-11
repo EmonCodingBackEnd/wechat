@@ -1,6 +1,5 @@
-package com.coding.component.cache.redis.cache;
+package com.coding.component.cache.redis;
 
-import com.coding.component.cache.redis.RedisKeyType;
 import com.coding.component.security.auth.AuthService;
 import com.coding.component.security.auth.LoginSession;
 import com.coding.component.security.auth.SystemInfo;

@@ -1,4 +1,4 @@
-package com.coding.component.jwt;
+package com.coding.component.security.jwt;
 
 import com.coding.component.security.CustomWebAuthenticationDetails;
 import com.coding.component.security.CustomWebAuthenticationDetailsSource;

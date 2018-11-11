@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.component.security;
 
-import com.coding.component.cache.redis.cache.RedisCache;
+import com.coding.component.cache.redis.RedisCache;
 import com.coding.component.security.auth.SystemInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;

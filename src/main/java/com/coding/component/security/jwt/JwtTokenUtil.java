@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20181104-01         Rushing0711     M201811040839 新建文件
  ********************************************************************************/
-package com.coding.component.jwt;
+package com.coding.component.security.jwt;
 
 import com.coding.component.security.CustomUserDetails;
 import io.jsonwebtoken.Claims;

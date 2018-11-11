@@ -13,7 +13,7 @@
 package com.coding.component.cache.redis.annotation.resolver;
 
 import com.coding.component.cache.redis.annotation.RedisKeyCapturer;
-import com.coding.component.cache.redis.cache.RedisCache;
+import com.coding.component.cache.redis.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -30,7 +30,7 @@ import java.lang.reflect.Field;
 @Aspect
 @Component
 @Slf4j
-public class RedisKeyCaptureResolver {
+public class RedisKeyCapturerResolver {
 
     @Pointcut("@annotation(redisKeyCapturer)")
     public void publicMethods(RedisKeyCapturer redisKeyCapturer) {}

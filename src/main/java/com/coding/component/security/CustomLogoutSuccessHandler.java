@@ -1,7 +1,7 @@
 package com.coding.component.security;
 
-import com.coding.component.jwt.JwtRedisKeyUtil;
-import com.coding.component.jwt.JwtTokenUtil;
+import com.coding.component.security.jwt.JwtRedisKeyUtil;
+import com.coding.component.security.jwt.JwtTokenUtil;
 import com.coding.component.system.exception.AppStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

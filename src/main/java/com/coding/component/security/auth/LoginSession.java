@@ -29,7 +29,7 @@ public class LoginSession implements Serializable {
     private Long userId;
 
     /** 用户所属租户. */
-    private Integer tenantId;
+    private Long tenantId;
 
     /** 用户的当前门店，用户切换前取自系统中的默认门店 */
     private Long currentShopId;

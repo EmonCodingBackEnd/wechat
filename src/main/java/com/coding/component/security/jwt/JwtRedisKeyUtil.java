@@ -10,7 +10,7 @@
  * <Version>        <DateSerial>        <Author>        <Description>
  * 1.0.0            20181106-01         Rushing0711     M201811061237 新建文件
  ********************************************************************************/
-package com.coding.component.jwt;
+package com.coding.component.security.jwt;
 
 import com.coding.component.cache.redis.RedisKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -12,7 +12,7 @@
  ********************************************************************************/
 package com.coding.component.security;
 
-import com.coding.component.jwt.JwtAuthenticationTokenFilter;
+import com.coding.component.security.jwt.JwtAuthenticationTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

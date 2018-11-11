@@ -13,7 +13,7 @@
 package com.coding.component.cache.redis.annotation.resolver;
 
 import com.coding.component.cache.redis.annotation.LoginCache;
-import com.coding.component.cache.redis.cache.RedisCache;
+import com.coding.component.cache.redis.RedisCache;
 import com.coding.component.security.CustomUserDetails;
 import com.coding.component.security.CustomWebAuthenticationDetails;
 import com.coding.component.security.auth.LoginSession;
