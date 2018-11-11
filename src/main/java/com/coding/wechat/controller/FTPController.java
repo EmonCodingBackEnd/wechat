@@ -12,9 +12,9 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
-import com.coding.wechat.component.ftp.FTPTools;
-import com.coding.wechat.component.ftp.result.UploadResult;
-import com.coding.wechat.component.ftp.result.UploadResultItem;
+import com.coding.component.ftp.FTPTools;
+import com.coding.component.ftp.result.UploadResult;
+import com.coding.component.ftp.result.UploadResultItem;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

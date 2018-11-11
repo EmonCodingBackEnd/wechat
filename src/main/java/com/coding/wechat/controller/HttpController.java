@@ -12,10 +12,10 @@
  ********************************************************************************/
 package com.coding.wechat.controller;
 
-import com.coding.wechat.component.constants.Consts;
-import com.coding.wechat.component.http.HttpException;
-import com.coding.wechat.component.http.HttpTools;
-import com.coding.wechat.component.regex.RegexDefine;
+import com.coding.component.constants.Consts;
+import com.coding.component.http.HttpException;
+import com.coding.component.http.HttpTools;
+import com.coding.component.regex.RegexDefine;
 import com.coding.wechat.config.WechatConfig;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
