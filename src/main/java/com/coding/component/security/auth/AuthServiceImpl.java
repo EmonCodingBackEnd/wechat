@@ -53,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         LoginSession loginSession = new LoginSession();
 
         loginSession.setUserId(1000010000L);
-        loginSession.setTenantId(10000);
+        loginSession.setTenantId(10000L);
         loginSession.setCurrentShopId(shopId);
         loginSession.setCurrentSystem(systemType);
         loginSession.setUsername("测试用户名称");
