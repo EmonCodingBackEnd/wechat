@@ -33,7 +33,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-@Component
 public class LoginCacheArgumentResolver implements HandlerMethodArgumentResolver {
 
     private RedisCache redisCache;
