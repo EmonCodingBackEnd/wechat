@@ -16,7 +16,7 @@ INSERT INTO record_no_mgr (record_no, record_type, record_name_en, record_name_c
 DELETE FROM record_no_mgr WHERE record_no='102';
 INSERT INTO record_no_mgr (record_no, record_type, record_name_en, record_name_ch, max_record_no, record_len, workdate, create_time, modify_time, version) VALUES('102', 1, 'shop', '门店表', 0, 5, '2018-11-09', '2018-11-07 12:07:43.000', '2018-11-09 02:47:43.000', 0);
 DELETE FROM record_no_mgr WHERE record_no='103';
-INSERT INTO record_no_mgr (record_no, record_type, record_name_en, record_name_ch, max_record_no, record_len, workdate, create_time, modify_time, version) VALUES('103', 1, 'goods', '商品票号', 0, 5, '2018-11-09', '2018-11-07 12:07:07.000', '2018-11-09 09:53:21.000', 0);
+INSERT INTO record_no_mgr (record_no, record_type, record_name_en, record_name_ch, max_record_no, record_len, workdate, create_time, modify_time, version) VALUES('103', 3, 'goods', '商品票号', 0, 5, '2018-11-09', '2018-11-07 12:07:07.000', '2018-11-09 09:53:21.000', 0);
 DELETE FROM record_no_mgr WHERE record_no='104';
 INSERT INTO record_no_mgr (record_no, record_type, record_name_en, record_name_ch, max_record_no, record_len, workdate, create_time, modify_time, version) VALUES('104', 1, 'userinfo', '用户信息表', 0, 5, '2018-11-09', '2018-11-07 12:07:07.000', '2018-11-09 02:47:43.000', 0);
 DELETE FROM record_no_mgr WHERE record_no='105';
