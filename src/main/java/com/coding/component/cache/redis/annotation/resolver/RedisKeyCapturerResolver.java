@@ -61,13 +61,16 @@ public class RedisKeyCapturerResolver {
                         redisKey = prefix + fieldValue;
                         break;
                     } catch (IllegalAccessException e) {
-                        log.error("【RedisKeyCaptureResolver】获取RedisKey错误", e);
+                        log.error("【RedisKeyCapturerResolver】获取RedisKey错误", e);
                     }
                 }
             }
         }
         if (redisKey != null) {
             RedisCache.deleteInfo(redisKey);
+        } else {
+            log.error(
+                    "【RedisKeyCapturerResolver】无法获取注解@RedisKeyCapturer指定的redis key信息，请检查value指定的属性名称是否正确");
         }
     }
 }

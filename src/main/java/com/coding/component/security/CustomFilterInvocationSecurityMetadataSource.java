@@ -23,9 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -34,8 +32,7 @@ public class CustomFilterInvocationSecurityMetadataSource
 
     public static final String EMPTY = "";
 
-    @Autowired
-    private RedisCache redisCache;
+    @Autowired private RedisCache redisCache;
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
 
@@ -44,18 +41,17 @@ public class CustomFilterInvocationSecurityMetadataSource
             throws IllegalArgumentException {
         String url = ((FilterInvocation) object).getRequestUrl();
 
-        List<String> unionRoleIdList = new ArrayList<>();
+        Set<String> unionRoleIdSet = new HashSet<>();
         List<SystemInfo.MenuDTO> menuDTOList = redisCache.systemInfo().getMenuDTOList();
         for (SystemInfo.MenuDTO menuDTO : menuDTOList) {
             String urlPattern =
                     StringUtils.hasText(menuDTO.getUrlPattern()) ? menuDTO.getUrlPattern() : EMPTY;
             if (antPathMatcher.match(urlPattern, url) && menuDTO.getRoleList().size() > 0) {
-                unionRoleIdList.addAll(menuDTO.getRoleList());
+                unionRoleIdSet.addAll(menuDTO.getRoleList());
             }
         }
-        if (unionRoleIdList.size() > 0) {
-            unionRoleIdList = unionRoleIdList.stream().distinct().collect(Collectors.toList());
-            return SecurityConfig.createList(unionRoleIdList.toArray(new String[] {}));
+        if (unionRoleIdSet.size() > 0) {
+            return SecurityConfig.createList(unionRoleIdSet.toArray(new String[] {}));
         }
 
         // 没有匹配上的资源，都是登录访问
