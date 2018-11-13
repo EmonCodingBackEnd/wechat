@@ -12,6 +12,7 @@
  ********************************************************************************/
 package com.coding.component.system.api;
 
+import com.coding.component.system.exception.AppStatus;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -22,10 +23,10 @@ public class AppResponse<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = -3455461468232581561L;
 
     /** 错误码. */
-    protected Integer errorCode;
+    protected Integer errorCode = AppStatus.SUCCESS.getCode();
 
     /** 提示信息. */
-    protected String errorMessage;
+    protected String errorMessage = AppStatus.SUCCESS.getMessage();
 
     /** 具体内容. */
     private T data;
