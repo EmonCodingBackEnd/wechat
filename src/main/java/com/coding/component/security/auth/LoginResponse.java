@@ -36,7 +36,7 @@ public class LoginResponse extends AppResponse {
     private String currentShopId;
 
     /** 当前系统用户切换前取自系统中的默认系统. */
-    private String currentSystem;
+    private Integer currentSystem;
 
     /** 用户名称 */
     private String username;
