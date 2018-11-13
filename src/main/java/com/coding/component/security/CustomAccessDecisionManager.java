@@ -48,6 +48,10 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
             Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
             for (GrantedAuthority authority : authorities) {
+                // 如果是系统管理员
+                if (authority.getAuthority().equals("admin")) {
+                    return;
+                }
                 if (authority.getAuthority().equals(needPermission)) {
                     return;
                 }
