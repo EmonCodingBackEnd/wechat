@@ -37,8 +37,8 @@ public class CustomUnauthorizedEntryPoint implements AuthenticationEntryPoint {
         httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         httpServletResponse.setContentType("application/json;charset=UTF-8"); // 响应类型
 
-        AuthResponse customResponse = AuthResponse.getAuthResponse(AppStatus.AUTH_UNAUTHENTICATION);
-        customResponse.setErrorMessage("请先登录！");
-        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(customResponse));
+        AuthResponse authResponse = AuthResponse.getAuthResponse(AppStatus.AUTH_UNAUTHENTICATION);
+        authResponse.setErrorMessage("请先登录！");
+        httpServletResponse.getWriter().write(objectMapper.writeValueAsString(authResponse));
     }
 }

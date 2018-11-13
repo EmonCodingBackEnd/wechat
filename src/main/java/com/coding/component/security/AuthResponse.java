@@ -1,5 +1,5 @@
 /*
- * 文件名称：CustomResponse.java
+ * 文件名称：AuthResponse.java
  * 系统名称：[系统名称]
  * 模块名称：[模块名称]
  * 软件版权：Copyright (c) 2011-2018, liming20110711@163.com All Rights Reserved.

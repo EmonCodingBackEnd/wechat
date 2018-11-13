@@ -22,6 +22,7 @@ import com.coding.component.security.AuthResponse;
 import com.coding.component.security.CustomUserDetails;
 import com.coding.component.security.CustomWebAuthenticationDetails;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
@@ -76,16 +77,28 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/switchSystem", method = RequestMethod.GET)
-    public LoginSession switchSystem(@LoginCache LoginSession loginSession, String systemType) {
+    public LoginResponse switchSystem(@LoginCache LoginSession loginSession, String systemType) {
         Long userId = loginSession.getUserId();
         authService.switchSystem(userId, Integer.valueOf(systemType));
-        return redisCache.userSession(userId);
+
+        loginSession = redisCache.userSession(userId);
+        LoginResponse loginResponse = new LoginResponse();
+        BeanUtils.copyProperties(loginSession, loginResponse);
+        loginResponse.setUserId(String.valueOf(loginSession.getUserId()));
+        loginResponse.setCurrentShopId(String.valueOf(loginSession.getCurrentShopId()));
+        return loginResponse;
     }
 
     @RequestMapping(value = "/switchShop", method = RequestMethod.GET)
     @RedisKeyCapturer(value = "userId", prefix = RedisKeyType.USERINFO_SESSION)
-    public LoginSession switchShop(@LoginCache("userId") Long userId, String shopId) {
+    public LoginResponse switchShop(@LoginCache("userId") Long userId, String shopId) {
         authService.switchShop(userId, Long.valueOf(shopId));
-        return redisCache.userSession(userId);
+
+        LoginSession loginSession = redisCache.userSession(userId);
+        LoginResponse loginResponse = new LoginResponse();
+        BeanUtils.copyProperties(loginSession, loginResponse);
+        loginResponse.setUserId(String.valueOf(loginSession.getUserId()));
+        loginResponse.setCurrentShopId(String.valueOf(loginSession.getCurrentShopId()));
+        return loginResponse;
     }
 }
