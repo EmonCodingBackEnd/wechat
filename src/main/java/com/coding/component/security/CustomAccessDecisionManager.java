@@ -49,7 +49,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
 
             for (GrantedAuthority authority : authorities) {
                 // 如果是系统管理员
-                if (authority.getAuthority().equals("admin")) {
+                if (authority.getAuthority().equals(CustomSecurityConstant.ADMIN)) {
                     return;
                 }
                 if (authority.getAuthority().equals(needPermission)) {

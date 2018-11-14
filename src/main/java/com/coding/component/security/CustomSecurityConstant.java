@@ -17,4 +17,6 @@ public class CustomSecurityConstant {
     public static final String delimiter = ":";
 
     public static final String EMPTY = "";
+
+    public static final String ADMIN = "admin";
 }
