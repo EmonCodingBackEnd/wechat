@@ -27,6 +27,10 @@ public class CustomUsernamePasswordAuthenticationFilter
                 StringUtils.isEmpty(authType)
                         ? CustomSecurityConstant.EMPTY
                         : StringUtils.trimAllWhitespace(authType);
-        return authType.concat(CustomSecurityConstant.delimiter).concat(super.obtainUsername(request));
+        String username = super.obtainUsername(request);
+        if (username == null) {
+            username = CustomSecurityConstant.EMPTY;
+        }
+        return authType.concat(CustomSecurityConstant.delimiter).concat(username);
     }
 }
