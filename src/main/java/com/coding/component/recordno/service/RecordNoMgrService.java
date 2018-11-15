@@ -16,27 +16,51 @@ import java.util.List;
 
 public interface RecordNoMgrService {
 
-    String getTenantRecordNo(String prefix);
+    /** 租户编号. */
+    String getTenantRecordNo();
 
-    List<String> getBatchTenantRecordNo(String prefix, Integer recordNoNum);
+    /** 批量租户编号. */
+    List<String> getBatchTenantRecordNo(Integer recordNoNum);
 
+    /** 门店编号：前缀是租户编号. */
     String getShopRecordNo(String prefix);
 
+    /** 批量门店编号：前缀是租户编号. */
     List<String> getBatchShopRecordNo(String prefix, Integer recordNoNum);
 
+    /** 商品票号：前缀是租户编号. */
     String getGoodsRecordNo(String prefix);
 
+    /** 批量商品票号：前缀是租户编号. */
     List<String> getBatchGoodsRecordNo(String prefix, Integer recordNoNum);
 
+    /** 用户编号：前缀是租户编号. */
     String getUserinfoRecordNo(String prefix);
 
+    /** 批量用户编号：前缀是租户ID. */
     List<String> getBatchUserinfoRecordNo(String prefix, Integer recordNoNum);
 
+    /** 会员编号. */
     String getCustomerRecordNo();
 
+    /** 批量会员编号. */
     List<String> getBatchCustomerRecordNo(Integer recordNoNum);
 
+    /** 订单编号. */
     String getOrderRecordNo();
 
+    /** 批量订单编号. */
     List<String> getBatchOrderRecordNo(Integer recordNoNum);
+
+    /** 商品SKU编号. */
+    String getGoodsSpuNo();
+
+    /** 批量商品SKU编号. */
+    List<String> getBatchGoodsSpuNo(Integer recordNoNum);
+
+    /** 商品SPEC编号：前缀是商品SKU编号. */
+    String getGoodsSpecNo(String prefix);
+
+    /** 批量商品SPEC编号：前缀是商品SKU编号. */
+    List<String> getBatchGoodsSpecNo(String prefix, Integer recordNoNum);
 }
