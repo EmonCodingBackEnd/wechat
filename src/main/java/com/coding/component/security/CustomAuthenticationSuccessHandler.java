@@ -64,6 +64,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         BeanUtils.copyProperties(loginSession, loginResponse);
         loginResponse.setToken(token);
         loginResponse.setUserId(String.valueOf(loginSession.getUserId()));
+        loginResponse.setTenantId(String.valueOf(loginSession.getTenantId()));
+        loginResponse.setHqShopId(String.valueOf(loginSession.getHqShopId()));
         loginResponse.setCurrentShopId(String.valueOf(loginSession.getCurrentShopId()));
         response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
     }

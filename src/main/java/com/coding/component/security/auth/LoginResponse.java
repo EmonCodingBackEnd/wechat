@@ -12,6 +12,8 @@
  ********************************************************************************/
 package com.coding.component.security.auth;
 
+import com.coding.component.security.auth.VO.ShopVO;
+import com.coding.component.security.auth.VO.SystemVO;
 import com.coding.component.system.api.AppResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,6 +33,12 @@ public class LoginResponse extends AppResponse {
 
     /** 用户编号. */
     private String userId;
+
+    /** 用户所属租户. */
+    private String tenantId;
+
+    /** 用户所属租户的总店. */
+    private String hqShopId;
 
     /** 用户的当前门店，用户切换前取自系统中的默认门店 */
     private String currentShopId;
@@ -61,13 +69,13 @@ public class LoginResponse extends AppResponse {
 
     /** 用户可访问的系统类型. */
     @JsonProperty("systemTypes")
-    private List<String> systemTypeList;
+    private List<SystemVO> systemTypeList;
 
     /** 用户管辖的门店信息. */
-    @JsonProperty("shopIds")
-    private List<String> shopIdList;
+    @JsonProperty("shopInfos")
+    private List<ShopVO> shopInfoList;
 
     /** 用户拥有的菜单权限. */
-    @JsonProperty("menuIds")
-    private List<String> menuIdList;
+    @JsonProperty("menuKeys")
+    private List<String> menuKeyList;
 }
