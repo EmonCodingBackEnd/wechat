@@ -14,6 +14,8 @@ package com.coding.component.security.auth;
 
 import com.coding.component.cache.redis.RedisKeyType;
 import com.coding.component.cache.redis.annotation.RedisKeyCapturer;
+import com.coding.component.security.auth.VO.ShopVO;
+import com.coding.component.security.auth.VO.SystemVO;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +64,13 @@ public class AuthServiceImpl implements AuthService {
         loginSession.setAge(18);
         loginSession.setIsAdmin(1);
         loginSession.setMobile("18767188240");
-        loginSession.setSystemTypeList(Lists.newArrayList("1", "2"));
-        loginSession.setShopIdList(Lists.newArrayList("1", "2", "3"));
-        loginSession.setMenuIdList(Lists.newArrayList("1", "2", "3", "4", "5"));
+        SystemVO systemVO = new SystemVO();
+        systemVO.setId("1");
+        loginSession.setSystemTypeList(Lists.newArrayList(systemVO));
+        ShopVO shopVO = new ShopVO();
+        shopVO.setId("1");
+        loginSession.setShopInfoList(Lists.newArrayList(shopVO));
+        loginSession.setMenuKeyList(Lists.newArrayList("1", "2", "3", "4", "5"));
 
         // 封装
         LoginAuthority loginAuthority = new LoginAuthority();
@@ -108,4 +114,7 @@ public class AuthServiceImpl implements AuthService {
         systemInfo.getMenuDTOList().add(menuDTO);
         return systemInfo;
     }
+
+    @Override
+    public void loginSuccess(LoginSession loginSession) {}
 }

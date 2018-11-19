@@ -23,4 +23,6 @@ public interface AuthService {
     void switchShop(Long userId, Long targetShop);
 
     SystemInfo systemInfo();
+
+    void loginSuccess(LoginSession loginSession);
 }

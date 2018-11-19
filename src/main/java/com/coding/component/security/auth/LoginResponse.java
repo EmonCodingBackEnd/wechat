@@ -12,11 +12,13 @@
  ********************************************************************************/
 package com.coding.component.security.auth;
 
-import com.coding.component.security.auth.VO.ShopVO;
-import com.coding.component.security.auth.VO.SystemVO;
-import com.coding.component.system.api.AppResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.ishanshan.component.security.auth.VO.ShopVO;
+import com.ishanshan.component.security.auth.VO.SystemVO;
+import com.ishanshan.component.serializer.Long2StringSerializer;
+import com.ishanshan.component.system.api.AppResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -32,16 +34,20 @@ public class LoginResponse extends AppResponse {
     private String token;
 
     /** 用户编号. */
-    private String userId;
+    @JsonSerialize(using = Long2StringSerializer.class)
+    private Long userId;
 
     /** 用户所属租户. */
-    private String tenantId;
+    @JsonSerialize(using = Long2StringSerializer.class)
+    private Long tenantId;
 
     /** 用户所属租户的总店. */
-    private String hqShopId;
+    @JsonSerialize(using = Long2StringSerializer.class)
+    private Long hqShopId;
 
     /** 用户的当前门店，用户切换前取自系统中的默认门店 */
-    private String currentShopId;
+    @JsonSerialize(using = Long2StringSerializer.class)
+    private Long currentShopId;
 
     /** 当前系统用户切换前取自系统中的默认系统. */
     private Integer currentSystem;

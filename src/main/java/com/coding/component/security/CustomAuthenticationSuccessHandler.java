@@ -13,10 +13,11 @@
 package com.coding.component.security;
 
 import com.coding.component.cache.redis.RedisCache;
-import com.coding.component.security.jwt.JwtRedisKeyUtil;
-import com.coding.component.security.jwt.JwtTokenUtil;
+import com.coding.component.security.auth.AuthService;
 import com.coding.component.security.auth.LoginResponse;
 import com.coding.component.security.auth.LoginSession;
+import com.coding.component.security.jwt.JwtRedisKeyUtil;
+import com.coding.component.security.jwt.JwtTokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -40,6 +41,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired private JwtTokenUtil jwtTokenUtil;
     @Autowired private StringRedisTemplate stringRedisTemplate;
     @Autowired private RedisCache redisCache;
+    @Autowired private AuthService authService;
 
     @Override
     public void onAuthenticationSuccess(
@@ -63,10 +65,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         LoginResponse loginResponse = new LoginResponse();
         BeanUtils.copyProperties(loginSession, loginResponse);
         loginResponse.setToken(token);
-        loginResponse.setUserId(String.valueOf(loginSession.getUserId()));
-        loginResponse.setTenantId(String.valueOf(loginSession.getTenantId()));
-        loginResponse.setHqShopId(String.valueOf(loginSession.getHqShopId()));
-        loginResponse.setCurrentShopId(String.valueOf(loginSession.getCurrentShopId()));
+
+        authService.loginSuccess(loginSession);
         response.getWriter().write(objectMapper.writeValueAsString(loginResponse));
     }
 }
