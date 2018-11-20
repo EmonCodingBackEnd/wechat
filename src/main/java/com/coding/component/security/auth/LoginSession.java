@@ -81,4 +81,16 @@ public class LoginSession implements Serializable {
     /** 用户拥有的角色权限. */
     @JsonProperty("authoritys")
     private LoginAuthority loginAuthority;
+
+    public String toLog() {
+        return "LoginSession{"
+                + "userId="
+                + userId
+                + ", currentShopId="
+                + currentShopId
+                + ", username='"
+                + username
+                + '\''
+                + '}';
+    }
 }
