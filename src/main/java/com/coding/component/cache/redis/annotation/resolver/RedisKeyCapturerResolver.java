@@ -43,25 +43,29 @@ public class RedisKeyCapturerResolver {
         String[] paramNames = ((CodeSignature) jp.getSignature()).getParameterNames();
         Object[] paramValues = jp.getArgs();
         String redisKey = null;
-        for (int i = 0; i < paramNames.length; i++) {
-            String paramName = paramNames[i];
-            Object paramValue = paramValues[i];
-            if (ClassUtils.isPrimitiveOrWrapper(paramValue.getClass())
-                    || String.class.isAssignableFrom(paramValue.getClass())) {
-                if (paramName.equals(StringUtils.trimWhitespace(fieldName))) {
-                    redisKey = prefix + paramValue;
-                    break;
-                }
-            } else {
-                Field field = ReflectionUtils.findField(paramValue.getClass(), fieldName);
-                if (field != null) {
-                    ReflectionUtils.makeAccessible(field);
-                    try {
-                        Object fieldValue = field.get(paramValue);
-                        redisKey = prefix + fieldValue;
+        if (StringUtils.isEmpty(StringUtils.trimWhitespace(fieldName))) {
+            redisKey = prefix;
+        } else {
+            for (int i = 0; i < paramNames.length; i++) {
+                String paramName = paramNames[i];
+                Object paramValue = paramValues[i];
+                if (ClassUtils.isPrimitiveOrWrapper(paramValue.getClass())
+                        || String.class.isAssignableFrom(paramValue.getClass())) {
+                    if (paramName.equals(StringUtils.trimWhitespace(fieldName))) {
+                        redisKey = prefix + paramValue;
                         break;
-                    } catch (IllegalAccessException e) {
-                        log.error("【RedisKeyCapturerResolver】获取RedisKey错误", e);
+                    }
+                } else {
+                    Field field = ReflectionUtils.findField(paramValue.getClass(), fieldName);
+                    if (field != null) {
+                        ReflectionUtils.makeAccessible(field);
+                        try {
+                            Object fieldValue = field.get(paramValue);
+                            redisKey = prefix + fieldValue;
+                            break;
+                        } catch (IllegalAccessException e) {
+                            log.error("【RedisKeyCapturerResolver】获取RedisKey错误", e);
+                        }
                     }
                 }
             }
