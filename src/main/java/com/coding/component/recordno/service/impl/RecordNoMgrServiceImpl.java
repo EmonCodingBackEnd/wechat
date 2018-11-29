@@ -213,7 +213,7 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
                     break;
                 default:
             }
-            recordNo.append(integerToString(currentMaxRecordNo++, recordLen.getRecordLen()));
+            recordNo.append(integerToString(++currentMaxRecordNo, recordLen.getRecordLen()));
             recordNoList.add(recordNo.toString());
         }
 
