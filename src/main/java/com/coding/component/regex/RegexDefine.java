@@ -78,7 +78,7 @@ public abstract class RegexDefine {
      * @since 1.0.0
      */
     public static final String MOBILE_REGEX =
-            "^((?:13[0-9])|(?:14[5|7])|(?:15(?:[0-3]|[5-9]))|(?:17[013678])|(?:18[0,5-9]))\\d{4}(\\d{4})$";
+            "^((?:13[0-9])|(?:14[5|7|9])|(?:15(?:[0-3]|[5-9]))|(?:16[6])|(?:17[013678])|(?:18[0-9])|(?:19[89]))\\d{4}(\\d{4})$";
 
     /** 字段说明：{@linkplain #MOBILE_REGEX}. */
     public static final Pattern MOBILE_REGEX_PATTERN = Pattern.compile(MOBILE_REGEX);
