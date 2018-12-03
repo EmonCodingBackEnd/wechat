@@ -7,6 +7,7 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -150,6 +151,37 @@ public class WebSocketServer {
         for (Map.Entry<String, WebSocketServer> entry : userSession.entrySet()) {
             try {
                 entry.getValue().sendMessage(message);
+            } catch (IOException e) {
+                log.error(
+                        String.format(
+                                "【WebSocket】发送消息错误,userId=%s, message=%s",
+                                entry.getKey(), entry.getValue().session.getId()),
+                        e);
+            }
+        }
+    }
+
+    /**
+     * 群发自定义消息，发送给指定的人.
+     *
+     * <p>创建时间: <font style="color:#00FFFF">20181203 12:32</font><br>
+     * [请在此输入功能详述]
+     *
+     * @param userIdList
+     * @param message
+     * @return void
+     * @author Rushing0711
+     * @since 1.0.0
+     */
+    public static void sendWebSocketMessage(List<String> userIdList, String message)
+            throws IOException {
+        log.info("【WebSocket】群发送自定义消息 message={}", message);
+        // 群发消息
+        for (Map.Entry<String, WebSocketServer> entry : userSession.entrySet()) {
+            try {
+                if (userIdList.contains(entry.getKey())) {
+                    entry.getValue().sendMessage(message);
+                }
             } catch (IOException e) {
                 log.error(
                         String.format(
