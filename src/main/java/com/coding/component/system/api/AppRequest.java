@@ -19,6 +19,8 @@ import java.io.Serializable;
 @Data
 public abstract class AppRequest implements Serializable {
 
+    private static final long serialVersionUID = 6386500729119806662L;
+
     /** 请求ID用作幂等性校验 */
     protected String requestId;
 }
