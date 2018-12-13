@@ -27,6 +27,45 @@ import java.util.regex.Pattern;
 public abstract class RegexDefine {
 
     /**
+     * 字段说明: 正整数正则表达式<br/>
+     * 正则: <code>^[1-9]\d*$</code><br/>
+     * 定义: 正整数
+     * 示例: 521
+     */
+    public static final String POSITIVE_INTEGER_REGEX = "^[1-9]\\d*$";
+
+    /**
+     * 字段说明: {@linkplain #POSITIVE_INTEGER_REGEX}
+     */
+    public static final Pattern POSITIVE_INTEGER_REGEX_PATTERN = Pattern.compile(POSITIVE_INTEGER_REGEX);
+
+    /**
+     * 字段说明: CSV文件名的正则表达式，匹配单个CSV文件名<br/>
+     * 正则: ^(([\w-]+\.csv)(@[1-9]\d*((:|-)[1-9]\d*)*)?)$<br/>
+     * 定义: abc1.csv 或 abc1.csv@1-5:8:10 或 abc2.csv@1-3:5:8-20<br/>
+     * 示例: abc2.csv@1-3:5:8-20
+     */
+    public static final String CSV_FILE_REGEX = "^([\\w-]+\\.csv)(@[1-9]\\d*((:|-)[1-9]\\d*)*)?$";
+
+    /**
+     * 字段说明: {@linkplain #CSV_FILE_REGEX}
+     */
+    public static final Pattern CSV_FILE_REGEX_PATTERN = Pattern.compile(CSV_FILE_REGEX);
+
+    /**
+     * 字段说明: CSV文件配置的正则表达式，匹配单个或多个CSV文件名，多个CSV文件名以<code>|</code>组合<br/>
+     * 正则: ^(([\w-]+\.csv)(@[1-9]\d*((:|-)[1-9]\d*)*)?)(\|(([\w-]+\.csv)(@[1-9]\d*((:|-)[1-9]\d*)*)?))*$<br/>
+     * 定义: abc1.csv 或 abc1.csv@1-5:8:10 或 abc1.csv@1-5:8:10|abc2.csv@1-3:5:8-20...<br/>
+     * 示例: abc1.csv@35|abc1.csv@1-5:8:10|abc2.csv@1-3:5:8-20
+     */
+    public static final String CSV_FILE_CONFIG_REGEX = "^(([\\w-]+\\.csv)(@[1-9]\\d*((:|-)[1-9]\\d*)*)?)(\\|(([\\w-]+\\.csv)(@[1-9]\\d*((:|-)[1-9]\\d*)*)?))*$";
+
+    /**
+     * 字段说明: {@linkplain #CSV_FILE_CONFIG_REGEX}
+     */
+    public static final Pattern CSV_FILE_CONFIG_REGEX_PATTERN = Pattern.compile(CSV_FILE_CONFIG_REGEX);
+
+    /**
      * 示例1：完全匹配的正则表达式定义.
      *
      * <p>创建时间: <font style="color:#00FFFF">20180424 15:19</font><br>

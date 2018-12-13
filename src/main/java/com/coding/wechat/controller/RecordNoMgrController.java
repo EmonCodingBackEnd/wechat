@@ -49,8 +49,8 @@ public class RecordNoMgrController {
             executorService.execute(
                     () -> {
                         try {
-                            recordNoMgrService.getTenantRecordNo("tenant");
-                            recordNoMgrService.getBatchTenantRecordNo("tenant", 9);
+                            recordNoMgrService.getTenantRecordNo();
+                            recordNoMgrService.getBatchTenantRecordNo(9);
                             recordNoMgrService.getShopRecordNo("shop");
                             recordNoMgrService.getBatchShopRecordNo("shop", 9);
                             recordNoMgrService.getGoodsRecordNo("goods");

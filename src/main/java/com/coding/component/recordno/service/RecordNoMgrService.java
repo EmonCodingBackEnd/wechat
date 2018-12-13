@@ -37,7 +37,7 @@ public interface RecordNoMgrService {
     /** 用户编号：前缀是租户编号. */
     String getUserinfoRecordNo(String prefix);
 
-    /** 批量用户编号：前缀是租户ID. */
+    /** 批量用户编号：前缀是租户编号. */
     List<String> getBatchUserinfoRecordNo(String prefix, Integer recordNoNum);
 
     /** 会员编号. */

@@ -29,6 +29,47 @@ import java.util.regex.Matcher;
 public abstract class RegexSupport {
 
     /**
+     * 功能说明: 解析单个CSV配置是否满足规则，如果满足，解析出CSV文件名fileName。
+     *
+     * @param value - 引用变量
+     * @return 解析结果
+     */
+    public static RegexResult matchSingleCSVFile(String value) {
+        RegexResult result = RegexResult.instance();
+        Matcher matcher = RegexDefine.CSV_FILE_REGEX_PATTERN.matcher(value);
+        if (matcher.matches()) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.CSV_FILE_REGEX);
+            result.setPattern(RegexDefine.CSV_FILE_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setRawValue(matcher.group(0));
+            result.setResult("fileName", matcher.group(1));
+        }
+        return result;
+    }
+
+    /**
+     * 功能说明: 解析多个CSV配置是否满足规则，如果满足，解析出首个CSV文件名fileName和配置名cfgName。
+     *
+     * @param value - 引用变量
+     * @return 解析结果
+     */
+    public static RegexResult matchMultiCSVFile(String value) {
+        RegexResult result = RegexResult.instance();
+        Matcher matcher = RegexDefine.CSV_FILE_CONFIG_REGEX_PATTERN.matcher(value);
+        if (matcher.matches()) {
+            result.setMatched(true);
+            result.setRegex(RegexDefine.CSV_FILE_CONFIG_REGEX);
+            result.setPattern(RegexDefine.CSV_FILE_CONFIG_REGEX_PATTERN);
+            result.setMatcher(matcher);
+            result.setRawValue(matcher.group(0));
+            result.setResult("cfgName", matcher.group(1));
+            result.setResult("fileName", matcher.group(2));
+        }
+        return result;
+    }
+
+    /**
      * 示例1：完全匹配的正则表达式定义.
      *
      * <p>创建时间: <font style="color:#00FFFF">20180424 15:06</font><br>
