@@ -12,9 +12,9 @@
  ********************************************************************************/
 package com.coding.component.recordno.service.impl;
 
-import com.coding.component.recordno.DO.RecordNoMgr;
-import com.coding.component.recordno.repository.RecordNoMgrRepository;
-import com.coding.component.recordno.service.RecordNoMgrService;
+import com.ishanshan.component.recordno.DO.RecordNoMgr;
+import com.ishanshan.component.recordno.repository.RecordNoMgrRepository;
+import com.ishanshan.component.recordno.service.RecordNoMgrService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,8 @@ import java.util.List;
 @Slf4j
 public class RecordNoMgrServiceImpl implements RecordNoMgrService {
 
-    @Autowired private RecordNoMgrRepository recordNoMgrRepository;
+    @Autowired
+    private RecordNoMgrRepository recordNoMgrRepository;
 
     private static final String EMPTY = "";
 
@@ -123,13 +124,13 @@ public class RecordNoMgrServiceImpl implements RecordNoMgrService {
     }
 
     @Override
-    public String getGoodsSpecNo(String prefix) {
-        return getRecordNoByTableName(EMPTY, "goods_spec_no", 1).get(0);
+    public String getGoodsSkuNo(String prefix) {
+        return getRecordNoByTableName(prefix, "goods_sku_no", 1).get(0);
     }
 
     @Override
-    public List<String> getBatchGoodsSpecNo(String prefix, Integer recordNoNum) {
-        return getRecordNoByTableName(EMPTY, "goods_spec_no", recordNoNum);
+    public List<String> getBatchGoodsSkuNo(String prefix, Integer recordNoNum) {
+        return getRecordNoByTableName(prefix, "goods_sku_no", recordNoNum);
     }
 
     private List<String> getRecordNoByTableName(String prefix, String tableName, int recordNoNum) {

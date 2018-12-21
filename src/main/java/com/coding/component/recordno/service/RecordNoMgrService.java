@@ -52,15 +52,15 @@ public interface RecordNoMgrService {
     /** 批量订单编号. */
     List<String> getBatchOrderRecordNo(Integer recordNoNum);
 
-    /** 商品SKU编号. */
+    /** 商品SPU编号. */
     String getGoodsSpuNo();
 
-    /** 批量商品SKU编号. */
+    /** 批量商品SPU编号. */
     List<String> getBatchGoodsSpuNo(Integer recordNoNum);
 
-    /** 商品SPEC编号：前缀是商品SKU编号. */
-    String getGoodsSpecNo(String prefix);
+    /** 商品SKU编号：前缀是商品SPU编号. */
+    String getGoodsSkuNo(String prefix);
 
-    /** 批量商品SPEC编号：前缀是商品SKU编号. */
-    List<String> getBatchGoodsSpecNo(String prefix, Integer recordNoNum);
+    /** 批量商品SKU编号：前缀是商品SPU编号. */
+    List<String> getBatchGoodsSkuNo(String prefix, Integer recordNoNum);
 }
