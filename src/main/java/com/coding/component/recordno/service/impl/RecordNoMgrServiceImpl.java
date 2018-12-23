@@ -12,9 +12,9 @@
  ********************************************************************************/
 package com.coding.component.recordno.service.impl;
 
-import com.ishanshan.component.recordno.DO.RecordNoMgr;
-import com.ishanshan.component.recordno.repository.RecordNoMgrRepository;
-import com.ishanshan.component.recordno.service.RecordNoMgrService;
+import com.coding.component.recordno.DO.RecordNoMgr;
+import com.coding.component.recordno.repository.RecordNoMgrRepository;
+import com.coding.component.recordno.service.RecordNoMgrService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
