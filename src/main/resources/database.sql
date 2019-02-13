@@ -9,6 +9,12 @@ create user 'springboot'@'%' identified by 'SpringBoot@123';
 -- 授权用户
 grant all privileges on *.* to 'springboot'@'%' with grant option;
 
+-- 创建用户
+create user 'backup'@'%' identified by 'Backup@123';
+
+-- 授权用户
+grant select,reload,lock tables,replication client,show view,event,process on *.* to 'backup'@'%' with grant option;
+
 -- 创建数据库
 CREATE DATABASE IF NOT EXISTS wechatdb DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

@@ -1,3 +1,5 @@
+host: 192.168.0.155
+
 wechat:
   appId: wx4d1f59cc41e1c601
   appSecret: 5cb8a75bd031b350957fa7e7d5e357eb
@@ -6,9 +8,9 @@ wechat:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: jpss
-    password: Jpss541018!
-    url: jdbc:mysql://192.168.1.52:3306/edendb?characterEncoding=utf-8&useSSL=false
+    username: springboot
+    password: SpringBoot@123
+    url: jdbc:mysql://${host}/wechatdb?characterEncoding=utf-8&useSSL=false
     # 是否使用schema.sql建库和data.sql初始化数据，默认true
     initialize: false
   jpa:
@@ -20,13 +22,13 @@ spring:
     cache-names: redisCache
   redis:
     database: 0
-    host: 192.168.1.56
-    port: 7001
+    host: ${host}
+    port: 6379
     timeout: 0
-    password: ss541018
-    sentinel:
-      master: mymaster
-      nodes: 192.168.1.56:26379,192.168.1.56:26378,192.168.1.56:26377
+    password: redis123
+#    sentinel:
+#      master: mymaster
+#      nodes: ${host}:26379,${host}:26378,${host}:26377
   # spring session使用存储类型
   session:
     store-type: redis
@@ -34,7 +36,7 @@ spring:
 ftp:
   servers[0]:
     alias: default
-    host: 192.168.1.56
+    host: ${host}
     port: 21
     username: ftp
     password: ftp123

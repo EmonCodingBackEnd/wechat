@@ -12,13 +12,13 @@
  ********************************************************************************/
 package com.coding.component.security.auth;
 
+import com.coding.component.security.auth.VO.ShopVO;
+import com.coding.component.security.auth.VO.SystemVO;
+import com.coding.component.serializer.Long2StringSerializer;
+import com.coding.component.system.api.AppResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.ishanshan.component.security.auth.VO.ShopVO;
-import com.ishanshan.component.security.auth.VO.SystemVO;
-import com.ishanshan.component.serializer.Long2StringSerializer;
-import com.ishanshan.component.system.api.AppResponse;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

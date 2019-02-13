@@ -1,3 +1,5 @@
+host: 192.168.0.155
+
 server:
   context-path: /wechat
   port: 8080
@@ -81,12 +83,12 @@ ftp:
     accessUrlPrefixes: http://file.emon.vip
   servers[1]:
     alias: house
-    host: 192.168.1.116
+    host: ${host}
     port: 21
     username: ftp
     password: ftp123
     passiveMode: true
-    accessUrlPrefixes: http://192.168.1.116
+    accessUrlPrefixes: http://${host}
   servers[2]:
     alias: company
     host: 10.0.0.116

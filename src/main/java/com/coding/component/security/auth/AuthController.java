@@ -12,15 +12,15 @@
  ********************************************************************************/
 package com.coding.component.security.auth;
 
-import com.ishanshan.component.cache.redis.RedisCache;
-import com.ishanshan.component.cache.redis.RedisKeyType;
-import com.ishanshan.component.cache.redis.annotation.LoginCache;
-import com.ishanshan.component.cache.redis.annotation.RedisKeyCapturer;
-import com.ishanshan.component.security.AuthResponse;
-import com.ishanshan.component.security.CustomUserDetails;
-import com.ishanshan.component.security.CustomWebAuthenticationDetails;
-import com.ishanshan.component.security.jwt.JwtRedisKeyUtil;
-import com.ishanshan.component.security.jwt.JwtTokenUtil;
+import com.coding.component.cache.redis.RedisCache;
+import com.coding.component.cache.redis.RedisKeyType;
+import com.coding.component.cache.redis.annotation.LoginCache;
+import com.coding.component.cache.redis.annotation.RedisKeyCapturer;
+import com.coding.component.security.AuthResponse;
+import com.coding.component.security.CustomUserDetails;
+import com.coding.component.security.CustomWebAuthenticationDetails;
+import com.coding.component.security.jwt.JwtRedisKeyUtil;
+import com.coding.component.security.jwt.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
