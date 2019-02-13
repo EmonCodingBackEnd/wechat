@@ -200,6 +200,7 @@
     </dependencies>
 
     <build>
+        <finalName>wechat-provider</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
