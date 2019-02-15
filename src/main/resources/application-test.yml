@@ -1,5 +1,8 @@
 host: 192.168.0.155
 
+server:
+  port: 8081
+
 wechat:
   appId: wxf46908d1b94ffc6c
   appSecret: 26c765de9bbe93f5b131856bd107da25
