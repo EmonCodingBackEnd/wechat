@@ -1,0 +1,112 @@
+host: 192.168.0.155
+
+server:
+  context-path: /wechat
+  port: 8080
+  # 解决： Caused by: java.io.IOException: The temporary upload location [/tmp/tomcat.6515295841566425416.8080/work/Tomcat/localhost/saas-ssp] is not valid
+  tomcat:
+    basedir: /home/emon/saas/wechat/tmp
+spring:
+  profiles:
+    active: dev
+  http:
+    multipart:
+      max-file-size: 20Mb
+      max-request-size: 100Mb
+  h2:
+    console:
+      enabled: true
+  # 禁用，否则对GenericKeyedFTPClientPool报错MXBean already registered with name org.apache.commons.pool2:type=GenericKeyedObjectPool,name=pool
+  jmx:
+    enabled: false
+
+wechat:
+  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET
+  menu:
+    createMenuUrl: https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN
+    queryMenuUrl: https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN
+    deleteMenuUrl: https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN
+  material:
+    createMediaUrl: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE
+    queryMediaUrl: https://api.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID
+    createMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=ACCESS_TOKEN
+    queryMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=ACCESS_TOKEN
+    deleteMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=ACCESS_TOKEN
+    modifyMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=ACCESS_TOKEN
+    countMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=ACCESS_TOKEN
+    listMaterialUrl: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=ACCESS_TOKEN
+logging:
+  config: classpath:logback-spring-${spring.profiles.active}.xml
+
+# 项目通用配置
+common:
+  uploadUrl: https://img.tamizoo.cn/upload
+  orderTimeOut: 15
+  wxOderTimeDiff: 5
+
+# 特殊任务线程池配置
+timerPool:
+  delay:
+    threadNamePrefix: TIMER_DELAY-
+    corePoolSize: 10
+    maxPoolSize: 200
+    queueCapacity: 1000
+    keeyAliveSecond: 60
+    delayTaskQueueDaemonThreadName: DelayTaskQueueDaemonThread
+  schedule:
+    threadNamePrefix: TIMER_SCHEDULE-
+    poolSize: 50
+    awaitTerminationSeconds: 60
+  async:
+    threadNamePrefix: TIMER_ASYNC-
+    corePoolSize: 10
+    maxPoolSize: 50
+    queueCapacity: 100
+    keeyAliveSecond: 60
+
+ftp:
+  enabled: true
+  pool:
+    timeBetweenEvictionRunsMillis: 60000
+    maxTotal: 1000
+    maxTotalPerKey: 10
+    minIdlePerKey: 5
+    maxIdlePerKey: 10
+    maxWaitMillis: 10000
+  servers[0]:
+    alias: default
+    host: 39.107.97.197
+    port: 21
+    username: ftp
+    password: ftp@163
+    passiveMode: true
+    accessUrlPrefixes: http://file.emon.vip
+  servers[1]:
+    alias: house
+    host: ${host}
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://${host}
+  servers[2]:
+    alias: company
+    host: 10.0.0.116
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://10.0.0.116
+  servers[3]:
+    alias: saas
+    host: 192.168.1.56
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://192.168.1.56
+
+# JWT Token有效时间，单位：秒
+jwt:
+  expiration: 600
+

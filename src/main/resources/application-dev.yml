@@ -1,0 +1,44 @@
+host: 192.168.0.155
+
+wechat:
+  appId: wxf46908d1b94ffc6c
+  appSecret: 26c765de9bbe93f5b131856bd107da25
+  token: emonnote
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: springboot
+    password: SpringBoot@123
+    url: jdbc:mysql://${host}/wechatdb?characterEncoding=utf-8&useSSL=false
+    # 是否使用schema.sql建库和data.sql初始化数据，默认true
+    initialize: false
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  cache:
+    type: redis
+    cache-names: redisCache
+  redis:
+    database: 0
+    host: ${host}
+    port: 6379
+    timeout: 0
+    password: redis123
+#    sentinel:
+#      master: mymaster
+#      nodes: ${host}:26379,${host}:26389,${host}:26399
+  # spring session使用存储类型
+  session:
+    store-type: redis
+
+ftp:
+  servers[0]:
+    alias: default
+    host: ${host}
+    port: 21
+    username: ftp
+    password: ftp123
+    passiveMode: true
+    accessUrlPrefixes: http://${host}
